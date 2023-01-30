@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 autocxx = "0.23.1"
 cxx = "1.0"
+openmp-sys = { version = "1.2.3", features = ["static"] }
 
 [build-dependencies]
 cmake = "0.1.49"

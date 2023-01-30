@@ -6,7 +6,7 @@ fn main() {
         "networkit/include",
         "networkit/extlibs/tlx",
         "bridge/",
-        "/opt/homebrew/Cellar/libomp/15.0.7/include"
+        "/opt/homebrew/opt/libomp/include"
     ]).build().unwrap();
     // This assumes all your C++ bindings are in main.rs
     b.flag_if_supported("-std=c++17")

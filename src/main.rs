@@ -1,3 +1,5 @@
+extern crate openmp_sys;
+
 use autocxx::prelude::*;
 
 // use all the main autocxx functions
