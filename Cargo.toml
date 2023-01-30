@@ -6,11 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-autocxx = "0.23.1"
 cxx = "1.0"
 openmp-sys = { version = "1.2.3", features = ["static"] }
+miette = "5.5.0"
 
 [build-dependencies]
 cmake = "0.1.49"
-autocxx-build = "0.23.1"
+cxx-build = "1.0"
 miette = { version = "5", features = ["fancy"] } # optional but gives nicer error messages!

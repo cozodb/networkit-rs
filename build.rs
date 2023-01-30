@@ -1,17 +1,28 @@
 use std::env;
-use std::path::PathBuf;
 
 fn main() {
-    let mut b = autocxx_build::Builder::new("src/main.rs", &[
-        "networkit/include",
-        "networkit/extlibs/tlx",
-        "bridge/",
-        "/opt/homebrew/opt/libomp/include"
-    ]).build().unwrap();
-    // This assumes all your C++ bindings are in main.rs
-    b.flag_if_supported("-std=c++17")
-        .compile("networkit-rs"); // arbitrary library name, pick anything
-    println!("cargo:rerun-if-changed=src/main.rs");
+    let target = env::var("TARGET").unwrap();
+
+    let mut builder = cxx_build::bridge("src/bridge.rs");
+    if target.contains("msvc") {
+        builder.flag_if_supported("-std:c++17");
+    } else {
+        builder.flag("-std=c++17");
+    };
+
+    builder
+        .files(["bridge/bridge.cpp"])
+        .include("networkit/include")
+        .include("networkit/extlibs/tlx")
+        .include("bridge")
+        .include("/opt/homebrew/opt/libomp/include");
+
+    println!("cargo:rerun-if-changed=src/bridge.rs");
+    println!("cargo:rerun-if-changed=bridge/bridge.h");
+
+    println!("cargo:rustc-link-search=native=/opt/homebrew/opt/libomp/lib");
+    println!("cargo:rustc-link-lib=static=omp");
+    builder.compile("networkit-rs");
 
     // Add instructions to link to any C++ libraries you need.
 
