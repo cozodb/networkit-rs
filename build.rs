@@ -23,7 +23,13 @@ fn main() {
 
     println!("cargo:rustc-link-search=native=/opt/homebrew/opt/libomp/lib");
     println!("cargo:rustc-link-search=native=/usr/local/opt/libomp/lib");
-    println!("cargo:rustc-link-lib=static=omp");
+
+    if target.contains("darwin") {
+        println!("cargo:rustc-link-lib=static=omp");
+    } else {
+        println!("cargo:rustc-link-lib=omp");
+    }
+
     builder.compile("networkit-rs");
 
     // Add instructions to link to any C++ libraries you need.
