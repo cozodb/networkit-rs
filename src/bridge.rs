@@ -2,24 +2,6 @@ extern crate openmp_sys;
 
 pub(crate) use ffi::*;
 
-//
-// // use all the main autocxx functions
-//
-// include_cpp! {
-//     #include "networkit/centrality/Centrality.hpp"
-//     #include "networkit/centrality/PageRank.hpp"
-//     #include "extra.h"
-//
-//     safety!(unsafe)
-//     generate!("NetworKit::Graph")
-//     generate!("NetworKit::Algorithm")
-//     generate!("NetworKit::Centrality")
-//     generate!("NetworKit::PageRank")
-//     generate!("NetworKit::PageRank_Norm")
-//     generate!("NetworKit::PageRank_SinkHandling")
-//     generate!("NetworKit::NewPageRank")
-// }
-
 #[cxx::bridge(namespace = "NetworKit")]
 mod ffi {
     unsafe extern "C++" {

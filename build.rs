@@ -30,13 +30,6 @@ fn main() {
 }
 
 fn build_networkit() {
-    // let base = env::var_os("OUT_DIR").unwrap();
-    // let mut out_lib_path = PathBuf::from(base);
-    // out_lib_path.push("libnetworkit.a");
-    // if out_lib_path.exists() {
-    //     return;
-    // }
-
     let mut config = cmake::Config::new("networkit");
     config.define("NETWORKIT_STATIC", "ON");
     let mut res = config.build();
