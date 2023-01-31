@@ -10,6 +10,8 @@ fn main() {
         builder.flag("-std=c++17");
     };
 
+    builder.flag_if_supported("-fopenmp");
+
     builder
         .files(["bridge/bridge.cpp"])
         .include("networkit/include")
