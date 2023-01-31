@@ -15,12 +15,14 @@ fn main() {
         .include("networkit/include")
         .include("networkit/extlibs/tlx")
         .include("bridge")
-        .include("/opt/homebrew/opt/libomp/include");
+        .include("/opt/homebrew/opt/libomp/include")
+        .include("/usr/local/opt/libomp/include");
 
     println!("cargo:rerun-if-changed=src/bridge.rs");
     println!("cargo:rerun-if-changed=bridge/bridge.h");
 
     println!("cargo:rustc-link-search=native=/opt/homebrew/opt/libomp/lib");
+    println!("cargo:rustc-link-search=native=/usr/local/opt/libomp/lib");
     println!("cargo:rustc-link-lib=static=omp");
     builder.compile("networkit-rs");
 
