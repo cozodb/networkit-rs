@@ -27,7 +27,12 @@ mod ffi {
 
         pub type Graph;
 
-        pub fn NewGraph(n: u64, weighted: bool, directed: bool, edges_indexed: bool) -> UniquePtr<Graph>;
+        pub fn NewGraph(
+            n: u64,
+            weighted: bool,
+            directed: bool,
+            edges_indexed: bool,
+        ) -> UniquePtr<Graph>;
         pub fn addEdge(
             self: Pin<&mut Graph>,
             u: u64,
@@ -71,9 +76,54 @@ mod ffi {
         fn removeMultiEdges(self: Pin<&mut Graph>);
         unsafe fn removeNode(self: Pin<&mut Graph>, u: u64);
         fn removeSelfLoops(self: Pin<&mut Graph>);
+        unsafe fn restoreNode(self: Pin<&mut Graph>, u: u64);
+        unsafe fn setWeight(self: Pin<&mut Graph>, u: u64, v: u64, ew: f64) -> Result<()>;
 
-        // TODO
+        fn sortEdges(self: Pin<&mut Graph>);
+        unsafe fn swapEdge(self: Pin<&mut Graph>, s1: u64, t1: u64, s2: u64, t2: u64);
 
+        fn totalEdgeWeight(self: &Graph) -> f64;
+
+        fn upperEdgeIdBound(self: &Graph) -> u64;
         fn upperNodeIdBound(self: &Graph) -> u64;
+
+        unsafe fn weight(self: &Graph, u: u64, v: u64) -> f64;
+
+        unsafe fn weightedDegree(self: &Graph, u: u64, count_self_loops_twice: bool) -> f64;
+        unsafe fn weightedDegreeIn(self: &Graph, u: u64, count_self_loops_twice: bool) -> f64;
+
+        pub type GraphNodeIter;
+
+        fn NewGraphNodeIter(g: &Graph) -> UniquePtr<GraphNodeIter>;
+        fn advance(self: Pin<&mut GraphNodeIter>, u: &mut u64) -> bool;
+
+        pub type GraphEdgeIter;
+        fn NewGraphEdgeIter(g: &Graph) -> UniquePtr<GraphEdgeIter>;
+        fn advance(self: Pin<&mut GraphEdgeIter>, u: &mut u64, v: &mut u64) -> bool;
+
+        pub type GraphEdgeWeightIter;
+        fn NewGraphEdgeWeightIter(g: &Graph) -> UniquePtr<GraphEdgeWeightIter>;
+        fn advance(
+            self: Pin<&mut GraphEdgeWeightIter>,
+            u: &mut u64,
+            v: &mut u64,
+            wt: &mut f64,
+        ) -> bool;
+
+        pub type GraphNeighbourIter;
+        unsafe fn NewGraphNeighbourIter(
+            g: &Graph,
+            u: u64,
+            in_neighbours: bool,
+        ) -> UniquePtr<GraphNeighbourIter>;
+        fn advance(self: Pin<&mut GraphNeighbourIter>, u: &mut u64) -> bool;
+
+        pub type GraphNeighbourWeightIter;
+        unsafe fn NewGraphNeighbourWeightIter(
+            g: &Graph,
+            u: u64,
+            in_neighbours: bool,
+        ) -> Result<UniquePtr<GraphNeighbourWeightIter>>;
+        fn advance(self: Pin<&mut GraphNeighbourWeightIter>, u: &mut u64, wt: &mut f64) -> bool;
     }
 }
