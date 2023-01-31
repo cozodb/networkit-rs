@@ -29,7 +29,7 @@ fn main() {
     if target.contains("darwin") {
         println!("cargo:rustc-link-lib=static=omp");
     } else {
-        println!("cargo:rustc-link-lib=omp");
+        // println!("cargo:rustc-link-lib=omp");
     }
 
     builder.compile("networkit-rs");
