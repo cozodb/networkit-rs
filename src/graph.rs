@@ -14,8 +14,10 @@ impl Graph {
         }
     }
 
-    pub fn add_edge(&mut self, u: u64, v: u64, ew: f64, check_multi_edge: bool) -> bool {
-        self.inner.pin_mut().addEdge(u, v, ew, check_multi_edge)
+    pub fn add_edge(&mut self, u: u64, v: u64, ew: Option<f64>, check_multi_edge: bool) -> bool {
+        self.inner
+            .pin_mut()
+            .addEdge(u, v, ew.unwrap_or(1.), check_multi_edge)
     }
 
     pub fn add_node(&mut self) -> u64 {

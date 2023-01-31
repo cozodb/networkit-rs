@@ -13,6 +13,8 @@ namespace NetworKit
 
     using namespace std;
 
+    // GRAPH
+
     inline unique_ptr<Graph> NewGraph(count n, bool weighted, bool directed, bool edgesIndexed)
     {
         return make_unique<Graph>(n, weighted, directed, edgesIndexed);
@@ -153,6 +155,14 @@ namespace NetworKit
     public:
         GraphNeighbourWeightIter(Graph::NeighborWeightIterator cur_, Graph::NeighborWeightIterator end_) : cur(cur_), end(end_) {}
 
+        inline node current() const
+        {
+            return (*cur).first;
+        }
+        inline edgeweight current_weight() const
+        {
+            return (*cur).second;
+        }
         inline bool advance(node &u, edgeweight &wt)
         {
             if (cur != end)

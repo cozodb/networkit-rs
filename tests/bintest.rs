@@ -3,9 +3,9 @@ use networkit_rs::graph::Graph;
 #[test]
 fn creation() {
     let mut g = Graph::new(10, false, true, false);
-    g.add_edge(0, 2, 1., false);
-    g.add_edge(1, 3, 1., false);
-    g.add_edge(9, 0, 1., false);
+    g.add_edge(0, 2, None, false);
+    g.add_edge(1, 3, None, false);
+    g.add_edge(9, 0, None, false);
     println!("Nodes");
     for u in g.iter_nodes() {
         println!("{u}");

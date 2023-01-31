@@ -25,6 +25,8 @@ mod ffi {
     unsafe extern "C++" {
         include!("bridge.h");
 
+        // GRAPH
+
         pub type Graph;
 
         pub fn NewGraph(
@@ -38,7 +40,7 @@ mod ffi {
             u: u64,
             v: u64,
             ew: f64,
-            checkMultiEdge: bool,
+            check_multi_edge: bool,
         ) -> bool;
         fn addNode(self: Pin<&mut Graph>) -> u64;
         fn addNodes(self: Pin<&mut Graph>, number_of_new_nodes: u64) -> u64;
@@ -56,16 +58,6 @@ mod ffi {
         fn isDirected(self: &Graph) -> bool;
         fn isIsolated(self: &Graph, u: u64) -> Result<bool>;
         fn isWeighted(self: &Graph) -> bool;
-
-        // TODO iterators
-
-        // pub type Graph_NodeRange;
-        //
-        // fn NewNodeRange(g: &Graph) -> UniquePtr<Graph_NodeRange>;
-        //
-        // pub type Graph_EdgeRange;
-        //
-        // fn NewEdgeRange(g: &Graph) -> UniquePtr<Graph_EdgeRange>;
 
         fn numberOfEdges(self: &Graph) -> u64;
         fn numberOfNodes(self: &Graph) -> u64;
