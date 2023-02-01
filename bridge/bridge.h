@@ -6,6 +6,7 @@
 #define NETWORKIT_EXTRA_H
 
 #include <networkit/graph/Graph.hpp>
+#include <networkit/graph/GraphBuilder.hpp>
 #include "rust/cxx.h"
 
 namespace NetworKit
@@ -43,7 +44,7 @@ namespace NetworKit
         }
     };
 
-    unique_ptr<GraphNodeIter> NewGraphNodeIter(const Graph &g)
+    inline unique_ptr<GraphNodeIter> NewGraphNodeIter(const Graph &g)
     {
         auto range = g.nodeRange();
         return make_unique<GraphNodeIter>(range.begin(), range.end());
@@ -73,7 +74,7 @@ namespace NetworKit
         }
     };
 
-    unique_ptr<GraphEdgeIter> NewGraphEdgeIter(const Graph &g)
+    inline unique_ptr<GraphEdgeIter> NewGraphEdgeIter(const Graph &g)
     {
         auto range = g.edgeRange();
         return make_unique<GraphEdgeIter>(range.begin(), range.end());
@@ -104,7 +105,7 @@ namespace NetworKit
         }
     };
 
-    unique_ptr<GraphEdgeWeightIter> NewGraphEdgeWeightIter(const Graph &g)
+    inline unique_ptr<GraphEdgeWeightIter> NewGraphEdgeWeightIter(const Graph &g)
     {
         auto range = g.edgeWeightRange();
         return make_unique<GraphEdgeWeightIter>(range.begin(), range.end());
@@ -133,7 +134,7 @@ namespace NetworKit
         }
     };
 
-    unique_ptr<GraphNeighbourIter> NewGraphNeighbourIter(const Graph &g, node u, bool in_neighbours)
+    inline unique_ptr<GraphNeighbourIter> NewGraphNeighbourIter(const Graph &g, node u, bool in_neighbours)
     {
         if (in_neighbours)
         {
@@ -179,7 +180,7 @@ namespace NetworKit
         }
     };
 
-    unique_ptr<GraphNeighbourWeightIter> NewGraphNeighbourWeightIter(const Graph &g, node u, bool in_neighbours)
+    inline unique_ptr<GraphNeighbourWeightIter> NewGraphNeighbourWeightIter(const Graph &g, node u, bool in_neighbours)
     {
         if (in_neighbours)
         {
@@ -193,6 +194,17 @@ namespace NetworKit
         }
     }
 
+    // GRAPH BUILDER
+
+    inline unique_ptr<GraphBuilder> NewGraphBuilder(count n, bool weighted, bool directed)
+    {
+        return make_unique<GraphBuilder>(n, weighted, directed);
+    }
+
+    inline unique_ptr<Graph> GraphBuilderCompleteGraph(GraphBuilder &builder, bool parallel)
+    {
+        return make_unique<Graph>(builder.completeGraph(parallel));
+    }
 }
 
 #endif // NETWORKIT_EXTRA_H

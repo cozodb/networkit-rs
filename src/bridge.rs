@@ -99,5 +99,33 @@ mod ffi {
             in_neighbours: bool,
         ) -> Result<UniquePtr<GraphNeighbourWeightIter>>;
         fn advance(self: Pin<&mut GraphNeighbourWeightIter>, u: &mut u64, wt: &mut f64) -> bool;
+
+        // GRAPH BUILDER
+
+        pub type GraphBuilder;
+        fn NewGraphBuilder(n: u64, weighted: bool, directed: bool) -> UniquePtr<GraphBuilder>;
+        fn reset(self: Pin<&mut GraphBuilder>, n: u64);
+        fn isWeighted(self: &GraphBuilder) -> bool;
+        fn isDirected(self: &GraphBuilder) -> bool;
+        fn isEmpty(self: &GraphBuilder) -> bool;
+        fn numberOfNodes(self: &GraphBuilder) -> u64;
+        fn upperNodeIdBound(self: &GraphBuilder) -> u64;
+        fn addNode(self: Pin<&mut GraphBuilder>) -> u64;
+        unsafe fn addHalfEdge(self: Pin<&mut GraphBuilder>, u: u64, v: u64, ew: f64);
+        unsafe fn addHalfOutEdge(self: Pin<&mut GraphBuilder>, u: u64, v: u64, ew: f64);
+        unsafe fn addHalfInEdge(self: Pin<&mut GraphBuilder>, u: u64, v: u64, ew: f64);
+        // unsafe fn swapNeighborhood: not needed
+        unsafe fn setWeight(self: Pin<&mut GraphBuilder>, u: u64, v: u64, ew: f64);
+        unsafe fn setOutWeight(self: Pin<&mut GraphBuilder>, u: u64, v: u64, ew: f64);
+        unsafe fn setInWeight(self: Pin<&mut GraphBuilder>, u: u64, v: u64, ew: f64);
+        unsafe fn increaseWeight(self: Pin<&mut GraphBuilder>, u: u64, v: u64, ew: f64);
+        unsafe fn increaseOutWeight(self: Pin<&mut GraphBuilder>, u: u64, v: u64, ew: f64);
+        unsafe fn increaseInWeight(self: Pin<&mut GraphBuilder>, u: u64, v: u64, ew: f64);
+        // completeGraph
+        fn GraphBuilderCompleteGraph(
+            builder: Pin<&mut GraphBuilder>,
+            parallel: bool,
+        ) -> UniquePtr<Graph>;
+        // iterators for builders are omitted
     }
 }
