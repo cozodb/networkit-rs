@@ -157,6 +157,33 @@ mod ffi {
         fn PTSubsetSizes(p: &Partition) -> UniquePtr<CxxVector<u64>>;
         fn toSingleton(self: Pin<&mut Partition>, e: u64);
         fn upperBound(self: &Partition) -> u64;
+
+        // COVER
+        pub type Cover;
+        pub fn NewCover() -> UniquePtr<Cover>;
+        pub fn NewCoverWithSize(z: u64) -> UniquePtr<Cover>;
+        pub fn NewCoverFromPartition(p: &Partition) -> UniquePtr<Cover>;
+        pub fn CopyCover(c: &Cover) -> UniquePtr<Cover>;
+        fn addToSubset(self: Pin<&mut Cover>, s: u64, e: u64);
+        fn allToSingletons(self: Pin<&mut Cover>);
+        fn contains(self: &Cover, e: u64) -> bool;
+        fn extend(self: Pin<&mut Cover>) -> u64;
+        fn CVGetMembers(c: &Cover, s: u64, rs: &mut Vec<u64>);
+        fn CVGetSubsetIds(c: &Cover, rs: &mut Vec<u64>);
+        fn inSameSubset(self: &Cover, e1: u64, e2: u64) -> bool;
+        fn lowerBound(self: &Cover) -> u64;
+        fn mergeSubsets(self: Pin<&mut Cover>, s: u64, t: u64);
+        fn moveToSubset(self: Pin<&mut Cover>, s: u64, e: u64);
+        fn numberOfElements(self: &Cover) -> u64;
+        fn numberOfSubsets(self: &Cover) -> u64;
+        fn removeFromSubset(self: Pin<&mut Cover>, s: u64, e: u64);
+        fn setUpperBound(self: Pin<&mut Cover>, upper: u64);
+        fn CVSubsetSizeMap(c: &Cover, ks: &mut Vec<u64>, sz: &mut Vec<u64>);
+        fn CVSubsetSizes(c: &Cover) -> UniquePtr<CxxVector<u64>>;
+        fn CVSubsetsOf(c: &Cover, e: u64) -> UniquePtr<CxxVector<u64>>;
+        fn toSingleton(self: Pin<&mut Cover>, e: u64) -> u64;
+        fn upperBound(self: &Cover) -> u64;
+
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

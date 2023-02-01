@@ -8,7 +8,7 @@ use crate::{
 };
 
 pub struct Partition {
-    inner: UniquePtr<bridge::Partition>,
+    pub(crate) inner: UniquePtr<bridge::Partition>,
 }
 
 unsafe impl Send for Partition {}
@@ -26,6 +26,12 @@ impl Deref for Partition {
 
     fn deref(&self) -> &Self::Target {
         &self.inner
+    }
+}
+
+impl Default for Partition {
+    fn default() -> Self {
+        Partition::new(0)
     }
 }
 

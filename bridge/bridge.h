@@ -6,6 +6,7 @@
 #define NETWORKIT_EXTRA_H
 
 #include <networkit/graph/Graph.hpp>
+#include <networkit/structures/Cover.hpp>
 #include <networkit/structures/Partition.hpp>
 #include <networkit/graph/GraphBuilder.hpp>
 #include <networkit/graph/GraphTools.hpp>
@@ -365,6 +366,62 @@ namespace NetworKit
     {
         string n(name);
         p.setName(n);
+    }
+
+    // COVER
+
+    inline unique_ptr<Cover> NewCover()
+    {
+        return make_unique<Cover>();
+    }
+
+    inline unique_ptr<Cover> NewCoverWithSize(index z)
+    {
+        return make_unique<Cover>(z);
+    }
+
+    inline unique_ptr<Cover> NewCoverFromPartition(const Partition &p)
+    {
+        return make_unique<Cover>(p);
+    }
+
+    inline unique_ptr<Cover> CopyCover(const Cover &c)
+    {
+        return make_unique<Cover>(c);
+    }
+
+    inline void CVGetMembers(const Cover &p, index s, rust::Vec<node> &rs)
+    {
+        for (auto &&res : p.getMembers(s))
+        {
+            rs.push_back(res);
+        }
+    }
+    inline void CVGetSubsetIds(const Cover &p, rust::Vec<node> &rs)
+    {
+        for (auto &&res : p.getSubsetIds())
+        {
+            rs.push_back(res);
+        }
+    }
+    inline void CVSubsetSizeMap(const Cover &p, rust::Vec<node> &ks, rust::Vec<node> &sz)
+    {
+        for (auto &&pair : p.subsetSizeMap())
+        {
+            ks.push_back(pair.first);
+            sz.push_back(pair.second);
+        }
+    }
+
+    inline unique_ptr<vector<count>> CVSubsetSizes(const Cover &p)
+    {
+        return make_unique<vector<count>>(p.subsetSizes());
+    }
+
+    inline unique_ptr<vector<count>> CVSubsetsOf(const Cover &c, node e)
+    {
+        auto r = c.subsetsOf(e);
+        return make_unique<vector<count>>(r.begin(), r.end());
     }
 }
 
