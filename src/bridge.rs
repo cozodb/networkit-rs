@@ -2,8 +2,10 @@ extern crate openmp_sys;
 
 pub(crate) use ffi::*;
 
-#[cxx::bridge(namespace = "NetworKit")]
+#[cxx::bridge]
 mod ffi {
+
+    #[namespace = "NetworKit"]
     unsafe extern "C++" {
         include!("bridge.h");
 
@@ -17,6 +19,7 @@ mod ffi {
             directed: bool,
             edges_indexed: bool,
         ) -> UniquePtr<Graph>;
+        pub fn CopyGraph(g: &Graph) -> UniquePtr<Graph>;
         pub fn addEdge(
             self: Pin<&mut Graph>,
             u: u64,
@@ -127,5 +130,47 @@ mod ffi {
             parallel: bool,
         ) -> UniquePtr<Graph>;
         // iterators for builders are omitted
+
+        // GRAPH TOOLS
+
+    }
+    #[namespace = "NetworKit::GraphTools"]
+    unsafe extern "C++" {
+        // include!("bridge.h");
+
+        fn append(g: Pin<&mut Graph>, g1: &Graph);
+        fn augmentGraph(g: Pin<&mut Graph>) -> u64;
+        fn GTCopyNodes(g: &Graph) -> UniquePtr<Graph>;
+        fn GTCreateAugmentedGraph(g: &Graph, root: &mut u64) -> UniquePtr<Graph>;
+        fn density(g: &Graph) -> f64;
+        // getCompactedGraph, getContinuousNodeIds, getRandomContinuousNodeIds merged into one function
+        fn GTGetCompactedGraph(g: &Graph, random: bool) -> UniquePtr<Graph>;
+        fn GTVolume(g: &Graph, nodes: &[u64]) -> f64;
+        fn GTInVolume(g: &Graph, nodes: &[u64]) -> f64;
+        fn maxDegree(g: &Graph) -> u64;
+        fn maxInDegree(g: &Graph) -> u64;
+        fn maxWeightedDegree(g: &Graph) -> f64;
+        fn maxWeightedInDegree(g: &Graph) -> f64;
+        fn merge(g: Pin<&mut Graph>, g1: &Graph);
+        fn GTRandomEdge(g: &Graph, uniform: bool, src: &mut u64, dst: &mut u64);
+        fn GTRandomEdges(g: &Graph, n: u64, src: &mut Vec<u64>, dst: &mut Vec<u64>);
+        unsafe fn randomNeighbor(g: &Graph, u: u64) -> u64;
+        fn randomNode(g: &Graph) -> u64;
+        fn GTRandomNodes(g: &Graph, n: u64) -> UniquePtr<CxxVector<u64>>;
+        fn GTRemoveEdgesFromIsolatedSet(g: Pin<&mut Graph>, nodes: &[u64]);
+        fn GTSize(g: &Graph, n_nodes: &mut u64, n_edges: &mut u64);
+        fn sortEdgesByWeight(g: Pin<&mut Graph>, descending: bool);
+        fn GTSubgraphAndNeighborsFromNodes(
+            g: &Graph,
+            nodes: &[u64],
+            include_out_neighbors: bool,
+            include_in_neighbors: bool,
+        ) -> UniquePtr<Graph>;
+        fn GTSubgraphFromNodes(g: &Graph, nodes: &[u64]) -> UniquePtr<Graph>;
+        fn GTToUndirected(g: &Graph) -> UniquePtr<Graph>;
+        fn GTToUnweighted(g: &Graph) -> UniquePtr<Graph>;
+        fn GTToWeighted(g: &Graph) -> UniquePtr<Graph>;
+        fn GTTopologicalSort(g: &Graph) -> UniquePtr<CxxVector<u64>>;
+        fn GTTranspose(g: &Graph) -> Result<UniquePtr<Graph>>;
     }
 }

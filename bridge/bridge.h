@@ -7,6 +7,7 @@
 
 #include <networkit/graph/Graph.hpp>
 #include <networkit/graph/GraphBuilder.hpp>
+#include <networkit/graph/GraphTools.hpp>
 #include "rust/cxx.h"
 
 namespace NetworKit
@@ -19,6 +20,11 @@ namespace NetworKit
     inline unique_ptr<Graph> NewGraph(count n, bool weighted, bool directed, bool edgesIndexed)
     {
         return make_unique<Graph>(n, weighted, directed, edgesIndexed);
+    }
+
+    inline unique_ptr<Graph> CopyGraph(const Graph &g)
+    {
+        return make_unique<Graph>(g);
     }
 
     class GraphNodeIter
@@ -204,6 +210,111 @@ namespace NetworKit
     inline unique_ptr<Graph> GraphBuilderCompleteGraph(GraphBuilder &builder, bool parallel)
     {
         return make_unique<Graph>(builder.completeGraph(parallel));
+    }
+
+    // GRAPH TOOLS
+
+    namespace GraphTools
+    {
+        inline unique_ptr<Graph> GTCopyNodes(const Graph &G)
+        {
+            return make_unique<Graph>(copyNodes(G));
+        }
+        inline unique_ptr<Graph> GTCreateAugmentedGraph(const Graph &G, node &root)
+        {
+            auto ret = createAugmentedGraph(G);
+            root = ret.second;
+            return make_unique<Graph>(move(ret.first));
+        }
+        inline unique_ptr<Graph> GTGetCompactedGraph(const Graph &G, bool random)
+        {
+            unordered_map<node, node> map;
+            if (random)
+            {
+                map = getRandomContinuousNodeIds(G);
+            }
+            else
+            {
+                map = getContinuousNodeIds(G);
+            }
+            return make_unique<Graph>(getCompactedGraph(G, map));
+        }
+
+        inline double GTInVolume(const Graph &G, rust::Slice<const node> nodes)
+        {
+            return inVolume(G, nodes.begin(), nodes.end());
+        }
+
+        inline void GTRandomEdge(const Graph &G, bool uniform, node &src, node &dst)
+        {
+            auto ret = randomEdge(G, uniform);
+            src = ret.first;
+            dst = ret.second;
+        }
+        inline void GTRandomEdges(const Graph &G, count n, rust::Vec<node> &src, rust::Vec<node> &dst)
+        {
+            auto ret = randomEdges(G, n);
+            for (auto &&pair : ret)
+            {
+                src.push_back(pair.first);
+                dst.push_back(pair.second);
+            }
+        }
+        inline unique_ptr<vector<node>> GTRandomNodes(const Graph &G, count n)
+        {
+            return make_unique<vector<node>>(randomNodes(G, n));
+        }
+        inline void GTRemoveEdgesFromIsolatedSet(Graph &G, rust::Slice<const node> nodes)
+        {
+            removeEdgesFromIsolatedSet(G, nodes.begin(), nodes.end());
+        }
+        inline void GTSize(const Graph &G, count &n_nodes, count &n_edges)
+        {
+            auto ret = size(G);
+            n_nodes = ret.first;
+            n_edges = ret.second;
+        }
+        inline unique_ptr<Graph> GTSubgraphAndNeighborsFromNodes(const Graph &G, rust::Slice<const node> nodes, bool includeOutNeighbors = false, bool includeInNeighbors = false)
+        {
+            unordered_set<node> ns(nodes.begin(), nodes.end());
+            return make_unique<Graph>(subgraphAndNeighborsFromNodes(G, ns, includeOutNeighbors, includeInNeighbors));
+        }
+        inline unique_ptr<Graph> GTSubgraphFromNodes(const Graph &G, rust::Slice<const node> nodes)
+        {
+            unordered_set<node> ns(nodes.begin(), nodes.end());
+            return make_unique<Graph>(subgraphFromNodes(G, ns));
+        }
+        inline unique_ptr<Graph> GTToUndirected(const Graph &G)
+        {
+            return make_unique<Graph>(toUndirected(G));
+        }
+        inline unique_ptr<Graph> GTToUnweighted(const Graph &G)
+        {
+            return make_unique<Graph>(toUnweighted(G));
+        }
+        inline unique_ptr<Graph> GTToWeighted(const Graph &G)
+        {
+            return make_unique<Graph>(toWeighted(G));
+        }
+        inline unique_ptr<vector<node>> GTTopologicalSort(const Graph &G)
+        {
+            return make_unique<vector<node>>(topologicalSort(G));
+        }
+        inline unique_ptr<Graph> GTTranspose(const Graph &G)
+        {
+            return make_unique<Graph>(transpose(G));
+        }
+        inline double GTVolume(const Graph &G, rust::Slice<const node> nodes)
+        {
+            if (nodes.empty())
+            {
+                return volume(G);
+            }
+            else
+            {
+                return volume(G, nodes.begin(), nodes.end());
+            }
+        }
     }
 }
 
