@@ -6,6 +6,7 @@
 #define NETWORKIT_EXTRA_H
 
 #include <networkit/graph/Graph.hpp>
+#include <networkit/structures/Partition.hpp>
 #include <networkit/graph/GraphBuilder.hpp>
 #include <networkit/graph/GraphTools.hpp>
 #include "rust/cxx.h"
@@ -315,6 +316,55 @@ namespace NetworKit
                 return volume(G, nodes.begin(), nodes.end());
             }
         }
+    }
+
+    // PARTITION
+
+    inline unique_ptr<Partition> NewPartition(index z)
+    {
+        return make_unique<Partition>(z);
+    }
+
+    inline unique_ptr<Partition> CopyPartition(const Partition &p)
+    {
+        return make_unique<Partition>(p);
+    }
+
+    inline unique_ptr<vector<count>> PTSubsetSizes(const Partition &p)
+    {
+        return make_unique<vector<count>>(p.subsetSizes());
+    }
+
+    inline void PTSubsetSizeMap(const Partition &p, rust::Vec<node> &ks, rust::Vec<node> &sz)
+    {
+        for (auto &&pair : p.subsetSizeMap())
+        {
+            ks.push_back(pair.first);
+            sz.push_back(pair.second);
+        }
+    }
+    inline void PTGetMembers(const Partition &p, index s, rust::Vec<node> &rs)
+    {
+        for (auto &&res : p.getMembers(s))
+        {
+            rs.push_back(res);
+        }
+    }
+    inline void PTGetSubsetIds(const Partition &p, rust::Vec<node> &rs)
+    {
+        for (auto &&res : p.getSubsetIds())
+        {
+            rs.push_back(res);
+        }
+    }
+    inline unique_ptr<string> PTGetName(const Partition &p)
+    {
+        return make_unique<string>(p.getName());
+    }
+    inline void PTSetName(Partition &p, rust::Str name)
+    {
+        string n(name);
+        p.setName(n);
     }
 }
 

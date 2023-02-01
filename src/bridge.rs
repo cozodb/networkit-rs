@@ -131,12 +131,37 @@ mod ffi {
         ) -> UniquePtr<Graph>;
         // iterators for builders are omitted
 
-        // GRAPH TOOLS
-
+        // PARTITION
+        pub type Partition;
+        pub fn NewPartition(z: u64) -> UniquePtr<Partition>;
+        fn CopyPartition(p: &Partition) -> UniquePtr<Partition>;
+        fn addToSubset(self: Pin<&mut Partition>, s: u64, e: u64);
+        fn allToSingletons(self: Pin<&mut Partition>);
+        fn compact(self: Pin<&mut Partition>, use_turbo: bool);
+        fn contains(self: &Partition, e: u64) -> bool;
+        fn extend(self: Pin<&mut Partition>) -> u64;
+        fn PTGetMembers(p: &Partition, s: u64, rs: &mut Vec<u64>);
+        fn PTGetName(p: &Partition) -> UniquePtr<CxxString>;
+        fn PTGetSubsetIds(p: &Partition, rs: &mut Vec<u64>);
+        fn getVector(self: &Partition) -> &CxxVector<u64>;
+        fn inSameSubset(self: &Partition, e1: u64, e2: u64) -> bool;
+        fn lowerBound(self: &Partition) -> u64;
+        fn mergeSubsets(self: Pin<&mut Partition>, s: u64, t: u64) -> u64;
+        fn moveToSubset(self: Pin<&mut Partition>, s: u64, e: u64);
+        fn numberOfElements(self: &Partition) -> u64;
+        fn numberOfSubsets(self: &Partition) -> u64;
+        fn PTSetName(p: Pin<&mut Partition>, name: &str);
+        fn setUpperBound(self: Pin<&mut Partition>, upper: u64);
+        fn subsetOf(self: &Partition, e: u64) -> u64;
+        fn PTSubsetSizeMap(p: &Partition, ks: &mut Vec<u64>, sz: &mut Vec<u64>);
+        fn PTSubsetSizes(p: &Partition) -> UniquePtr<CxxVector<u64>>;
+        fn toSingleton(self: Pin<&mut Partition>, e: u64);
+        fn upperBound(self: &Partition) -> u64;
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {
-        // include!("bridge.h");
+
+        // GRAPH TOOLS
 
         fn append(g: Pin<&mut Graph>, g1: &Graph);
         fn augmentGraph(g: Pin<&mut Graph>) -> u64;
