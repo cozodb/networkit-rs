@@ -10,6 +10,8 @@
 #include <networkit/structures/Partition.hpp>
 #include <networkit/graph/GraphBuilder.hpp>
 #include <networkit/graph/GraphTools.hpp>
+#include <networkit/community/AdjustedRandMeasure.hpp>
+#include <networkit/community/ClusteringGenerator.hpp>
 #include "rust/cxx.h"
 
 namespace NetworKit
@@ -422,6 +424,43 @@ namespace NetworKit
     {
         auto r = c.subsetsOf(e);
         return make_unique<vector<count>>(r.begin(), r.end());
+    }
+
+    // COMMUNITY
+
+    inline unique_ptr<AdjustedRandMeasure> NewAdjustedRandMeasure()
+    {
+        return make_unique<AdjustedRandMeasure>();
+    }
+
+    inline unique_ptr<ClusteringGenerator> NewClusteringGenerator()
+    {
+        return make_unique<ClusteringGenerator>();
+    }
+
+    inline unique_ptr<Partition> CMMakeContinuousBalancedClustering(ClusteringGenerator &gen, const Graph &G, count k)
+    {
+        return make_unique<Partition>(gen.makeContinuousBalancedClustering(G, k));
+    }
+
+    inline unique_ptr<Partition> CMMakeNoncontinuousBalancedClustering(ClusteringGenerator &gen, const Graph &G, count k)
+    {
+        return make_unique<Partition>(gen.makeNoncontinuousBalancedClustering(G, k));
+    }
+
+    inline unique_ptr<Partition> CMMakeOneClustering(ClusteringGenerator &gen, const Graph &G)
+    {
+        return make_unique<Partition>(gen.makeOneClustering(G));
+    }
+
+    inline unique_ptr<Partition> CMMakeRandomClustering(ClusteringGenerator &gen, const Graph &G, count k)
+    {
+        return make_unique<Partition>(gen.makeRandomClustering(G, k));
+    }
+
+    inline unique_ptr<Partition> CMMakeSingletonClustering(ClusteringGenerator &gen, const Graph &G)
+    {
+        return make_unique<Partition>(gen.makeSingletonClustering(G));
     }
 }
 

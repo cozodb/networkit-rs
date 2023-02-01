@@ -27,6 +27,12 @@ impl Clone for Graph {
     }
 }
 
+impl From<UniquePtr<bridge::Graph>> for Graph {
+    fn from(value: UniquePtr<bridge::Graph>) -> Self {
+        Self { inner: value }
+    }
+}
+
 impl Graph {
     pub fn new(n: u64, weighted: bool, directed: bool, edges_indexed: bool) -> Self {
         Self {

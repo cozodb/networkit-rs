@@ -21,6 +21,12 @@ impl Clone for Partition {
     }
 }
 
+impl From<UniquePtr<bridge::Partition>> for Partition {
+    fn from(value: UniquePtr<bridge::Partition>) -> Self {
+        Self { inner: value }
+    }
+}
+
 impl Deref for Partition {
     type Target = bridge::Partition;
 

@@ -21,6 +21,12 @@ impl Deref for Cover {
     }
 }
 
+impl From<UniquePtr<bridge::Cover>> for Cover {
+    fn from(value: UniquePtr<bridge::Cover>) -> Self {
+        Self { inner: value }
+    }
+}
+
 impl Clone for Cover {
     fn clone(&self) -> Self {
         Self {

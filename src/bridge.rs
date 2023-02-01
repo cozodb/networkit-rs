@@ -184,6 +184,41 @@ mod ffi {
         fn toSingleton(self: Pin<&mut Cover>, e: u64) -> u64;
         fn upperBound(self: &Cover) -> u64;
 
+        // COMMUNITY
+        type AdjustedRandMeasure;
+        pub fn NewAdjustedRandMeasure() -> UniquePtr<AdjustedRandMeasure>;
+        pub fn getDissimilarity(
+            self: Pin<&mut AdjustedRandMeasure>,
+            g: &Graph,
+            zeta: &Partition,
+            eta: &Partition,
+        ) -> f64;
+
+        type ClusteringGenerator;
+        pub fn NewClusteringGenerator() -> UniquePtr<ClusteringGenerator>;
+        fn CMMakeContinuousBalancedClustering(
+            gen: Pin<&mut ClusteringGenerator>,
+            g: &Graph,
+            k: u64,
+        ) -> UniquePtr<Partition>;
+        fn CMMakeNoncontinuousBalancedClustering(
+            gen: Pin<&mut ClusteringGenerator>,
+            g: &Graph,
+            k: u64,
+        ) -> UniquePtr<Partition>;
+        fn CMMakeOneClustering(
+            gen: Pin<&mut ClusteringGenerator>,
+            g: &Graph,
+        ) -> UniquePtr<Partition>;
+        fn CMMakeRandomClustering(
+            gen: Pin<&mut ClusteringGenerator>,
+            g: &Graph,
+            k: u64,
+        ) -> UniquePtr<Partition>;
+        fn CMMakeSingletonClustering(
+            gen: Pin<&mut ClusteringGenerator>,
+            g: &Graph,
+        ) -> UniquePtr<Partition>;
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {
