@@ -219,6 +219,47 @@ mod ffi {
             gen: Pin<&mut ClusteringGenerator>,
             g: &Graph,
         ) -> UniquePtr<Partition>;
+
+        type CoverF1Similarity;
+        fn getWeightedAverage(self: &CoverF1Similarity) -> f64;
+        fn getUnweightedAverage(self: &CoverF1Similarity) -> f64;
+        fn getMaximumValue(self: &CoverF1Similarity) -> f64;
+        fn getMinimumValue(self: &CoverF1Similarity) -> f64;
+        fn getValue(self: &CoverF1Similarity, i: u64) -> f64;
+        fn CoverF1SimilarityGetValues(e: &CoverF1Similarity) -> UniquePtr<CxxVector<f64>>;
+        fn isSmallBetter(self: &CoverF1Similarity) -> bool;
+        fn run(self: Pin<&mut CoverF1Similarity>) -> Result<()>;
+        fn hasFinished(self: &CoverF1Similarity) -> bool;
+
+        fn NewCoverF1Similarity(
+            g: &Graph,
+            c: &Cover,
+            reference: &Cover,
+        ) -> UniquePtr<CoverF1Similarity>;
+
+        type CoverHubDominance;
+        fn getWeightedAverage(self: &CoverHubDominance) -> f64;
+        fn getUnweightedAverage(self: &CoverHubDominance) -> f64;
+        fn getMaximumValue(self: &CoverHubDominance) -> f64;
+        fn getMinimumValue(self: &CoverHubDominance) -> f64;
+        fn getValue(self: &CoverHubDominance, i: u64) -> f64;
+        fn CoverHubDominanceGetValues(e: &CoverHubDominance) -> UniquePtr<CxxVector<f64>>;
+        fn isSmallBetter(self: &CoverHubDominance) -> bool;
+        fn run(self: Pin<&mut CoverHubDominance>) -> Result<()>;
+        fn hasFinished(self: &CoverHubDominance) -> bool;
+
+        fn NewCoverHubDominance(g: &Graph, c: &Cover) -> UniquePtr<CoverHubDominance>;
+
+        type Coverage;
+        fn NewCoverage() -> UniquePtr<Coverage>;
+        fn getQuality(self: Pin<&mut Coverage>, p: &Partition, g: &Graph) -> f64;
+
+        type CutClustering;
+        fn NewCutClustering(g: &Graph, alpha: f64) -> UniquePtr<CutClustering>;
+        // omitted CutClustering::getClusterHierarchy
+        fn run(self: Pin<&mut CutClustering>) -> Result<()>;
+        fn hasFinished(self: &CutClustering) -> bool;
+        fn CutClusteringGetPartition(a: Pin<&mut CutClustering>) -> UniquePtr<Partition>;
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

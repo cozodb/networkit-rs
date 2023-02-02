@@ -12,6 +12,11 @@
 #include <networkit/graph/GraphTools.hpp>
 #include <networkit/community/AdjustedRandMeasure.hpp>
 #include <networkit/community/ClusteringGenerator.hpp>
+#include <networkit/community/LocalCommunityEvaluation.hpp>
+#include <networkit/community/CoverF1Similarity.hpp>
+#include <networkit/community/CoverHubDominance.hpp>
+#include <networkit/community/Coverage.hpp>
+#include <networkit/community/CutClustering.hpp>
 #include "rust/cxx.h"
 
 namespace NetworKit
@@ -461,6 +466,41 @@ namespace NetworKit
     inline unique_ptr<Partition> CMMakeSingletonClustering(ClusteringGenerator &gen, const Graph &G)
     {
         return make_unique<Partition>(gen.makeSingletonClustering(G));
+    }
+
+    inline unique_ptr<vector<double>> CoverF1SimilarityGetValues(const CoverF1Similarity &e)
+    {
+        return make_unique<vector<double>>(e.getValues());
+    }
+
+    inline unique_ptr<CoverF1Similarity> NewCoverF1Similarity(const Graph &G, const Cover &C, const Cover &reference)
+    {
+        return make_unique<CoverF1Similarity>(CoverF1Similarity(G, C, reference));
+    }
+
+    inline unique_ptr<vector<double>> CoverHubDominanceGetValues(const CoverHubDominance &e)
+    {
+        return make_unique<vector<double>>(e.getValues());
+    }
+
+    inline unique_ptr<CoverHubDominance> NewCoverHubDominance(const Graph &G, const Cover &C)
+    {
+        return make_unique<CoverHubDominance>(CoverHubDominance(G, C));
+    }
+
+    inline unique_ptr<Coverage> NewCoverage()
+    {
+        return make_unique<Coverage>();
+    }
+
+    inline unique_ptr<CutClustering> NewCutClustering(const Graph &G, edgeweight alpha)
+    {
+        return make_unique<CutClustering>(G, alpha);
+    }
+
+    inline unique_ptr<Partition> CutClusteringGetPartition(CutClustering &a)
+    {
+        return make_unique<Partition>(a.getPartition());
     }
 }
 
