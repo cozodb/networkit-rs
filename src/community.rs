@@ -335,3 +335,215 @@ pub mod clustering_tools {
         weightedDegreeWithCluster(g, zeta, u, cid)
     }
 }
+
+pub struct GraphStructuralRandMeasure {
+    inner: UniquePtr<bridge::GraphStructuralRandMeasure>,
+}
+
+impl Default for GraphStructuralRandMeasure {
+    fn default() -> Self {
+        Self {
+            inner: NewGraphStructuralRandMeasure(),
+        }
+    }
+}
+
+impl GraphStructuralRandMeasure {
+    pub fn get_dissimilarity(
+        &mut self,
+        g: &crate::Graph,
+        first: &crate::Partition,
+        second: &crate::Partition,
+    ) -> f64 {
+        self.inner.pin_mut().getDissimilarity(g, first, second)
+    }
+}
+
+pub struct HubDominance {
+    inner: UniquePtr<bridge::HubDominance>,
+}
+
+impl Default for HubDominance {
+    fn default() -> Self {
+        Self {
+            inner: NewHubDominance(),
+        }
+    }
+}
+
+impl HubDominance {
+    pub fn get_quality(&mut self, partition: &crate::Partition, graph: &crate::Graph) -> f64 {
+        self.inner.pin_mut().getQuality(partition, graph)
+    }
+    pub fn get_quality_for_cover(&mut self, cover: &crate::Cover, graph: &crate::Graph) -> f64 {
+        self.inner.pin_mut().getQualityForCover(cover, graph)
+    }
+}
+
+pub struct IntrapartitionDensity {
+    inner: UniquePtr<bridge::IntrapartitionDensity>,
+}
+
+impl IntrapartitionDensity {
+    pub fn new(g: &Graph, p: &Partition) -> Self {
+        Self {
+            inner: NewIntrapartitionDensity(g, p),
+        }
+    }
+    pub fn get_global(&self) -> f64 {
+        self.inner.getGlobal()
+    }
+}
+
+impl Algorithm for IntrapartitionDensity {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+impl LocalCommunityEvaluation for IntrapartitionDensity {
+    fn get_weighted_average(&self) -> f64 {
+        self.inner.getWeightedAverage()
+    }
+
+    fn get_unweighted_average(&self) -> f64 {
+        self.inner.getUnweightedAverage()
+    }
+
+    fn get_maximum_value(&self) -> f64 {
+        self.inner.getMaximumValue()
+    }
+
+    fn get_minimum_value(&self) -> f64 {
+        self.inner.getMinimumValue()
+    }
+
+    fn get_value(&self, i: u64) -> f64 {
+        self.inner.getValue(i)
+    }
+
+    fn get_values(&self) -> ValueIter {
+        ValueIter {
+            inner: IntrapartitionDensityGetValues(&self.inner),
+            at: 0,
+        }
+    }
+
+    fn is_small_better(&self) -> bool {
+        self.inner.isSmallBetter()
+    }
+}
+
+pub struct IsolatedInterpartitionConductance {
+    inner: UniquePtr<bridge::IsolatedInterpartitionConductance>,
+}
+
+impl IsolatedInterpartitionConductance {
+    pub fn new(g: &Graph, p: &Partition) -> Self {
+        Self {
+            inner: NewIsolatedInterpartitionConductance(g, p),
+        }
+    }
+}
+
+impl Algorithm for IsolatedInterpartitionConductance {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+impl LocalCommunityEvaluation for IsolatedInterpartitionConductance {
+    fn get_weighted_average(&self) -> f64 {
+        self.inner.getWeightedAverage()
+    }
+
+    fn get_unweighted_average(&self) -> f64 {
+        self.inner.getUnweightedAverage()
+    }
+
+    fn get_maximum_value(&self) -> f64 {
+        self.inner.getMaximumValue()
+    }
+
+    fn get_minimum_value(&self) -> f64 {
+        self.inner.getMinimumValue()
+    }
+
+    fn get_value(&self, i: u64) -> f64 {
+        self.inner.getValue(i)
+    }
+
+    fn get_values(&self) -> ValueIter {
+        ValueIter {
+            inner: IsolatedInterpartitionConductanceGetValues(&self.inner),
+            at: 0,
+        }
+    }
+
+    fn is_small_better(&self) -> bool {
+        self.inner.isSmallBetter()
+    }
+}
+
+pub struct IsolatedInterpartitionExpansion {
+    inner: UniquePtr<bridge::IsolatedInterpartitionExpansion>,
+}
+
+impl IsolatedInterpartitionExpansion {
+    pub fn new(g: &Graph, p: &Partition) -> Self {
+        Self {
+            inner: NewIsolatedInterpartitionExpansion(g, p),
+        }
+    }
+}
+
+impl Algorithm for IsolatedInterpartitionExpansion {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+impl LocalCommunityEvaluation for IsolatedInterpartitionExpansion {
+    fn get_weighted_average(&self) -> f64 {
+        self.inner.getWeightedAverage()
+    }
+
+    fn get_unweighted_average(&self) -> f64 {
+        self.inner.getUnweightedAverage()
+    }
+
+    fn get_maximum_value(&self) -> f64 {
+        self.inner.getMaximumValue()
+    }
+
+    fn get_minimum_value(&self) -> f64 {
+        self.inner.getMinimumValue()
+    }
+
+    fn get_value(&self, i: u64) -> f64 {
+        self.inner.getValue(i)
+    }
+
+    fn get_values(&self) -> ValueIter {
+        ValueIter {
+            inner: IsolatedInterpartitionExpansionGetValues(&self.inner),
+            at: 0,
+        }
+    }
+
+    fn is_small_better(&self) -> bool {
+        self.inner.isSmallBetter()
+    }
+}

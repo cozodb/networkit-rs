@@ -10,6 +10,11 @@
 #include <networkit/community/CutClustering.hpp>
 #include <networkit/community/EdgeCut.hpp>
 #include <networkit/community/GraphClusteringTools.hpp>
+#include <networkit/community/GraphStructuralRandMeasure.hpp>
+#include <networkit/community/HubDominance.hpp>
+#include <networkit/community/IntrapartitionDensity.hpp>
+#include <networkit/community/IsolatedInterpartitionConductance.hpp>
+#include <networkit/community/IsolatedInterpartitionExpansion.hpp>
 #include "rust/cxx.h"
 
 namespace NetworKit
@@ -135,11 +140,52 @@ namespace NetworKit
 
     namespace GraphClusteringTools
     {
-        unique_ptr<Graph> MakeCommunicationGraph(const Graph &graph, Partition &zeta)
+        inline unique_ptr<Graph> MakeCommunicationGraph(const Graph &graph, Partition &zeta)
         {
             return make_unique<Graph>(communicationGraph(graph, zeta));
         }
     }
+
+    inline unique_ptr<GraphStructuralRandMeasure> NewGraphStructuralRandMeasure()
+    {
+        return make_unique<GraphStructuralRandMeasure>();
+    }
+
+    inline unique_ptr<HubDominance> NewHubDominance()
+    {
+        return make_unique<HubDominance>();
+    }
+
+    inline unique_ptr<IntrapartitionDensity> NewIntrapartitionDensity(const Graph &G, const Partition &P)
+    {
+        return make_unique<IntrapartitionDensity>(G, P);
+    }
+
+    inline unique_ptr<vector<double>> IntrapartitionDensityGetValues(const IntrapartitionDensity &e)
+    {
+        return make_unique<vector<double>>(e.getValues());
+    }
+
+    inline unique_ptr<IsolatedInterpartitionConductance> NewIsolatedInterpartitionConductance(const Graph &G, const Partition &P)
+    {
+        return make_unique<IsolatedInterpartitionConductance>(G, P);
+    }
+
+    inline unique_ptr<vector<double>> IsolatedInterpartitionConductanceGetValues(const IsolatedInterpartitionConductance &e)
+    {
+        return make_unique<vector<double>>(e.getValues());
+    }
+
+    inline unique_ptr<IsolatedInterpartitionExpansion> NewIsolatedInterpartitionExpansion(const Graph &G, const Partition &P)
+    {
+        return make_unique<IsolatedInterpartitionExpansion>(G, P);
+    }
+
+    inline unique_ptr<vector<double>> IsolatedInterpartitionExpansionGetValues(const IsolatedInterpartitionExpansion &e)
+    {
+        return make_unique<vector<double>>(e.getValues());
+    }
+
 }
 
 #endif // NK_COMMUNITY_H

@@ -274,6 +274,68 @@ mod ffi {
         type EdgeCut;
         fn NewEdgeCut() -> UniquePtr<EdgeCut>;
         fn getQuality(self: Pin<&mut EdgeCut>, p: &Partition, g: &Graph) -> f64;
+
+        type GraphStructuralRandMeasure;
+        fn NewGraphStructuralRandMeasure() -> UniquePtr<GraphStructuralRandMeasure>;
+        fn getDissimilarity(
+            self: Pin<&mut GraphStructuralRandMeasure>,
+            g: &Graph,
+            first: &Partition,
+            second: &Partition,
+        ) -> f64;
+
+        type HubDominance;
+        fn NewHubDominance() -> UniquePtr<HubDominance>;
+        fn getQuality(self: Pin<&mut HubDominance>, p: &Partition, g: &Graph) -> f64;
+        #[rust_name = "getQualityForCover"]
+        fn getQuality(self: Pin<&mut HubDominance>, p: &Cover, g: &Graph) -> f64;
+
+        type IntrapartitionDensity;
+        fn NewIntrapartitionDensity(g: &Graph, p: &Partition) -> UniquePtr<IntrapartitionDensity>;
+        fn getGlobal(self: &IntrapartitionDensity) -> f64;
+        fn getWeightedAverage(self: &IntrapartitionDensity) -> f64;
+        fn getUnweightedAverage(self: &IntrapartitionDensity) -> f64;
+        fn getMaximumValue(self: &IntrapartitionDensity) -> f64;
+        fn getMinimumValue(self: &IntrapartitionDensity) -> f64;
+        fn getValue(self: &IntrapartitionDensity, i: u64) -> f64;
+        fn IntrapartitionDensityGetValues(e: &IntrapartitionDensity) -> UniquePtr<CxxVector<f64>>;
+        fn isSmallBetter(self: &IntrapartitionDensity) -> bool;
+        fn run(self: Pin<&mut IntrapartitionDensity>) -> Result<()>;
+        fn hasFinished(self: &IntrapartitionDensity) -> bool;
+
+        type IsolatedInterpartitionConductance;
+        fn NewIsolatedInterpartitionConductance(
+            g: &Graph,
+            p: &Partition,
+        ) -> UniquePtr<IsolatedInterpartitionConductance>;
+        fn getWeightedAverage(self: &IsolatedInterpartitionConductance) -> f64;
+        fn getUnweightedAverage(self: &IsolatedInterpartitionConductance) -> f64;
+        fn getMaximumValue(self: &IsolatedInterpartitionConductance) -> f64;
+        fn getMinimumValue(self: &IsolatedInterpartitionConductance) -> f64;
+        fn getValue(self: &IsolatedInterpartitionConductance, i: u64) -> f64;
+        fn IsolatedInterpartitionConductanceGetValues(
+            e: &IsolatedInterpartitionConductance,
+        ) -> UniquePtr<CxxVector<f64>>;
+        fn isSmallBetter(self: &IsolatedInterpartitionConductance) -> bool;
+        fn run(self: Pin<&mut IsolatedInterpartitionConductance>) -> Result<()>;
+        fn hasFinished(self: &IsolatedInterpartitionConductance) -> bool;
+
+        type IsolatedInterpartitionExpansion;
+        fn NewIsolatedInterpartitionExpansion(
+            g: &Graph,
+            p: &Partition,
+        ) -> UniquePtr<IsolatedInterpartitionExpansion>;
+        fn getWeightedAverage(self: &IsolatedInterpartitionExpansion) -> f64;
+        fn getUnweightedAverage(self: &IsolatedInterpartitionExpansion) -> f64;
+        fn getMaximumValue(self: &IsolatedInterpartitionExpansion) -> f64;
+        fn getMinimumValue(self: &IsolatedInterpartitionExpansion) -> f64;
+        fn getValue(self: &IsolatedInterpartitionExpansion, i: u64) -> f64;
+        fn IsolatedInterpartitionExpansionGetValues(
+            e: &IsolatedInterpartitionExpansion,
+        ) -> UniquePtr<CxxVector<f64>>;
+        fn isSmallBetter(self: &IsolatedInterpartitionExpansion) -> bool;
+        fn run(self: Pin<&mut IsolatedInterpartitionExpansion>) -> Result<()>;
+        fn hasFinished(self: &IsolatedInterpartitionExpansion) -> bool;
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {
