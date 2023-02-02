@@ -279,3 +279,59 @@ impl Algorithm for CutClustering {
         self.inner.hasFinished()
     }
 }
+
+pub struct EdgeCut {
+    inner: UniquePtr<bridge::EdgeCut>,
+}
+
+impl Default for EdgeCut {
+    fn default() -> Self {
+        Self {
+            inner: NewEdgeCut(),
+        }
+    }
+}
+
+impl QualityMeasure for EdgeCut {
+    fn get_quality(&mut self, partition: &crate::Partition, graph: &crate::Graph) -> f64 {
+        self.inner.pin_mut().getQuality(partition, graph)
+    }
+}
+
+pub mod clustering_tools {
+    use crate::bridge::*;
+
+    pub fn communication_graph(g: &crate::Graph, zeta: &mut crate::Partition) -> crate::Graph {
+        MakeCommunicationGraph(g, zeta.inner.pin_mut()).into()
+    }
+
+    pub fn equal_clusterings(
+        zeta: &crate::Partition,
+        eta: &crate::Partition,
+        g: &mut crate::Graph,
+    ) -> bool {
+        equalClusterings(zeta, eta, g.inner.pin_mut())
+    }
+
+    pub fn get_imbalance(zeta: &crate::Partition) -> f32 {
+        getImbalance(zeta)
+    }
+
+    pub fn is_one_clustering(g: &crate::Graph, zeta: &crate::Partition) -> bool {
+        isOneClustering(g, zeta)
+    }
+    pub fn is_proper_clustering(g: &crate::Graph, zeta: &crate::Partition) -> bool {
+        isProperClustering(g, zeta)
+    }
+    pub fn is_singleton_clustering(g: &crate::Graph, zeta: &crate::Partition) -> bool {
+        isSingletonClustering(g, zeta)
+    }
+    pub fn weighted_degree_with_cluster(
+        g: &crate::Graph,
+        zeta: &crate::Partition,
+        u: u64,
+        cid: u64,
+    ) -> u64 {
+        weightedDegreeWithCluster(g, zeta, u, cid)
+    }
+}

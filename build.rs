@@ -22,6 +22,8 @@ fn main() {
 
     println!("cargo:rerun-if-changed=src/bridge.rs");
     println!("cargo:rerun-if-changed=bridge/bridge.h");
+    println!("cargo:rerun-if-changed=bridge/graph.h");
+    println!("cargo:rerun-if-changed=bridge/community.h");
 
     println!("cargo:rustc-link-search=native=/opt/homebrew/opt/libomp/lib");
     println!("cargo:rustc-link-search=native=/usr/local/opt/libomp/lib");

@@ -9,7 +9,7 @@ mod ffi {
     unsafe extern "C++" {
         include!("bridge.h");
 
-        // GRAPH
+        // ---- GRAPH ----
 
         pub type Graph;
 
@@ -103,7 +103,7 @@ mod ffi {
         ) -> Result<UniquePtr<GraphNeighbourWeightIter>>;
         fn advance(self: Pin<&mut GraphNeighbourWeightIter>, u: &mut u64, wt: &mut f64) -> bool;
 
-        // GRAPH BUILDER
+        // ---- GRAPH BUILDER ----
 
         pub type GraphBuilder;
         fn NewGraphBuilder(n: u64, weighted: bool, directed: bool) -> UniquePtr<GraphBuilder>;
@@ -131,7 +131,8 @@ mod ffi {
         ) -> UniquePtr<Graph>;
         // iterators for builders are omitted
 
-        // PARTITION
+        // ---- PARTITION ----
+
         pub type Partition;
         pub fn NewPartition(z: u64) -> UniquePtr<Partition>;
         fn CopyPartition(p: &Partition) -> UniquePtr<Partition>;
@@ -158,7 +159,8 @@ mod ffi {
         fn toSingleton(self: Pin<&mut Partition>, e: u64);
         fn upperBound(self: &Partition) -> u64;
 
-        // COVER
+        // ---- COVER ----
+
         pub type Cover;
         pub fn NewCover() -> UniquePtr<Cover>;
         pub fn NewCoverWithSize(z: u64) -> UniquePtr<Cover>;
@@ -184,7 +186,8 @@ mod ffi {
         fn toSingleton(self: Pin<&mut Cover>, e: u64) -> u64;
         fn upperBound(self: &Cover) -> u64;
 
-        // COMMUNITY
+        // ---- COMMUNITY ----
+
         type AdjustedRandMeasure;
         pub fn NewAdjustedRandMeasure() -> UniquePtr<AdjustedRandMeasure>;
         pub fn getDissimilarity(
@@ -267,11 +270,15 @@ mod ffi {
         fn run(self: Pin<&mut CutClustering>) -> Result<()>;
         fn hasFinished(self: &CutClustering) -> bool;
         fn CutClusteringGetPartition(a: Pin<&mut CutClustering>) -> UniquePtr<Partition>;
+
+        type EdgeCut;
+        fn NewEdgeCut() -> UniquePtr<EdgeCut>;
+        fn getQuality(self: Pin<&mut EdgeCut>, p: &Partition, g: &Graph) -> f64;
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {
 
-        // GRAPH TOOLS
+        // ---- GRAPH TOOLS ----
 
         fn append(g: Pin<&mut Graph>, g1: &Graph);
         fn augmentGraph(g: Pin<&mut Graph>) -> u64;
@@ -307,5 +314,15 @@ mod ffi {
         fn GTToWeighted(g: &Graph) -> UniquePtr<Graph>;
         fn GTTopologicalSort(g: &Graph) -> UniquePtr<CxxVector<u64>>;
         fn GTTranspose(g: &Graph) -> Result<UniquePtr<Graph>>;
+    }
+    #[namespace = "NetworKit::GraphClusteringTools"]
+    unsafe extern "C++" {
+        fn MakeCommunicationGraph(g: &Graph, zeta: Pin<&mut Partition>) -> UniquePtr<Graph>;
+        fn equalClusterings(zeta: &Partition, eta: &Partition, g: Pin<&mut Graph>) -> bool;
+        fn getImbalance(zeta: &Partition) -> f32;
+        fn isOneClustering(g: &Graph, zeta: &Partition) -> bool;
+        fn isProperClustering(g: &Graph, zeta: &Partition) -> bool;
+        fn isSingletonClustering(g: &Graph, zeta: &Partition) -> bool;
+        fn weightedDegreeWithCluster(g: &Graph, zeta: &Partition, u: u64, cid: u64) -> u64;
     }
 }

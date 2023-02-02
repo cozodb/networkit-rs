@@ -3,3 +3,5 @@
 //
 
 #include "bridge.h"
+
+void nk_null() {}
