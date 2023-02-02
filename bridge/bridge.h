@@ -502,6 +502,45 @@ namespace NetworKit
     {
         return make_unique<Partition>(a.getPartition());
     }
+
+    class HierarchyIter
+    {
+        map<edgeweight, Partition> data;
+        map<edgeweight, Partition>::iterator cur;
+        map<edgeweight, Partition>::iterator end;
+
+    public:
+        HierarchyIter(map<edgeweight, Partition> data_) : data(data_)
+        {
+            cur = data.begin();
+            end = data.end();
+        }
+        inline bool isAtEnd() const
+        {
+            return cur == end;
+        }
+        inline void advance()
+        {
+            if (cur != end)
+            {
+                cur++;
+            }
+        }
+        inline edgeweight curKey() const
+        {
+            return cur->first;
+        }
+        inline unique_ptr<Partition> curVal() const
+        {
+            return make_unique<Partition>(cur->second);
+        }
+    };
+
+    // CutClustering::getClusterHierarchy
+    inline unique_ptr<HierarchyIter> CutClusteringGetClusterHierarchy(const Graph &g)
+    {
+        return make_unique<HierarchyIter>(CutClustering::getClusterHierarchy(g));
+    }
 }
 
 #endif // NETWORKIT_EXTRA_H

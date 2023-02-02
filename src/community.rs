@@ -239,6 +239,29 @@ impl CutClustering {
             inner: NewCutClustering(g, alpha),
         }
     }
+    pub fn get_cluster_hierarchy(
+        g: &crate::Graph,
+    ) -> impl Iterator<Item = (f64, crate::Partition)> {
+        let inner = CutClusteringGetClusterHierarchy(g);
+        struct It {
+            inner: UniquePtr<HierarchyIter>,
+        }
+        impl Iterator for It {
+            type Item = (f64, crate::Partition);
+
+            fn next(&mut self) -> Option<Self::Item> {
+                if self.inner.isAtEnd() {
+                    None
+                } else {
+                    let k = self.inner.curKey();
+                    let v = self.inner.curVal();
+                    self.inner.pin_mut().advance();
+                    Some((k, v.into()))
+                }
+            }
+        }
+        It { inner }
+    }
 }
 
 impl CommunityDetector for CutClustering {

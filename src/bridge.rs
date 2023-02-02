@@ -256,7 +256,14 @@ mod ffi {
 
         type CutClustering;
         fn NewCutClustering(g: &Graph, alpha: f64) -> UniquePtr<CutClustering>;
-        // omitted CutClustering::getClusterHierarchy
+        // for CutClustering::getClusterHierarchy
+        type HierarchyIter;
+        fn isAtEnd(self: &HierarchyIter) -> bool;
+        fn advance(self: Pin<&mut HierarchyIter>);
+        fn curKey(self: &HierarchyIter) -> f64;
+        fn curVal(self: &HierarchyIter) -> UniquePtr<Partition>;
+        fn CutClusteringGetClusterHierarchy(g: &Graph) -> UniquePtr<HierarchyIter>;
+
         fn run(self: Pin<&mut CutClustering>) -> Result<()>;
         fn hasFinished(self: &CutClustering) -> bool;
         fn CutClusteringGetPartition(a: Pin<&mut CutClustering>) -> UniquePtr<Partition>;
