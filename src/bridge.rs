@@ -419,7 +419,7 @@ mod ffi {
             max_iter: u64,
             turbo: bool,
             recurse: bool,
-        ) -> UniquePtr<PLM>;
+        ) -> Result<UniquePtr<PLM>>;
         fn PLMCoarsen(g: &Graph, zeta: &Partition, mapping: &mut Vec<u64>) -> UniquePtr<Graph>;
         fn PLMProlong(
             g: &Graph,

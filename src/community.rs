@@ -801,8 +801,8 @@ impl PLM {
         max_iter: Option<u64>,
         turbo: Option<bool>,
         recurse: Option<bool>,
-    ) -> Self {
-        Self {
+    ) -> Result<Self> {
+        Ok(Self {
             inner: NewPLM(
                 g,
                 refine.unwrap_or(false),
@@ -811,8 +811,9 @@ impl PLM {
                 max_iter.unwrap_or(32),
                 turbo.unwrap_or(true),
                 recurse.unwrap_or(true),
-            ),
-        }
+            )
+            .into_diagnostic()?,
+        })
     }
     pub fn coarsen(g: &crate::Graph, zeta: &crate::Partition) -> (crate::Graph, Vec<u64>) {
         let mut mapping = vec![];
