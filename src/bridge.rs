@@ -691,6 +691,24 @@ mod ffi {
         );
         fn TwoPhaseLAsBase(algo: UniquePtr<TwoPhaseL>) -> UniquePtr<SelectiveCommunityDetector>;
 
+        // ---- COARSENING ----
+
+        type ParallelPartitionCoarsening;
+        fn NewParallelPartitionCoarsening(
+            g: &Graph,
+            zeta: &Partition,
+            parallel: bool,
+        ) -> UniquePtr<ParallelPartitionCoarsening>;
+
+        fn run(self: Pin<&mut ParallelPartitionCoarsening>) -> Result<()>;
+        fn hasFinished(self: &ParallelPartitionCoarsening) -> bool;
+        fn ParallelPartitionCoarseningGetCoarseGraph(
+            algo: &ParallelPartitionCoarsening,
+        ) -> UniquePtr<Graph>;
+        fn ParallelPartitionCoarseningGetFineToCoarseNodeMapping(
+            algo: &ParallelPartitionCoarsening,
+        ) -> UniquePtr<CxxVector<u64>>;
+
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

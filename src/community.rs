@@ -4,9 +4,11 @@ use miette::IntoDiagnostic;
 use crate::{
     base::Algorithm,
     bridge::{self, *},
+    coarsening::GraphCoarsening,
     scd::SelectiveCommunityDetectorBase,
     QualityMeasure,
 };
+use miette::Result;
 
 pub struct AdjustedRandMeasure {
     inner: UniquePtr<bridge::AdjustedRandMeasure>,
@@ -1106,7 +1108,11 @@ impl StablePartitionNodes {
     }
 }
 
-// TODO communityGraph: need to implement coarsening module first
+pub fn community_graph(g: &crate::Graph, zeta: &crate::Partition) -> Result<crate::Graph> {
+    let mut cg = crate::coarsening::ParallelPartitionCoarsening::new(g, zeta, true);
+    cg.run()?;
+    Ok(cg.get_coarse_graph())
+}
 
 // compareCommunities: not implemented in upstream
 

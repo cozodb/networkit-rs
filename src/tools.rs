@@ -171,7 +171,7 @@ pub fn transpose(g: &Graph) -> Result<Graph> {
     Ok(Graph { inner })
 }
 
-pub(crate) struct NodeIter {
+pub struct NodeIter {
     pub(crate) nodes: UniquePtr<CxxVector<u64>>,
     pub(crate) at: usize,
 }
