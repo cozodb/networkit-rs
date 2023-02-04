@@ -352,6 +352,150 @@ mod ffi {
         fn run(self: Pin<&mut LFM>) -> Result<()>;
         fn hasFinished(self: &LFM) -> bool;
 
+        type LPDegreeOrdered;
+        fn NewLPDegreeOrdered(g: &Graph) -> UniquePtr<LPDegreeOrdered>;
+        fn run(self: Pin<&mut LPDegreeOrdered>) -> Result<()>;
+        fn hasFinished(self: &LPDegreeOrdered) -> bool;
+        fn LPDegreeOrderedGetPartition(a: Pin<&mut LPDegreeOrdered>) -> UniquePtr<Partition>;
+        fn numberOfIterations(self: Pin<&mut LPDegreeOrdered>) -> u64;
+
+        type LouvainMapEquation;
+        fn NewLouvainMapEquation(
+            g: &Graph,
+            hierarchical: bool,
+            max_iterations: u64,
+            parallelization_strategy: &str,
+        ) -> UniquePtr<LouvainMapEquation>;
+        fn run(self: Pin<&mut LouvainMapEquation>) -> Result<()>;
+        fn hasFinished(self: &LouvainMapEquation) -> bool;
+        fn LouvainMapEquationGetPartition(a: Pin<&mut LouvainMapEquation>) -> UniquePtr<Partition>;
+
+        type Modularity;
+        fn NewModularity() -> UniquePtr<Modularity>;
+        fn getQuality(self: Pin<&mut Modularity>, p: &Partition, g: &Graph) -> f64;
+
+        type NMIDistance;
+        fn NewNMIDistance() -> UniquePtr<NMIDistance>;
+
+        pub fn getDissimilarity(
+            self: Pin<&mut NMIDistance>,
+            g: &Graph,
+            zeta: &Partition,
+            eta: &Partition,
+        ) -> f64;
+
+        type NodeStructuralRandMeasure;
+        fn NewNodeStructuralRandMeasure() -> UniquePtr<NodeStructuralRandMeasure>;
+
+        pub fn getDissimilarity(
+            self: Pin<&mut NodeStructuralRandMeasure>,
+            g: &Graph,
+            zeta: &Partition,
+            eta: &Partition,
+        ) -> f64;
+
+        type OverlappingNMIDistance;
+        pub fn NewOverlappingNMIDistance(normalization: u8) -> UniquePtr<OverlappingNMIDistance>;
+        pub fn getDissimilarity(
+            self: Pin<&mut OverlappingNMIDistance>,
+            g: &Graph,
+            zeta: &Partition,
+            eta: &Partition,
+        ) -> f64;
+        #[rust_name = "getDissimilarityForCover"]
+        pub fn getDissimilarity(
+            self: Pin<&mut OverlappingNMIDistance>,
+            g: &Graph,
+            zeta: &Cover,
+            eta: &Cover,
+        ) -> f64;
+
+        type PLM;
+        pub fn NewPLM(
+            g: &Graph,
+            refine: bool,
+            gamma: f64,
+            par: &str,
+            max_iter: u64,
+            turbo: bool,
+            recurse: bool,
+        ) -> UniquePtr<PLM>;
+        fn PLMCoarsen(g: &Graph, zeta: &Partition, mapping: &mut Vec<u64>) -> UniquePtr<Graph>;
+        fn PLMProlong(
+            g: &Graph,
+            zeta_coarse: &Partition,
+            g_fine: &Graph,
+            node_to_meta_node: &[u64],
+        ) -> UniquePtr<Partition>;
+        fn PLMGetPartition(a: Pin<&mut PLM>) -> UniquePtr<Partition>;
+        fn run(self: Pin<&mut PLM>) -> Result<()>;
+        fn hasFinished(self: &PLM) -> bool;
+
+        type PLP;
+        fn NewPLP(g: &Graph, theta: u64, max_iterations: u64) -> UniquePtr<PLP>;
+        fn run(self: Pin<&mut PLP>) -> Result<()>;
+        fn hasFinished(self: &PLP) -> bool;
+        fn numberOfIterations(self: Pin<&mut PLP>) -> u64;
+        fn PLPGetPartition(a: Pin<&mut PLP>) -> UniquePtr<Partition>;
+
+        type ParallelLeiden;
+        fn NewParallelLeiden(
+            g: &Graph,
+            iterations: u64,
+            randomize: bool,
+            gamma: f64,
+        ) -> UniquePtr<ParallelLeiden>;
+        fn run(self: Pin<&mut ParallelLeiden>) -> Result<()>;
+        fn hasFinished(self: &ParallelLeiden) -> bool;
+        fn ParallelLeidenGetPartition(a: Pin<&mut ParallelLeiden>) -> UniquePtr<Partition>;
+
+        type PartitionFragmentation;
+        fn NewPartitionFragmentation(g: &Graph, p: &Partition)
+            -> UniquePtr<PartitionFragmentation>;
+        fn getWeightedAverage(self: &PartitionFragmentation) -> f64;
+        fn getUnweightedAverage(self: &PartitionFragmentation) -> f64;
+        fn getMaximumValue(self: &PartitionFragmentation) -> f64;
+        fn getMinimumValue(self: &PartitionFragmentation) -> f64;
+        fn getValue(self: &PartitionFragmentation, i: u64) -> f64;
+        fn PartitionFragmentationGetValues(e: &PartitionFragmentation)
+            -> UniquePtr<CxxVector<f64>>;
+        fn isSmallBetter(self: &PartitionFragmentation) -> bool;
+        fn run(self: Pin<&mut PartitionFragmentation>) -> Result<()>;
+        fn hasFinished(self: &PartitionFragmentation) -> bool;
+
+        type PartitionHubDominance;
+        fn NewPartitionHubDominance(g: &Graph, p: &Partition) -> UniquePtr<PartitionHubDominance>;
+        fn getWeightedAverage(self: &PartitionHubDominance) -> f64;
+        fn getUnweightedAverage(self: &PartitionHubDominance) -> f64;
+        fn getMaximumValue(self: &PartitionHubDominance) -> f64;
+        fn getMinimumValue(self: &PartitionHubDominance) -> f64;
+        fn getValue(self: &PartitionHubDominance, i: u64) -> f64;
+        fn PartitionHubDominanceGetValues(e: &PartitionHubDominance) -> UniquePtr<CxxVector<f64>>;
+        fn isSmallBetter(self: &PartitionHubDominance) -> bool;
+        fn run(self: Pin<&mut PartitionHubDominance>) -> Result<()>;
+        fn hasFinished(self: &PartitionHubDominance) -> bool;
+
+        type PartitionIntersection;
+        fn NewPartitionIntersection() -> UniquePtr<PartitionIntersection>;
+        fn PartitionIntersectionCalculate(
+            algo: Pin<&mut PartitionIntersection>,
+            zeta: &Partition,
+            eta: &Partition,
+        ) -> UniquePtr<Partition>;
+
+        type StablePartitionNodes;
+        fn NewStablePartitionNodes(g: &Graph, p: &Partition) -> UniquePtr<StablePartitionNodes>;
+        fn getWeightedAverage(self: &StablePartitionNodes) -> f64;
+        fn getUnweightedAverage(self: &StablePartitionNodes) -> f64;
+        fn getMaximumValue(self: &StablePartitionNodes) -> f64;
+        fn getMinimumValue(self: &StablePartitionNodes) -> f64;
+        fn getValue(self: &StablePartitionNodes, i: u64) -> f64;
+        fn StablePartitionNodesGetValues(e: &StablePartitionNodes) -> UniquePtr<CxxVector<f64>>;
+        fn isSmallBetter(self: &StablePartitionNodes) -> bool;
+        fn run(self: Pin<&mut StablePartitionNodes>) -> Result<()>;
+        fn hasFinished(self: &StablePartitionNodes) -> bool;
+        fn isStable(self: &StablePartitionNodes, u: u64) -> bool;
+
         // ---- SCD ----
 
         type ApproximatePageRank;

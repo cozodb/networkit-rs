@@ -17,6 +17,19 @@
 #include <networkit/community/IsolatedInterpartitionExpansion.hpp>
 #include <networkit/community/JaccardMeasure.hpp>
 #include <networkit/community/LFM.hpp>
+#include <networkit/community/LPDegreeOrdered.hpp>
+#include <networkit/community/LouvainMapEquation.hpp>
+#include <networkit/community/Modularity.hpp>
+#include <networkit/community/NMIDistance.hpp>
+#include <networkit/community/NodeStructuralRandMeasure.hpp>
+#include <networkit/community/OverlappingNMIDistance.hpp>
+#include <networkit/community/PLM.hpp>
+#include <networkit/community/PLP.hpp>
+#include <networkit/community/ParallelLeiden.hpp>
+#include <networkit/community/PartitionFragmentation.hpp>
+#include <networkit/community/PartitionHubDominance.hpp>
+#include <networkit/community/PartitionIntersection.hpp>
+#include <networkit/community/StablePartitionNodes.hpp>
 #include "rust/cxx.h"
 
 namespace NetworKit
@@ -202,6 +215,158 @@ namespace NetworKit
     {
         return make_unique<Cover>(algo.getCover());
     }
+
+    inline unique_ptr<LPDegreeOrdered> NewLPDegreeOrdered(const Graph &g)
+    {
+        return make_unique<LPDegreeOrdered>(g);
+    }
+
+    inline unique_ptr<Partition> LPDegreeOrderedGetPartition(LPDegreeOrdered &a)
+    {
+        return make_unique<Partition>(a.getPartition());
+    }
+
+    inline unique_ptr<LouvainMapEquation> NewLouvainMapEquation(const Graph &graph, bool hierarchical, count maxIterations, const rust::Str parallelizationStrategy)
+    {
+        string ps(parallelizationStrategy);
+        return make_unique<LouvainMapEquation>(graph, hierarchical, maxIterations, ps);
+    }
+
+    inline unique_ptr<Partition> LouvainMapEquationGetPartition(LouvainMapEquation &a)
+    {
+        return make_unique<Partition>(a.getPartition());
+    }
+
+    inline unique_ptr<Modularity> NewModularity()
+    {
+        return make_unique<Modularity>();
+    }
+
+    inline unique_ptr<NMIDistance> NewNMIDistance()
+    {
+        return make_unique<NMIDistance>();
+    }
+
+    inline unique_ptr<NodeStructuralRandMeasure> NewNodeStructuralRandMeasure()
+    {
+        return make_unique<NodeStructuralRandMeasure>();
+    }
+
+    inline unique_ptr<OverlappingNMIDistance> NewOverlappingNMIDistance(
+        uint8_t normalization)
+    {
+        OverlappingNMIDistance::Normalization n;
+        switch (normalization)
+        {
+        case 2:
+            n = OverlappingNMIDistance::Normalization::ARITHMETIC_MEAN;
+            break;
+        case 4:
+            n = OverlappingNMIDistance::Normalization::JOINT_ENTROPY;
+            break;
+        case 1:
+            n = OverlappingNMIDistance::Normalization::GEOMETRIC_MEAN;
+            break;
+        case 3:
+            n = OverlappingNMIDistance::Normalization::MAX;
+            break;
+        case 0:
+            n = OverlappingNMIDistance::Normalization::MIN;
+            break;
+        default:
+            break;
+        }
+        return make_unique<OverlappingNMIDistance>(n);
+    }
+
+    inline unique_ptr<PLM> NewPLM(const Graph &G, bool refine, double gamma, rust::Str par,
+                                  count maxIter, bool turbo, bool recurse)
+    {
+        return make_unique<PLM>(G, refine, gamma, string(par), maxIter, turbo, recurse);
+    }
+
+    inline unique_ptr<Graph> PLMCoarsen(const Graph &G, const Partition &zeta, rust::Vec<node> &mapping)
+    {
+        auto res = PLM::coarsen(G, zeta);
+        for (auto &&n : res.second)
+        {
+            mapping.push_back(n);
+        }
+        return make_unique<Graph>(res.first);
+    }
+    inline unique_ptr<Partition> PLMProlong(
+        const Graph &g, const Partition &zetaCoarse, const Graph &Gfine,
+        rust::Slice<const node> nodeToMetaNode)
+    {
+        return make_unique<Partition>(PLM::prolong(g, zetaCoarse, Gfine, vector<node>(nodeToMetaNode.begin(), nodeToMetaNode.end())));
+    }
+
+    inline unique_ptr<Partition> PLMGetPartition(PLM &a)
+    {
+        return make_unique<Partition>(a.getPartition());
+    }
+
+    inline unique_ptr<PLP> NewPLP(const Graph &G, count theta = none, count maxIterations = none)
+    {
+        return make_unique<PLP>(G, theta, maxIterations);
+    }
+
+    inline unique_ptr<Partition> PLPGetPartition(PLP &a)
+    {
+        return make_unique<Partition>(a.getPartition());
+    }
+
+    inline unique_ptr<ParallelLeiden> NewParallelLeiden(const Graph &graph, count iterations = 3, bool randomize = true,
+                                                        double gamma = 1)
+    {
+        return make_unique<ParallelLeiden>(graph, iterations, randomize, gamma);
+    }
+
+    inline unique_ptr<Partition> ParallelLeidenGetPartition(ParallelLeiden &a)
+    {
+        return make_unique<Partition>(a.getPartition());
+    }
+
+    inline unique_ptr<PartitionFragmentation> NewPartitionFragmentation(const Graph &G, const Partition &P)
+    {
+        return make_unique<PartitionFragmentation>(G, P);
+    }
+
+    inline unique_ptr<vector<double>> PartitionFragmentationGetValues(const PartitionFragmentation &e)
+    {
+        return make_unique<vector<double>>(e.getValues());
+    }
+
+    inline unique_ptr<PartitionHubDominance> NewPartitionHubDominance(const Graph &G, const Partition &P)
+    {
+        return make_unique<PartitionHubDominance>(G, P);
+    }
+
+    inline unique_ptr<vector<double>> PartitionHubDominanceGetValues(const PartitionHubDominance &e)
+    {
+        return make_unique<vector<double>>(e.getValues());
+    }
+
+    inline unique_ptr<PartitionIntersection> NewPartitionIntersection()
+    {
+        return make_unique<PartitionIntersection>();
+    }
+
+    inline unique_ptr<Partition> PartitionIntersectionCalculate(PartitionIntersection &algo, const Partition &zeta, const Partition &eta)
+    {
+        return make_unique<Partition>(algo.calculate(zeta, eta));
+    }
+
+    inline unique_ptr<StablePartitionNodes> NewStablePartitionNodes(const Graph &G, const Partition &P)
+    {
+        return make_unique<StablePartitionNodes>(G, P);
+    }
+
+    inline unique_ptr<vector<double>> StablePartitionNodesGetValues(const StablePartitionNodes &e)
+    {
+        return make_unique<vector<double>>(e.getValues());
+    }
+
 }
 
 #endif // NK_COMMUNITY_H
