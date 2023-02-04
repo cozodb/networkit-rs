@@ -5,6 +5,7 @@ pub mod community;
 pub mod cover;
 pub mod graph;
 pub mod partition;
+pub mod scd;
 pub mod tools;
 
 pub use cover::Cover;

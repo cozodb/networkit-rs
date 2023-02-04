@@ -4,6 +4,7 @@ use miette::IntoDiagnostic;
 use crate::{
     base::Algorithm,
     bridge::{self, *},
+    scd::SelectiveCommunityDetectorBase,
     QualityMeasure,
 };
 
@@ -545,5 +546,60 @@ impl LocalCommunityEvaluation for IsolatedInterpartitionExpansion {
 
     fn is_small_better(&self) -> bool {
         self.inner.isSmallBetter()
+    }
+}
+
+pub struct JaccardMeasure {
+    inner: UniquePtr<bridge::JaccardMeasure>,
+}
+
+impl Default for JaccardMeasure {
+    fn default() -> Self {
+        Self {
+            inner: NewJaccardMeasure(),
+        }
+    }
+}
+
+impl JaccardMeasure {
+    pub fn get_dissimilarity(
+        &mut self,
+        g: &crate::Graph,
+        zeta: &crate::Partition,
+        eta: &crate::Partition,
+    ) -> f64 {
+        self.inner.pin_mut().getDissimilarity(g, zeta, eta)
+    }
+}
+
+pub trait OverlappingCommunityDetector: Algorithm {
+    fn get_cover(&self) -> crate::Cover;
+}
+
+pub struct LFM {
+    inner: UniquePtr<bridge::LFM>,
+}
+
+impl LFM {
+    pub fn new(g: &Graph, scd: &mut SelectiveCommunityDetectorBase) -> Self {
+        Self {
+            inner: NewLFM(g, scd.inner.pin_mut()),
+        }
+    }
+}
+
+impl OverlappingCommunityDetector for LFM {
+    fn get_cover(&self) -> crate::Cover {
+        LFMGetCover(&self.inner).into()
+    }
+}
+
+impl Algorithm for LFM {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
     }
 }

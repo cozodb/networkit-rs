@@ -15,6 +15,8 @@
 #include <networkit/community/IntrapartitionDensity.hpp>
 #include <networkit/community/IsolatedInterpartitionConductance.hpp>
 #include <networkit/community/IsolatedInterpartitionExpansion.hpp>
+#include <networkit/community/JaccardMeasure.hpp>
+#include <networkit/community/LFM.hpp>
 #include "rust/cxx.h"
 
 namespace NetworKit
@@ -186,6 +188,20 @@ namespace NetworKit
         return make_unique<vector<double>>(e.getValues());
     }
 
+    inline unique_ptr<JaccardMeasure> NewJaccardMeasure()
+    {
+        return make_unique<JaccardMeasure>();
+    }
+
+    inline unique_ptr<LFM> NewLFM(const Graph &G, SelectiveCommunityDetector &scd)
+    {
+        return make_unique<LFM>(G, scd);
+    }
+
+    inline unique_ptr<Cover> LFMGetCover(const LFM &algo)
+    {
+        return make_unique<Cover>(algo.getCover());
+    }
 }
 
 #endif // NK_COMMUNITY_H

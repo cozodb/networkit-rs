@@ -7,5 +7,6 @@
 
 #include <graph.h>
 #include <community.h>
+#include <scd.h>
 
 #endif // NK_BRIDGE_H

@@ -336,6 +336,217 @@ mod ffi {
         fn isSmallBetter(self: &IsolatedInterpartitionExpansion) -> bool;
         fn run(self: Pin<&mut IsolatedInterpartitionExpansion>) -> Result<()>;
         fn hasFinished(self: &IsolatedInterpartitionExpansion) -> bool;
+
+        type JaccardMeasure;
+        pub fn NewJaccardMeasure() -> UniquePtr<JaccardMeasure>;
+        pub fn getDissimilarity(
+            self: Pin<&mut JaccardMeasure>,
+            g: &Graph,
+            zeta: &Partition,
+            eta: &Partition,
+        ) -> f64;
+
+        type LFM;
+        pub fn NewLFM(g: &Graph, scd: Pin<&mut SelectiveCommunityDetector>) -> UniquePtr<LFM>;
+        fn LFMGetCover(algo: &LFM) -> UniquePtr<Cover>;
+        fn run(self: Pin<&mut LFM>) -> Result<()>;
+        fn hasFinished(self: &LFM) -> bool;
+
+        // ---- SCD ----
+
+        type ApproximatePageRank;
+        fn NewApproximatePageRank(
+            g: &Graph,
+            alpha: f64,
+            epsilon: f64,
+        ) -> UniquePtr<ApproximatePageRank>;
+
+        fn ApproximatePageRankRun(
+            algo: Pin<&mut ApproximatePageRank>,
+            seeds: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+
+        type SelectiveCommunityDetector;
+
+        type CliqueDetect;
+        fn NewCliqueDetect(g: &Graph) -> UniquePtr<CliqueDetect>;
+        fn CliqueDetectRun(
+            algo: Pin<&mut CliqueDetect>,
+            seeds: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn CliqueDetectExpandOneCommunity(
+            algo: Pin<&mut CliqueDetect>,
+            seeds: &[u64],
+            ret: &mut Vec<u64>,
+        );
+        fn CliqueDetectAsBase(
+            algo: UniquePtr<CliqueDetect>,
+        ) -> UniquePtr<SelectiveCommunityDetector>;
+
+        type CombinedSCD;
+        fn NewCombinedSCD(
+            g: &Graph,
+            first: Pin<&mut SelectiveCommunityDetector>,
+            second: Pin<&mut SelectiveCommunityDetector>,
+        ) -> UniquePtr<CombinedSCD>;
+        fn CombinedSCDRun(
+            algo: Pin<&mut CombinedSCD>,
+            seeds: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn CombinedSCDExpandOneCommunity(
+            algo: Pin<&mut CombinedSCD>,
+            seeds: &[u64],
+            ret: &mut Vec<u64>,
+        );
+        fn CombinedSCDAsBase(algo: UniquePtr<CombinedSCD>)
+            -> UniquePtr<SelectiveCommunityDetector>;
+
+        type GCE;
+        fn NewGCE(g: &Graph, q: &str) -> UniquePtr<GCE>;
+        fn GCERun(algo: Pin<&mut GCE>, seeds: &[u64], ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn GCEExpandOneCommunity(algo: Pin<&mut GCE>, seeds: &[u64], ret: &mut Vec<u64>);
+        fn GCEAsBase(algo: UniquePtr<GCE>) -> UniquePtr<SelectiveCommunityDetector>;
+
+        type LFMLocal;
+        fn NewLFMLocal(g: &Graph, alpha: f64) -> UniquePtr<LFMLocal>;
+        fn LFMLocalRun(
+            algo: Pin<&mut LFMLocal>,
+            seeds: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn LFMLocalExpandOneCommunity(algo: Pin<&mut LFMLocal>, seeds: &[u64], ret: &mut Vec<u64>);
+        fn LFMLocalAsBase(algo: UniquePtr<LFMLocal>) -> UniquePtr<SelectiveCommunityDetector>;
+
+        type LocalT;
+        fn NewLocalT(g: &Graph) -> UniquePtr<LocalT>;
+        fn LocalTRun(algo: Pin<&mut LocalT>, seeds: &[u64], ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn LocalTExpandOneCommunity(algo: Pin<&mut LocalT>, seeds: &[u64], ret: &mut Vec<u64>);
+        fn LocalTAsBase(algo: UniquePtr<LocalT>) -> UniquePtr<SelectiveCommunityDetector>;
+
+        type LocalTightnessExpansion;
+        fn NewLocalTightnessExpansion(g: &Graph, alpha: f64) -> UniquePtr<LocalTightnessExpansion>;
+        fn LocalTightnessExpansionRun(
+            algo: Pin<&mut LocalTightnessExpansion>,
+            seeds: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn LocalTightnessExpansionExpandOneCommunity(
+            algo: Pin<&mut LocalTightnessExpansion>,
+            seeds: &[u64],
+            ret: &mut Vec<u64>,
+        );
+        fn LocalTightnessExpansionAsBase(
+            algo: UniquePtr<LocalTightnessExpansion>,
+        ) -> UniquePtr<SelectiveCommunityDetector>;
+
+        type PageRankNibble;
+        fn NewPageRankNibble(g: &Graph, alpha: f64, epsilon: f64) -> UniquePtr<PageRankNibble>;
+        fn PageRankNibbleRun(
+            algo: Pin<&mut PageRankNibble>,
+            seeds: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn PageRankNibbleExpandOneCommunity(
+            algo: Pin<&mut PageRankNibble>,
+            seeds: &[u64],
+            ret: &mut Vec<u64>,
+        );
+        fn PageRankNibbleAsBase(
+            algo: UniquePtr<PageRankNibble>,
+        ) -> UniquePtr<SelectiveCommunityDetector>;
+
+        type RandomBFS;
+        fn NewRandomBFS(g: &Graph, c: &Cover) -> UniquePtr<RandomBFS>;
+        fn RandomBFSRun(
+            algo: Pin<&mut RandomBFS>,
+            seeds: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn RandomBFSExpandOneCommunity(
+            algo: Pin<&mut RandomBFS>,
+            seeds: &[u64],
+            ret: &mut Vec<u64>,
+        );
+        fn RandomBFSAsBase(algo: UniquePtr<RandomBFS>) -> UniquePtr<SelectiveCommunityDetector>;
+
+        type SCDGroundTruthComparison;
+        fn NewSCDGroundTruthComparison(
+            g: &Graph,
+            ground_truth: &Cover,
+            ks: &[u64],
+            vs: &[u64],
+            ignore_seeds: bool,
+        ) -> UniquePtr<SCDGroundTruthComparison>;
+
+        fn SCDGroundTruthComparisonGetIndividualJaccard(
+            algo: &SCDGroundTruthComparison,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+
+        fn SCDGroundTruthComparisonGetIndividualPrecision(
+            algo: &SCDGroundTruthComparison,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+
+        fn SCDGroundTruthComparisonGetIndividualRecall(
+            algo: &SCDGroundTruthComparison,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+
+        fn SCDGroundTruthComparisonGetIndividualF1(
+            algo: &SCDGroundTruthComparison,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+
+        fn getAverageJaccard(self: &SCDGroundTruthComparison) -> f64;
+        fn getAverageF1(self: &SCDGroundTruthComparison) -> f64;
+        fn getAveragePrecision(self: &SCDGroundTruthComparison) -> f64;
+        fn getAverageRecall(self: &SCDGroundTruthComparison) -> f64;
+
+        fn run(self: Pin<&mut SCDGroundTruthComparison>) -> Result<()>;
+        fn hasFinished(self: &SCDGroundTruthComparison) -> bool;
+
+        type SetConductance;
+        fn NewSetConductance(g: &Graph, community: &[u64]) -> UniquePtr<SetConductance>;
+        fn getConductance(self: &SetConductance) -> f64;
+        fn run(self: Pin<&mut SetConductance>) -> Result<()>;
+        fn hasFinished(self: &SetConductance) -> bool;
+
+        type TCE;
+        fn NewTCE(g: &Graph, refine: bool, use_jaccard: bool) -> UniquePtr<TCE>;
+        fn TCERun(algo: Pin<&mut TCE>, seeds: &[u64], ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn TCEExpandOneCommunity(algo: Pin<&mut TCE>, seeds: &[u64], ret: &mut Vec<u64>);
+        fn TCEAsBase(algo: UniquePtr<TCE>) -> UniquePtr<SelectiveCommunityDetector>;
+
+        type TwoPhaseL;
+        fn NewTwoPhaseL(g: &Graph) -> UniquePtr<TwoPhaseL>;
+        fn TwoPhaseLRun(
+            algo: Pin<&mut TwoPhaseL>,
+            seeds: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn TwoPhaseLExpandOneCommunity(
+            algo: Pin<&mut TwoPhaseL>,
+            seeds: &[u64],
+            ret: &mut Vec<u64>,
+        );
+        fn TwoPhaseLAsBase(algo: UniquePtr<TwoPhaseL>) -> UniquePtr<SelectiveCommunityDetector>;
+
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {
