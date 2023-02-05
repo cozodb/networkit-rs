@@ -6,6 +6,12 @@
 #include <networkit/centrality/ApproxBetweenness.hpp>
 #include <networkit/centrality/ApproxCloseness.hpp>
 #include <networkit/centrality/ApproxElectricalCloseness.hpp>
+#include <networkit/centrality/ApproxGroupBetweenness.hpp>
+#include <networkit/centrality/ApproxSpanningEdge.hpp>
+#include <networkit/centrality/Betweenness.hpp>
+#include <networkit/centrality/Closeness.hpp>
+#include <networkit/centrality/CoreDecomposition.hpp>
+#include <networkit/centrality/DegreeCentrality.hpp>
 
 namespace NetworKit
 {
@@ -97,6 +103,128 @@ namespace NetworKit
         return make_unique<vector<double>>(algo.getDiagonal());
     }
 
+    inline unique_ptr<ApproxGroupBetweenness> NewApproxGroupBetweenness(
+        const Graph &G, count groupSize, double epsilon)
+    {
+        return make_unique<ApproxGroupBetweenness>(G, groupSize, epsilon);
+    }
+
+    inline unique_ptr<vector<node>> ApproxGroupBetweennessGroupMaxBetweenness(const ApproxGroupBetweenness &algo)
+    {
+        return make_unique<vector<node>>(algo.groupMaxBetweenness());
+    }
+
+    inline unique_ptr<vector<node>> ApproxGroupBetweennessScoreOfGroup(const ApproxGroupBetweenness &algo,
+                                                                       rust::Slice<const node> S, bool normalized)
+    {
+        vector<node> nodes(S.begin(), S.end());
+        return make_unique<vector<node>>(algo.scoreOfGroup(nodes, normalized));
+    }
+
+    inline unique_ptr<ApproxSpanningEdge> NewApproxSpanningEdge(
+        const Graph &G, double epsilon)
+    {
+        return make_unique<ApproxSpanningEdge>(G, epsilon);
+    }
+
+    inline unique_ptr<vector<double>> ApproxSpanningEdgeScores(const ApproxSpanningEdge &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<Betweenness> NewBetweenness(
+        const Graph &G, bool normalized = false, bool computeEdgeCentrality = false)
+    {
+        return make_unique<Betweenness>(G, normalized, computeEdgeCentrality);
+    }
+    inline void BetweennessRanking(Betweenness &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> BetweennessScores(Betweenness &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<vector<double>> BetweennessEdgeScores(Betweenness &algo)
+    {
+        return make_unique<vector<double>>(algo.edgeScores());
+    }
+
+    inline unique_ptr<Closeness> NewCloseness(
+        const Graph &G, bool normalized, uint8_t variant)
+    {
+        return make_unique<Closeness>(G, normalized, variant);
+    }
+    inline void ClosenessRanking(Closeness &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> ClosenessScores(Closeness &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<CoreDecomposition> NewCoreDecomposition(
+        const Graph &G, bool normalized = false,
+        bool enforceBucketQueueAlgorithm = false, bool storeNodeOrder = false)
+    {
+        return make_unique<CoreDecomposition>(G, normalized, enforceBucketQueueAlgorithm, storeNodeOrder);
+    }
+    inline void CoreDecompositionRanking(CoreDecomposition &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> CoreDecompositionScores(CoreDecomposition &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<Cover> CoreDecompositionGetCover(const CoreDecomposition &algo)
+    {
+        return make_unique<Cover>(algo.getCover());
+    }
+
+    inline unique_ptr<vector<node>> CoreDecompositionGetNodeOrder(const CoreDecomposition &algo)
+    {
+        return make_unique<vector<node>>(algo.getNodeOrder());
+    }
+
+    inline unique_ptr<Partition> CoreDecompositionGetPartition(const CoreDecomposition &algo)
+    {
+        return make_unique<Partition>(algo.getPartition());
+    }
+
+    inline unique_ptr<DegreeCentrality> NewDegreeCentrality(
+        const Graph &G, bool normalized = false,
+        bool outDeg = false, bool ignoreSelfLoops = false)
+    {
+        return make_unique<DegreeCentrality>(G, normalized, outDeg, ignoreSelfLoops);
+    }
+    inline void DegreeCentralityRanking(DegreeCentrality &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> DegreeCentralityScores(DegreeCentrality &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
 }
 
 #endif // NK_CENTRALITY_H

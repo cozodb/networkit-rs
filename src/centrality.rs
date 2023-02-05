@@ -1,5 +1,3 @@
-use std::collections::BTreeMap;
-
 use cxx::UniquePtr;
 use miette::IntoDiagnostic;
 
@@ -45,7 +43,7 @@ pub struct ApproxBetweenness {
 
 impl ApproxBetweenness {
     pub fn new(
-        g: &Graph,
+        g: &crate::Graph,
         epsilon: Option<f64>,
         delta: Option<f64>,
         universal_constant: Option<f64>,
@@ -114,7 +112,7 @@ pub enum ApproxClosenessType {
 
 impl ApproxCloseness {
     pub fn new(
-        g: &Graph,
+        g: &crate::Graph,
         n_samples: u64,
         epsilon: Option<f64>,
         normalized: bool,
@@ -176,7 +174,7 @@ pub struct ApproxElectricalCloseness {
 }
 
 impl ApproxElectricalCloseness {
-    pub fn new(g: &Graph, epsilon: Option<f64>, kappa: Option<f64>) -> Self {
+    pub fn new(g: &crate::Graph, epsilon: Option<f64>, kappa: Option<f64>) -> Self {
         Self {
             inner: NewApproxElectricalCloseness(g, epsilon.unwrap_or(0.1), kappa.unwrap_or(0.3)),
         }
@@ -225,6 +223,310 @@ impl Centrality for ApproxElectricalCloseness {
 }
 
 impl Algorithm for ApproxElectricalCloseness {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct ApproxGroupBetweenness {
+    inner: UniquePtr<bridge::ApproxGroupBetweenness>,
+}
+
+impl ApproxGroupBetweenness {
+    pub fn new(g: &crate::Graph, group_size: u64, epsilon: f64) -> Self {
+        Self {
+            inner: NewApproxGroupBetweenness(g, group_size, epsilon),
+        }
+    }
+    pub fn group_max_betweenness(&self) -> impl Iterator<Item = u64> {
+        NodeIter {
+            nodes: ApproxGroupBetweennessGroupMaxBetweenness(&self.inner),
+            at: 0,
+        }
+    }
+    pub fn score_of_group(&self, nodes: &[u64], normalized: bool) -> impl Iterator<Item = u64> {
+        NodeIter {
+            nodes: ApproxGroupBetweennessScoreOfGroup(&self.inner, nodes, normalized),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for ApproxGroupBetweenness {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct ApproxSpanningEdge {
+    inner: UniquePtr<bridge::ApproxSpanningEdge>,
+}
+
+impl ApproxSpanningEdge {
+    pub fn new(g: &crate::Graph, epsilon: Option<f64>) -> Self {
+        Self {
+            inner: NewApproxSpanningEdge(g, epsilon.unwrap_or(0.1)),
+        }
+    }
+
+    pub fn scores(&self) -> ValueIter {
+        ValueIter {
+            inner: ApproxSpanningEdgeScores(&self.inner),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for ApproxSpanningEdge {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct Betweenness {
+    inner: UniquePtr<bridge::Betweenness>,
+}
+
+impl Betweenness {
+    pub fn new(g: &crate::Graph, normalized: bool, compute_edge_centrality: bool) -> Self {
+        Self {
+            inner: NewBetweenness(g, normalized, compute_edge_centrality),
+        }
+    }
+
+    pub fn edge_scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: BetweennessEdgeScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Centrality for Betweenness {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        BetweennessRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: BetweennessScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for Betweenness {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct Closeness {
+    inner: UniquePtr<bridge::Closeness>,
+}
+
+#[derive(Default)]
+#[repr(u8)]
+pub enum ClosenessVariant {
+    #[default]
+    Standard = 0,
+    Generalized = 1,
+}
+
+impl Closeness {
+    pub fn new(g: &crate::Graph, normalized: bool, variant: ClosenessVariant) -> Self {
+        Self {
+            inner: NewCloseness(g, normalized, variant as u8),
+        }
+    }
+}
+
+impl Centrality for Closeness {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        ClosenessRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: ClosenessScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for Closeness {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct CoreDecomposition {
+    inner: UniquePtr<bridge::CoreDecomposition>,
+}
+
+impl CoreDecomposition {
+    pub fn new(
+        g: &crate::Graph,
+        normalized: bool,
+        enforce_bucket_queue_algorithm: bool,
+        store_node_order: bool,
+    ) -> Self {
+        Self {
+            inner: NewCoreDecomposition(
+                g,
+                normalized,
+                enforce_bucket_queue_algorithm,
+                store_node_order,
+            ),
+        }
+    }
+
+    pub fn get_cover(&self) -> crate::Cover {
+        CoreDecompositionGetCover(&self.inner).into()
+    }
+    pub fn get_partition(&self) -> crate::Partition {
+        CoreDecompositionGetPartition(&self.inner).into()
+    }
+    pub fn get_node_order(&self) -> impl Iterator<Item = u64> {
+        NodeIter {
+            nodes: CoreDecompositionGetNodeOrder(&self.inner),
+            at: 0,
+        }
+    }
+    pub fn max_core_number(&self) -> u64 {
+        self.inner.maxCoreNumber()
+    }
+}
+
+impl Centrality for CoreDecomposition {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        CoreDecompositionRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: CoreDecompositionScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for CoreDecomposition {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct DegreeCentrality {
+    inner: UniquePtr<bridge::DegreeCentrality>,
+}
+
+impl DegreeCentrality {
+    pub fn new(g: &crate::Graph, normalized: bool, out_deg: bool, ignore_self_loops: bool) -> Self {
+        Self {
+            inner: NewDegreeCentrality(g, normalized, out_deg, ignore_self_loops),
+        }
+    }
+}
+
+impl Centrality for DegreeCentrality {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        DegreeCentralityRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: DegreeCentralityScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for DegreeCentrality {
     fn run(&mut self) -> miette::Result<()> {
         self.inner.pin_mut().run().into_diagnostic()
     }

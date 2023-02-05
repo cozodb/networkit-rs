@@ -14,6 +14,7 @@ fn main() {
 
     builder
         .files(["bridge/bridge.cpp"])
+        .include("networkit/extlibs/ttmath")
         .include("networkit/include")
         .include("networkit/extlibs/tlx")
         .include("bridge")

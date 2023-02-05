@@ -791,6 +791,96 @@ mod ffi {
         fn ApproxElectricalClosenessGetDiagonal(
             algo: &ApproxElectricalCloseness,
         ) -> UniquePtr<CxxVector<f64>>;
+
+        type ApproxGroupBetweenness;
+        fn NewApproxGroupBetweenness(
+            g: &Graph,
+            group_size: u64,
+            epsilon: f64,
+        ) -> UniquePtr<ApproxGroupBetweenness>;
+        fn run(self: Pin<&mut ApproxGroupBetweenness>) -> Result<()>;
+        fn hasFinished(self: &ApproxGroupBetweenness) -> bool;
+        fn ApproxGroupBetweennessGroupMaxBetweenness(
+            algo: &ApproxGroupBetweenness,
+        ) -> UniquePtr<CxxVector<u64>>;
+        fn ApproxGroupBetweennessScoreOfGroup(
+            algo: &ApproxGroupBetweenness,
+            nodes: &[u64],
+            normalized: bool,
+        ) -> UniquePtr<CxxVector<u64>>;
+
+        type ApproxSpanningEdge;
+        fn NewApproxSpanningEdge(g: &Graph, epsilon: f64) -> UniquePtr<ApproxSpanningEdge>;
+        fn ApproxSpanningEdgeScores(algo: &ApproxSpanningEdge) -> UniquePtr<CxxVector<f64>>;
+        fn run(self: Pin<&mut ApproxSpanningEdge>) -> Result<()>;
+        fn hasFinished(self: &ApproxSpanningEdge) -> bool;
+
+        type Betweenness;
+        fn NewBetweenness(
+            g: &Graph,
+            normalized: bool,
+            compute_edge_centrality: bool,
+        ) -> UniquePtr<Betweenness>;
+        fn run(self: Pin<&mut Betweenness>) -> Result<()>;
+        fn hasFinished(self: &Betweenness) -> bool;
+        fn centralization(self: Pin<&mut Betweenness>) -> f64;
+        fn maximum(self: Pin<&mut Betweenness>) -> f64;
+        fn score(self: Pin<&mut Betweenness>, node: u64) -> f64;
+        fn BetweennessRanking(algo: Pin<&mut Betweenness>, ks: &mut Vec<u64>, vs: &mut Vec<f64>);
+        fn BetweennessScores(algo: Pin<&mut Betweenness>) -> UniquePtr<CxxVector<f64>>;
+        fn BetweennessEdgeScores(algo: Pin<&mut Betweenness>) -> UniquePtr<CxxVector<f64>>;
+
+        type Closeness;
+        fn NewCloseness(g: &Graph, normalized: bool, variant: u8) -> UniquePtr<Closeness>;
+        fn run(self: Pin<&mut Closeness>) -> Result<()>;
+        fn hasFinished(self: &Closeness) -> bool;
+        fn centralization(self: Pin<&mut Closeness>) -> f64;
+        fn maximum(self: Pin<&mut Closeness>) -> f64;
+        fn score(self: Pin<&mut Closeness>, node: u64) -> f64;
+        fn ClosenessRanking(algo: Pin<&mut Closeness>, ks: &mut Vec<u64>, vs: &mut Vec<f64>);
+        fn ClosenessScores(algo: Pin<&mut Closeness>) -> UniquePtr<CxxVector<f64>>;
+
+        type CoreDecomposition;
+        fn NewCoreDecomposition(
+            g: &Graph,
+            normalized: bool,
+            enforce_bucket_queue_algorithm: bool,
+            store_node_order: bool,
+        ) -> UniquePtr<CoreDecomposition>;
+        fn run(self: Pin<&mut CoreDecomposition>) -> Result<()>;
+        fn hasFinished(self: &CoreDecomposition) -> bool;
+        fn centralization(self: Pin<&mut CoreDecomposition>) -> f64;
+        fn maximum(self: Pin<&mut CoreDecomposition>) -> f64;
+        fn score(self: Pin<&mut CoreDecomposition>, node: u64) -> f64;
+        fn CoreDecompositionRanking(
+            algo: Pin<&mut CoreDecomposition>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn CoreDecompositionScores(algo: Pin<&mut CoreDecomposition>) -> UniquePtr<CxxVector<f64>>;
+        fn maxCoreNumber(self: &CoreDecomposition) -> u64;
+        fn CoreDecompositionGetCover(algo: &CoreDecomposition) -> UniquePtr<Cover>;
+        fn CoreDecompositionGetPartition(algo: &CoreDecomposition) -> UniquePtr<Partition>;
+        fn CoreDecompositionGetNodeOrder(algo: &CoreDecomposition) -> UniquePtr<CxxVector<u64>>;
+
+        type DegreeCentrality;
+        fn NewDegreeCentrality(
+            g: &Graph,
+            normalized: bool,
+            out_deg: bool,
+            ignore_self_loops: bool,
+        ) -> UniquePtr<DegreeCentrality>;
+        fn run(self: Pin<&mut DegreeCentrality>) -> Result<()>;
+        fn hasFinished(self: &DegreeCentrality) -> bool;
+        fn centralization(self: Pin<&mut DegreeCentrality>) -> f64;
+        fn maximum(self: Pin<&mut DegreeCentrality>) -> f64;
+        fn score(self: Pin<&mut DegreeCentrality>, node: u64) -> f64;
+        fn DegreeCentralityRanking(
+            algo: Pin<&mut DegreeCentrality>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn DegreeCentralityScores(algo: Pin<&mut DegreeCentrality>) -> UniquePtr<CxxVector<f64>>;
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {
