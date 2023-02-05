@@ -1,6 +1,7 @@
 pub mod base;
 pub(crate) mod bridge;
 pub mod builder;
+pub mod clique;
 pub mod coarsening;
 pub mod community;
 pub mod cover;

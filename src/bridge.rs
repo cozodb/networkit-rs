@@ -709,6 +709,17 @@ mod ffi {
             algo: &ParallelPartitionCoarsening,
         ) -> UniquePtr<CxxVector<u64>>;
 
+        // ---- CLIQUE ----
+
+        type MaximalCliques;
+        fn NewMaximalCliques(g: &Graph, maximum_only: bool) -> UniquePtr<MaximalCliques>;
+        fn MaximalCliquesGetCliques(
+            algo: Pin<&mut MaximalCliques>,
+            cliques: &mut Vec<u64>,
+            nodes: &mut Vec<u64>,
+        );
+        fn run(self: Pin<&mut MaximalCliques>) -> Result<()>;
+        fn hasFinished(self: &MaximalCliques) -> bool;
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

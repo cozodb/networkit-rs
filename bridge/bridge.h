@@ -9,5 +9,6 @@
 #include <community.h>
 #include <scd.h>
 #include <coarsening.h>
+#include <clique.h>
 
 #endif // NK_BRIDGE_H
