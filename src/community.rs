@@ -72,8 +72,8 @@ impl ClusteringGenerator {
 }
 
 pub struct ValueIter {
-    inner: UniquePtr<CxxVector<f64>>,
-    at: usize,
+    pub(crate) inner: UniquePtr<CxxVector<f64>>,
+    pub(crate) at: usize,
 }
 
 impl Iterator for ValueIter {

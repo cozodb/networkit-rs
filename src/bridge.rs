@@ -720,6 +720,77 @@ mod ffi {
         );
         fn run(self: Pin<&mut MaximalCliques>) -> Result<()>;
         fn hasFinished(self: &MaximalCliques) -> bool;
+
+        // ---- CENTRALITY ----
+
+        type ApproxBetweenness;
+        fn NewApproxBetweenness(
+            g: &Graph,
+            epsilon: f64,
+            delta: f64,
+            universal_constant: f64,
+        ) -> UniquePtr<ApproxBetweenness>;
+        fn run(self: Pin<&mut ApproxBetweenness>) -> Result<()>;
+        fn hasFinished(self: &ApproxBetweenness) -> bool;
+        fn centralization(self: Pin<&mut ApproxBetweenness>) -> f64;
+        fn maximum(self: Pin<&mut ApproxBetweenness>) -> f64;
+        fn score(self: Pin<&mut ApproxBetweenness>, node: u64) -> f64;
+        fn ApproxBetweennessRanking(
+            algo: Pin<&mut ApproxBetweenness>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn ApproxBetweennessScores(algo: Pin<&mut ApproxBetweenness>) -> UniquePtr<CxxVector<f64>>;
+
+        type ApproxCloseness;
+        fn NewApproxCloseness(
+            g: &Graph,
+            n_samples: u64,
+            epsilon: f64,
+            normalized: bool,
+            t: u8,
+        ) -> UniquePtr<ApproxCloseness>;
+        fn run(self: Pin<&mut ApproxCloseness>) -> Result<()>;
+        fn hasFinished(self: &ApproxCloseness) -> bool;
+        fn centralization(self: Pin<&mut ApproxCloseness>) -> f64;
+        fn maximum(self: Pin<&mut ApproxCloseness>) -> f64;
+        fn score(self: Pin<&mut ApproxCloseness>, node: u64) -> f64;
+        fn ApproxClosenessRanking(
+            algo: Pin<&mut ApproxCloseness>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn ApproxClosenessScores(algo: Pin<&mut ApproxCloseness>) -> UniquePtr<CxxVector<f64>>;
+        fn ApproxClosenessGetSquareErrorEstimates(
+            algo: Pin<&mut ApproxCloseness>,
+        ) -> UniquePtr<CxxVector<f64>>;
+
+        type ApproxElectricalCloseness;
+        fn NewApproxElectricalCloseness(
+            g: &Graph,
+            epsilon: f64,
+            kappa: f64,
+        ) -> UniquePtr<ApproxElectricalCloseness>;
+        fn run(self: Pin<&mut ApproxElectricalCloseness>) -> Result<()>;
+        fn hasFinished(self: &ApproxElectricalCloseness) -> bool;
+        fn centralization(self: Pin<&mut ApproxElectricalCloseness>) -> f64;
+        fn maximum(self: Pin<&mut ApproxElectricalCloseness>) -> f64;
+        fn score(self: Pin<&mut ApproxElectricalCloseness>, node: u64) -> f64;
+        fn ApproxElectricalClosenessRanking(
+            algo: Pin<&mut ApproxElectricalCloseness>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn ApproxElectricalClosenessScores(
+            algo: Pin<&mut ApproxElectricalCloseness>,
+        ) -> UniquePtr<CxxVector<f64>>;
+        fn ApproxElectricalClosenessComputeExactDiagonal(
+            algo: &ApproxElectricalCloseness,
+            tol: f64,
+        ) -> UniquePtr<CxxVector<f64>>;
+        fn ApproxElectricalClosenessGetDiagonal(
+            algo: &ApproxElectricalCloseness,
+        ) -> UniquePtr<CxxVector<f64>>;
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

@@ -10,5 +10,6 @@
 #include <scd.h>
 #include <coarsening.h>
 #include <clique.h>
+#include <centrality.h>
 
 #endif // NK_BRIDGE_H
