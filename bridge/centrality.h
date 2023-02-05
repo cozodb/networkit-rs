@@ -12,6 +12,8 @@
 #include <networkit/centrality/Closeness.hpp>
 #include <networkit/centrality/CoreDecomposition.hpp>
 #include <networkit/centrality/DegreeCentrality.hpp>
+#include <networkit/centrality/DynApproxBetweenness.hpp>
+#include "graph_event.h"
 
 namespace NetworKit
 {
@@ -225,6 +227,43 @@ namespace NetworKit
     {
         return make_unique<vector<double>>(algo.scores());
     }
+
+    inline unique_ptr<DynApproxBetweenness> NewDynApproxBetweenness(
+        const Graph &G, double epsilon = 0.01, double delta = 0.1,
+        bool storePredecessors = true, double universalConstant = 0.5)
+    {
+        return make_unique<DynApproxBetweenness>(G, epsilon, delta, storePredecessors, universalConstant);
+    }
+
+    inline void DynApproxBetweennessRanking(DynApproxBetweenness &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> DynApproxBetweennessScores(DynApproxBetweenness &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline void DynApproxBetweennessUpdate(DynApproxBetweenness &algo, uint8_t kind, node u, node v, edgeweight ew)
+    {
+        algo.update(toGraphEvent(kind, u, v, ew));
+    }
+
+    inline void DynApproxBetweennessUpdateBatch(DynApproxBetweenness &algo, rust::Slice<const uint8_t> kinds, rust::Slice<const node> us, rust::Slice<const node> vs, rust::Slice<const edgeweight> ews)
+    {
+        vector<GraphEvent> evs;
+        evs.reserve(kinds.length());
+        for (size_t i = 0; i < kinds.length(); ++i)
+        {
+            evs.emplace_back(toGraphEvent(kinds[i], us[i], vs[i], ews[i]));
+        }
+        algo.updateBatch(evs);
+    }
+
 }
 
 #endif // NK_CENTRALITY_H

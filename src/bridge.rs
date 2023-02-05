@@ -881,6 +881,43 @@ mod ffi {
             vs: &mut Vec<f64>,
         );
         fn DegreeCentralityScores(algo: Pin<&mut DegreeCentrality>) -> UniquePtr<CxxVector<f64>>;
+
+        type DynApproxBetweenness;
+        fn NewDynApproxBetweenness(
+            g: &Graph,
+            epsilon: f64,
+            delta: f64,
+            store_predecessors: bool,
+            universal_constant: f64,
+        ) -> UniquePtr<DynApproxBetweenness>;
+        fn run(self: Pin<&mut DynApproxBetweenness>) -> Result<()>;
+        fn hasFinished(self: &DynApproxBetweenness) -> bool;
+        fn centralization(self: Pin<&mut DynApproxBetweenness>) -> f64;
+        fn maximum(self: Pin<&mut DynApproxBetweenness>) -> f64;
+        fn score(self: Pin<&mut DynApproxBetweenness>, node: u64) -> f64;
+        fn DynApproxBetweennessRanking(
+            algo: Pin<&mut DynApproxBetweenness>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn DynApproxBetweennessScores(
+            algo: Pin<&mut DynApproxBetweenness>,
+        ) -> UniquePtr<CxxVector<f64>>;
+        fn getNumberOfSamples(self: &DynApproxBetweenness) -> u64;
+        fn DynApproxBetweennessUpdate(
+            algo: Pin<&mut DynApproxBetweenness>,
+            kind: u8,
+            u: u64,
+            v: u64,
+            ew: f64,
+        );
+        fn DynApproxBetweennessUpdateBatch(
+            algo: Pin<&mut DynApproxBetweenness>,
+            kinds: &[u8],
+            us: &[u64],
+            vs: &[u64],
+            ew: &[f64],
+        );
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

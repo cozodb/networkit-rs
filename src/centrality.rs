@@ -2,7 +2,7 @@ use cxx::UniquePtr;
 use miette::IntoDiagnostic;
 
 use crate::{
-    base::Algorithm,
+    base::{Algorithm, DynAlgorithm},
     bridge::{self, *},
     community::ValueIter,
     tools::NodeIter,
@@ -533,5 +533,90 @@ impl Algorithm for DegreeCentrality {
 
     fn has_finished(&self) -> bool {
         self.inner.hasFinished()
+    }
+}
+
+pub struct DynApproxBetweenness {
+    inner: UniquePtr<bridge::DynApproxBetweenness>,
+}
+
+impl DynApproxBetweenness {
+    pub fn new(
+        g: &crate::Graph,
+        epsilon: Option<f64>,
+        delta: Option<f64>,
+        store_predecessors: bool,
+        universal_constant: Option<f64>,
+    ) -> Self {
+        Self {
+            inner: NewDynApproxBetweenness(
+                g,
+                epsilon.unwrap_or(0.01),
+                delta.unwrap_or(0.1),
+                store_predecessors,
+                universal_constant.unwrap_or(1.),
+            ),
+        }
+    }
+    pub fn get_number_of_samples(&self) -> u64 {
+        self.inner.getNumberOfSamples()
+    }
+}
+
+impl Centrality for DynApproxBetweenness {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        DynApproxBetweennessRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: DynApproxBetweennessScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for DynApproxBetweenness {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+impl DynAlgorithm for DynApproxBetweenness {
+    fn update(&mut self, e: crate::base::GraphEvent) {
+        DynApproxBetweennessUpdate(self.inner.pin_mut(), e.kind as u8, e.u, e.v, e.ew)
+    }
+
+    fn update_batch(&mut self, es: &[crate::base::GraphEvent]) {
+        let mut kinds = Vec::with_capacity(es.len());
+        let mut us = Vec::with_capacity(es.len());
+        let mut vs = Vec::with_capacity(es.len());
+        let mut ews = Vec::with_capacity(es.len());
+        for ev in es {
+            kinds.push(ev.kind as u8);
+            us.push(ev.u);
+            vs.push(ev.v);
+            ews.push(ev.ew);
+        }
+        DynApproxBetweennessUpdateBatch(self.inner.pin_mut(), &kinds, &us, &vs, &ews);
     }
 }
