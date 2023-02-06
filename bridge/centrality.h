@@ -20,6 +20,7 @@
 #include <networkit/centrality/EigenvectorCentrality.hpp>
 #include <networkit/centrality/EstimateBetweenness.hpp>
 #include <networkit/centrality/ForestCentrality.hpp>
+#include <networkit/centrality/GedWalk.hpp>
 #include "graph_event.h"
 
 namespace NetworKit
@@ -319,7 +320,7 @@ namespace NetworKit
 
     inline edgeweight DynBetweennessOneNodeComputeScore(DynBetweennessOneNode &algo, uint8_t kind, node u, node v, edgeweight ew)
     {
-        algo.computeScore(toGraphEvent(kind, u, v, ew));
+        return algo.computeScore(toGraphEvent(kind, u, v, ew));
     }
 
     inline void DynBetweennessOneNodeUpdateBatch(DynBetweennessOneNode &algo, rust::Slice<const uint8_t> kinds, rust::Slice<const node> us, rust::Slice<const node> vs, rust::Slice<const edgeweight> ews)
@@ -473,6 +474,51 @@ namespace NetworKit
         return make_unique<vector<double>>(algo.getDiagonal());
     }
 
+    inline unique_ptr<GedWalk> NewGedWalk(
+        const Graph &G, count k, double initEpsilon, double alpha,
+        uint8_t bs, uint8_t gs,
+        double spectralDelta)
+    {
+        GedWalk::BoundStrategy bs_;
+        switch (bs)
+        {
+        case 0:
+            bs_ = GedWalk::BoundStrategy::NO;
+            break;
+        case 1:
+            bs_ = GedWalk::BoundStrategy::SPECTRAL;
+            break;
+        case 2:
+            bs_ = GedWalk::BoundStrategy::GEOMETRIC;
+            break;
+        case 3:
+            bs_ = GedWalk::BoundStrategy::ADAPTIVE_GEOMETRIC;
+            break;
+        default:
+            break;
+        }
+        GedWalk::GreedyStrategy gs_;
+        switch (gs)
+        {
+        case 0:
+            gs_ = GedWalk::GreedyStrategy::LAZY;
+            break;
+        case 1:
+            gs_ = GedWalk::GreedyStrategy::STOCHASTIC;
+            break;
+        default:
+            break;
+        }
+        return make_unique<GedWalk>(G, k, initEpsilon, alpha, bs_, gs_, spectralDelta);
+    }
+    inline unique_ptr<vector<node>> GedWalkGroupMaxGedWalk(const GedWalk &algo)
+    {
+        return make_unique<vector<node>>(algo.groupMaxGedWalk());
+    }
+    inline double GedWalkScoreOfGroup(GedWalk &algo, rust::Slice<const node> group, double epsilon)
+    {
+        return algo.scoreOfGroup(group.begin(), group.end(), epsilon);
+    }
 }
 
 #endif // NK_CENTRALITY_H

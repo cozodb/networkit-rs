@@ -1051,3 +1051,71 @@ impl Algorithm for ForestCentrality {
         self.inner.hasFinished()
     }
 }
+
+pub struct GedWalk {
+    inner: UniquePtr<bridge::GedWalk>,
+}
+
+#[derive(Default, Copy, Clone)]
+#[repr(u8)]
+pub enum GedWalkBoundStrategy {
+    No,
+    Spectral,
+    #[default]
+    Geometric,
+    AdaptiveGeometric,
+}
+
+#[derive(Default, Copy, Clone)]
+#[repr(u8)]
+pub enum GedWalkGreedyStrategy {
+    #[default]
+    Lazy,
+    Stochastic,
+}
+
+impl GedWalk {
+    pub fn new(
+        g: &crate::Graph,
+        k: Option<u64>,
+        init_epsilon: Option<f64>,
+        alpha: Option<f64>,
+        bs: GedWalkBoundStrategy,
+        gs: GedWalkGreedyStrategy,
+        spectral_delta: Option<f64>,
+    ) -> Self {
+        Self {
+            inner: NewGedWalk(
+                g,
+                k.unwrap_or(1),
+                init_epsilon.unwrap_or(0.1),
+                alpha.unwrap_or(1.),
+                bs as u8,
+                gs as u8,
+                spectral_delta.unwrap_or(0.5),
+            ),
+        }
+    }
+    pub fn get_approximate_score(&self) -> f64 {
+        self.inner.getApproximateScore()
+    }
+    pub fn group_max_ged_walk(&self) -> impl Iterator<Item = u64> {
+        NodeIter {
+            nodes: GedWalkGroupMaxGedWalk(&self.inner),
+            at: 0,
+        }
+    }
+    pub fn score_of_group(&mut self, group: &[u64], epsilon: Option<f64>) -> f64 {
+        GedWalkScoreOfGroup(self.inner.pin_mut(), group, epsilon.unwrap_or(0.1))
+    }
+}
+
+impl Algorithm for GedWalk {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}

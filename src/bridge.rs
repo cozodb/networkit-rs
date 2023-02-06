@@ -1105,6 +1105,22 @@ mod ffi {
         fn ForestCentralityGetDiagonal(algo: &ForestCentrality) -> UniquePtr<CxxVector<f64>>;
         fn getNumberOfSamples(self: &ForestCentrality) -> u64;
 
+        type GedWalk;
+        fn NewGedWalk(
+            g: &Graph,
+            k: u64,
+            init_epsilon: f64,
+            alpha: f64,
+            bs: u8,
+            gs: u8,
+            spectral_delta: f64,
+        ) -> UniquePtr<GedWalk>;
+        fn run(self: Pin<&mut GedWalk>) -> Result<()>;
+        fn hasFinished(self: &GedWalk) -> bool;
+        fn getApproximateScore(self: &GedWalk) -> f64;
+        fn GedWalkGroupMaxGedWalk(algo: &GedWalk) -> UniquePtr<CxxVector<u64>>;
+        fn GedWalkScoreOfGroup(algo: Pin<&mut GedWalk>, group: &[u64], epsilon: f64) -> f64;
+
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {
