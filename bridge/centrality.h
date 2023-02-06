@@ -13,6 +13,13 @@
 #include <networkit/centrality/CoreDecomposition.hpp>
 #include <networkit/centrality/DegreeCentrality.hpp>
 #include <networkit/centrality/DynApproxBetweenness.hpp>
+#include <networkit/centrality/DynBetweenness.hpp>
+#include <networkit/centrality/DynBetweennessOneNode.hpp>
+#include <networkit/centrality/DynKatzCentrality.hpp>
+#include <networkit/centrality/DynTopHarmonicCloseness.hpp>
+#include <networkit/centrality/EigenvectorCentrality.hpp>
+#include <networkit/centrality/EstimateBetweenness.hpp>
+#include <networkit/centrality/ForestCentrality.hpp>
 #include "graph_event.h"
 
 namespace NetworKit
@@ -262,6 +269,208 @@ namespace NetworKit
             evs.emplace_back(toGraphEvent(kinds[i], us[i], vs[i], ews[i]));
         }
         algo.updateBatch(evs);
+    }
+
+    inline unique_ptr<DynBetweenness> NewDynBetweenness(
+        const Graph &G)
+    {
+        return make_unique<DynBetweenness>(G);
+    }
+
+    inline void DynBetweennessRanking(DynBetweenness &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> DynBetweennessScores(DynBetweenness &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline void DynBetweennessUpdate(DynBetweenness &algo, uint8_t kind, node u, node v, edgeweight ew)
+    {
+        algo.update(toGraphEvent(kind, u, v, ew));
+    }
+
+    inline void DynBetweennessUpdateBatch(DynBetweenness &algo, rust::Slice<const uint8_t> kinds, rust::Slice<const node> us, rust::Slice<const node> vs, rust::Slice<const edgeweight> ews)
+    {
+        vector<GraphEvent> evs;
+        evs.reserve(kinds.length());
+        for (size_t i = 0; i < kinds.length(); ++i)
+        {
+            evs.emplace_back(toGraphEvent(kinds[i], us[i], vs[i], ews[i]));
+        }
+        algo.updateBatch(evs);
+    }
+
+    inline unique_ptr<DynBetweennessOneNode> NewDynBetweennessOneNode(
+        Graph &G, node x)
+    {
+        return make_unique<DynBetweennessOneNode>(G, x);
+    }
+
+    inline void DynBetweennessOneNodeUpdate(DynBetweennessOneNode &algo, uint8_t kind, node u, node v, edgeweight ew)
+    {
+        algo.update(toGraphEvent(kind, u, v, ew));
+    }
+
+    inline edgeweight DynBetweennessOneNodeComputeScore(DynBetweennessOneNode &algo, uint8_t kind, node u, node v, edgeweight ew)
+    {
+        algo.computeScore(toGraphEvent(kind, u, v, ew));
+    }
+
+    inline void DynBetweennessOneNodeUpdateBatch(DynBetweennessOneNode &algo, rust::Slice<const uint8_t> kinds, rust::Slice<const node> us, rust::Slice<const node> vs, rust::Slice<const edgeweight> ews)
+    {
+        vector<GraphEvent> evs;
+        evs.reserve(kinds.length());
+        for (size_t i = 0; i < kinds.length(); ++i)
+        {
+            evs.emplace_back(toGraphEvent(kinds[i], us[i], vs[i], ews[i]));
+        }
+        algo.updateBatch(evs);
+    }
+
+    inline unique_ptr<DynKatzCentrality> NewDynKatzCentrality(
+        const Graph &G, count k, bool groupOnly = false, double tolerance = 1e-9)
+    {
+        return make_unique<DynKatzCentrality>(G, k, groupOnly, tolerance);
+    }
+
+    inline void DynKatzCentralityRanking(DynKatzCentrality &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> DynKatzCentralityScores(DynKatzCentrality &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<vector<node>> DynKatzCentralityTop(DynKatzCentrality &algo, count n)
+    {
+        return make_unique<vector<node>>(algo.top(n));
+    }
+
+    inline void DynKatzCentralityUpdate(DynKatzCentrality &algo, uint8_t kind, node u, node v, edgeweight ew)
+    {
+        algo.update(toGraphEvent(kind, u, v, ew));
+    }
+
+    inline void DynKatzCentralityUpdateBatch(DynKatzCentrality &algo, rust::Slice<const uint8_t> kinds, rust::Slice<const node> us, rust::Slice<const node> vs, rust::Slice<const edgeweight> ews)
+    {
+        vector<GraphEvent> evs;
+        evs.reserve(kinds.length());
+        for (size_t i = 0; i < kinds.length(); ++i)
+        {
+            evs.emplace_back(toGraphEvent(kinds[i], us[i], vs[i], ews[i]));
+        }
+        algo.updateBatch(evs);
+    }
+
+    inline unique_ptr<DynTopHarmonicCloseness> NewDynTopHarmonicCloseness(
+        const Graph &G, count k = 1, bool useBFSbound = false)
+    {
+        return make_unique<DynTopHarmonicCloseness>(G, k, useBFSbound);
+    }
+
+    inline void DynTopHarmonicClosenessRanking(DynTopHarmonicCloseness &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline void DynTopHarmonicClosenessUpdate(DynTopHarmonicCloseness &algo, uint8_t kind, node u, node v, edgeweight ew)
+    {
+        algo.update(toGraphEvent(kind, u, v, ew));
+    }
+
+    inline void DynTopHarmonicClosenessUpdateBatch(DynTopHarmonicCloseness &algo, rust::Slice<const uint8_t> kinds, rust::Slice<const node> us, rust::Slice<const node> vs, rust::Slice<const edgeweight> ews)
+    {
+        vector<GraphEvent> evs;
+        evs.reserve(kinds.length());
+        for (size_t i = 0; i < kinds.length(); ++i)
+        {
+            evs.emplace_back(toGraphEvent(kinds[i], us[i], vs[i], ews[i]));
+        }
+        algo.updateBatch(evs);
+    }
+
+    inline unique_ptr<vector<node>> DynTopHarmonicClosenessTopkNodesList(DynTopHarmonicCloseness &algo, bool includeTrail)
+    {
+        return make_unique<vector<node>>(algo.topkNodesList(includeTrail));
+    }
+
+    inline unique_ptr<vector<edgeweight>> DynTopHarmonicClosenessTopkScoresList(DynTopHarmonicCloseness &algo, bool includeTrail)
+    {
+        return make_unique<vector<edgeweight>>(algo.topkScoresList(includeTrail));
+    }
+
+    inline unique_ptr<EigenvectorCentrality> NewEigenvectorCentrality(
+        const Graph &G, double tol)
+    {
+        return make_unique<EigenvectorCentrality>(G, tol);
+    }
+    inline void EigenvectorCentralityRanking(EigenvectorCentrality &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> EigenvectorCentralityScores(EigenvectorCentrality &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<EstimateBetweenness> NewEstimateBetweenness(
+        const Graph &G, count nSamples, bool normalized = false,
+        bool parallel_flag = false)
+    {
+        return make_unique<EstimateBetweenness>(G, nSamples, normalized, parallel_flag);
+    }
+    inline void EstimateBetweennessRanking(EstimateBetweenness &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> EstimateBetweennessScores(EstimateBetweenness &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<ForestCentrality> NewForestCentrality(
+        const Graph &G, node root, double epsilon = 0.1, double kappa = 0.3)
+    {
+        return make_unique<ForestCentrality>(G, root, epsilon, kappa);
+    }
+    inline void ForestCentralityRanking(ForestCentrality &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> ForestCentralityScores(ForestCentrality &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<vector<double>> ForestCentralityGetDiagonal(const ForestCentrality &algo)
+    {
+        return make_unique<vector<double>>(algo.getDiagonal());
     }
 
 }

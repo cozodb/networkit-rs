@@ -918,6 +918,193 @@ mod ffi {
             vs: &[u64],
             ew: &[f64],
         );
+
+        type DynBetweenness;
+        fn NewDynBetweenness(g: &Graph) -> UniquePtr<DynBetweenness>;
+        fn run(self: Pin<&mut DynBetweenness>) -> Result<()>;
+        fn hasFinished(self: &DynBetweenness) -> bool;
+        fn centralization(self: Pin<&mut DynBetweenness>) -> f64;
+        fn maximum(self: Pin<&mut DynBetweenness>) -> f64;
+        fn score(self: Pin<&mut DynBetweenness>, node: u64) -> f64;
+        fn DynBetweennessRanking(
+            algo: Pin<&mut DynBetweenness>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn DynBetweennessScores(algo: Pin<&mut DynBetweenness>) -> UniquePtr<CxxVector<f64>>;
+        fn DynBetweennessUpdate(algo: Pin<&mut DynBetweenness>, kind: u8, u: u64, v: u64, ew: f64);
+        fn DynBetweennessUpdateBatch(
+            algo: Pin<&mut DynBetweenness>,
+            kinds: &[u8],
+            us: &[u64],
+            vs: &[u64],
+            ew: &[f64],
+        );
+
+        type DynBetweennessOneNode;
+        fn NewDynBetweennessOneNode(g: Pin<&mut Graph>, x: u64)
+            -> UniquePtr<DynBetweennessOneNode>;
+        fn DynBetweennessOneNodeUpdate(
+            algo: Pin<&mut DynBetweennessOneNode>,
+            kind: u8,
+            u: u64,
+            v: u64,
+            ew: f64,
+        );
+        fn DynBetweennessOneNodeUpdateBatch(
+            algo: Pin<&mut DynBetweennessOneNode>,
+            kinds: &[u8],
+            us: &[u64],
+            vs: &[u64],
+            ew: &[f64],
+        );
+        fn DynBetweennessOneNodeComputeScore(
+            algo: Pin<&mut DynBetweennessOneNode>,
+            kind: u8,
+            u: u64,
+            v: u64,
+            ew: f64,
+        ) -> f64;
+        fn getDistance(self: Pin<&mut DynBetweennessOneNode>, u: u64, v: u64) -> f64;
+        fn getSigma(self: Pin<&mut DynBetweennessOneNode>, u: u64, v: u64) -> f64;
+        fn getSigmax(self: Pin<&mut DynBetweennessOneNode>, u: u64, v: u64) -> f64;
+        fn getbcx(self: Pin<&mut DynBetweennessOneNode>) -> f64;
+        fn run(self: Pin<&mut DynBetweennessOneNode>);
+
+        type DynKatzCentrality;
+        fn NewDynKatzCentrality(
+            g: &Graph,
+            k: u64,
+            group_only: bool,
+            tolerance: f64,
+        ) -> UniquePtr<DynKatzCentrality>;
+        fn areDistinguished(self: Pin<&mut DynKatzCentrality>, u: u64, v: u64) -> bool;
+        fn bound(self: Pin<&mut DynKatzCentrality>, v: u64) -> f64;
+        fn run(self: Pin<&mut DynKatzCentrality>) -> Result<()>;
+        fn hasFinished(self: &DynKatzCentrality) -> bool;
+        fn centralization(self: Pin<&mut DynKatzCentrality>) -> f64;
+        fn maximum(self: Pin<&mut DynKatzCentrality>) -> f64;
+        fn score(self: Pin<&mut DynKatzCentrality>, node: u64) -> f64;
+        fn DynKatzCentralityRanking(
+            algo: Pin<&mut DynKatzCentrality>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn DynKatzCentralityScores(algo: Pin<&mut DynKatzCentrality>) -> UniquePtr<CxxVector<f64>>;
+        fn DynKatzCentralityUpdate(
+            algo: Pin<&mut DynKatzCentrality>,
+            kind: u8,
+            u: u64,
+            v: u64,
+            ew: f64,
+        );
+        fn DynKatzCentralityUpdateBatch(
+            algo: Pin<&mut DynKatzCentrality>,
+            kinds: &[u8],
+            us: &[u64],
+            vs: &[u64],
+            ew: &[f64],
+        );
+        fn DynKatzCentralityTop(
+            algo: Pin<&mut DynKatzCentrality>,
+            n: u64,
+        ) -> UniquePtr<CxxVector<u64>>;
+
+        type DynTopHarmonicCloseness;
+        fn NewDynTopHarmonicCloseness(
+            g: &Graph,
+            k: u64,
+            use_bfs_bound: bool,
+        ) -> UniquePtr<DynTopHarmonicCloseness>;
+        fn run(self: Pin<&mut DynTopHarmonicCloseness>) -> Result<()>;
+        fn hasFinished(self: &DynTopHarmonicCloseness) -> bool;
+        fn DynTopHarmonicClosenessRanking(
+            algo: Pin<&mut DynTopHarmonicCloseness>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn DynTopHarmonicClosenessUpdate(
+            algo: Pin<&mut DynTopHarmonicCloseness>,
+            kind: u8,
+            u: u64,
+            v: u64,
+            ew: f64,
+        );
+        fn DynTopHarmonicClosenessUpdateBatch(
+            algo: Pin<&mut DynTopHarmonicCloseness>,
+            kinds: &[u8],
+            us: &[u64],
+            vs: &[u64],
+            ew: &[f64],
+        );
+        fn reset(self: Pin<&mut DynTopHarmonicCloseness>);
+        fn DynTopHarmonicClosenessTopkNodesList(
+            algo: Pin<&mut DynTopHarmonicCloseness>,
+            include_trail: bool,
+        ) -> UniquePtr<CxxVector<u64>>;
+        fn DynTopHarmonicClosenessTopkScoresList(
+            algo: Pin<&mut DynTopHarmonicCloseness>,
+            include_trail: bool,
+        ) -> UniquePtr<CxxVector<f64>>;
+
+        type EigenvectorCentrality;
+        fn NewEigenvectorCentrality(g: &Graph, tol: f64) -> UniquePtr<EigenvectorCentrality>;
+        fn run(self: Pin<&mut EigenvectorCentrality>) -> Result<()>;
+        fn hasFinished(self: &EigenvectorCentrality) -> bool;
+        fn centralization(self: Pin<&mut EigenvectorCentrality>) -> f64;
+        fn maximum(self: Pin<&mut EigenvectorCentrality>) -> f64;
+        fn score(self: Pin<&mut EigenvectorCentrality>, node: u64) -> f64;
+        fn EigenvectorCentralityRanking(
+            algo: Pin<&mut EigenvectorCentrality>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn EigenvectorCentralityScores(
+            algo: Pin<&mut EigenvectorCentrality>,
+        ) -> UniquePtr<CxxVector<f64>>;
+
+        type EstimateBetweenness;
+        fn NewEstimateBetweenness(
+            g: &Graph,
+            n_samples: u64,
+            normalized: bool,
+            parallel: bool,
+        ) -> UniquePtr<EstimateBetweenness>;
+        fn run(self: Pin<&mut EstimateBetweenness>) -> Result<()>;
+        fn hasFinished(self: &EstimateBetweenness) -> bool;
+        fn centralization(self: Pin<&mut EstimateBetweenness>) -> f64;
+        fn maximum(self: Pin<&mut EstimateBetweenness>) -> f64;
+        fn score(self: Pin<&mut EstimateBetweenness>, node: u64) -> f64;
+        fn EstimateBetweennessRanking(
+            algo: Pin<&mut EstimateBetweenness>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn EstimateBetweennessScores(
+            algo: Pin<&mut EstimateBetweenness>,
+        ) -> UniquePtr<CxxVector<f64>>;
+
+        type ForestCentrality;
+        fn NewForestCentrality(
+            g: &Graph,
+            root: u64,
+            epsilon: f64,
+            kappa: f64,
+        ) -> UniquePtr<ForestCentrality>;
+        fn run(self: Pin<&mut ForestCentrality>) -> Result<()>;
+        fn hasFinished(self: &ForestCentrality) -> bool;
+        fn centralization(self: Pin<&mut ForestCentrality>) -> f64;
+        fn maximum(self: Pin<&mut ForestCentrality>) -> f64;
+        fn score(self: Pin<&mut ForestCentrality>, node: u64) -> f64;
+        fn ForestCentralityRanking(
+            algo: Pin<&mut ForestCentrality>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn ForestCentralityScores(algo: Pin<&mut ForestCentrality>) -> UniquePtr<CxxVector<f64>>;
+        fn ForestCentralityGetDiagonal(algo: &ForestCentrality) -> UniquePtr<CxxVector<f64>>;
+        fn getNumberOfSamples(self: &ForestCentrality) -> u64;
+
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {
