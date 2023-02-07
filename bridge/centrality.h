@@ -21,6 +21,10 @@
 #include <networkit/centrality/EstimateBetweenness.hpp>
 #include <networkit/centrality/ForestCentrality.hpp>
 #include <networkit/centrality/GedWalk.hpp>
+#include <networkit/centrality/GroupCloseness.hpp>
+#include <networkit/centrality/GroupClosenessGrowShrink.hpp>
+#include <networkit/centrality/GroupClosenessLocalSearch.hpp>
+#include <networkit/centrality/GroupClosenessLocalSwaps.hpp>
 #include "graph_event.h"
 
 namespace NetworKit
@@ -518,6 +522,67 @@ namespace NetworKit
     inline double GedWalkScoreOfGroup(GedWalk &algo, rust::Slice<const node> group, double epsilon)
     {
         return algo.scoreOfGroup(group.begin(), group.end(), epsilon);
+    }
+
+    inline unique_ptr<GroupCloseness> NewGroupCloseness(
+        const Graph &G, count k, count H)
+    {
+        return make_unique<GroupCloseness>(G, k, H);
+    }
+
+    inline double GroupClosenessScoreOfGroup(GroupCloseness &algo, rust::Slice<const node> group)
+    {
+        vector<node> gp{group.begin(), group.end()};
+        return algo.scoreOfGroup(gp);
+    }
+
+    inline unique_ptr<vector<node>> GroupClosenessGroupMaxCloseness(GroupCloseness &algo)
+    {
+        return make_unique<vector<node>>(algo.groupMaxCloseness());
+    }
+
+    inline double GroupClosenessComputeFarness(const GroupCloseness &algo, rust::Slice<const node> group, count H)
+    {
+        vector<node> gp{group.begin(), group.end()};
+        return algo.computeFarness(gp, H);
+    }
+
+    inline unique_ptr<GroupClosenessGrowShrink> NewGroupClosenessGrowShrink(
+        const Graph &graph, rust::Slice<const node> group,
+        bool extended = false, count insertions = 0,
+        count maxIterations = 100)
+    {
+        return make_unique<GroupClosenessGrowShrink>(graph, group.begin(), group.end(), extended, insertions, maxIterations);
+    }
+
+    inline unique_ptr<vector<node>> GroupClosenessGrowShrinkGroupMaxCloseness(const GroupClosenessGrowShrink &algo)
+    {
+        return make_unique<vector<node>>(algo.groupMaxCloseness());
+    }
+
+    inline unique_ptr<GroupClosenessLocalSearch> NewGroupClosenessLocalSearch(
+        const Graph &graph, rust::Slice<const node> group,
+        bool runGrowShrink = true,
+        count maxIterations = 100)
+    {
+        return make_unique<GroupClosenessLocalSearch>(graph, group.begin(), group.end(), runGrowShrink, maxIterations);
+    }
+
+    inline unique_ptr<vector<node>> GroupClosenessLocalSearchGroupMaxCloseness(const GroupClosenessLocalSearch &algo)
+    {
+        return make_unique<vector<node>>(algo.groupMaxCloseness());
+    }
+
+    inline unique_ptr<GroupClosenessLocalSwaps> NewGroupClosenessLocalSwaps(
+        const Graph &graph, rust::Slice<const node> group,
+        count maxSwaps)
+    {
+        return make_unique<GroupClosenessLocalSwaps>(graph, group.begin(), group.end(), maxSwaps);
+    }
+
+    inline unique_ptr<vector<node>> GroupClosenessLocalSwapsGroupMaxCloseness(const GroupClosenessLocalSwaps &algo)
+    {
+        return make_unique<vector<node>>(algo.groupMaxCloseness());
     }
 }
 

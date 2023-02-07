@@ -1121,6 +1121,58 @@ mod ffi {
         fn GedWalkGroupMaxGedWalk(algo: &GedWalk) -> UniquePtr<CxxVector<u64>>;
         fn GedWalkScoreOfGroup(algo: Pin<&mut GedWalk>, group: &[u64], epsilon: f64) -> f64;
 
+        type GroupCloseness;
+        fn NewGroupCloseness(g: &Graph, k: u64, h: u64) -> UniquePtr<GroupCloseness>;
+        fn run(self: Pin<&mut GroupCloseness>) -> Result<()>;
+        fn hasFinished(self: &GroupCloseness) -> bool;
+        fn GroupClosenessScoreOfGroup(algo: Pin<&mut GroupCloseness>, group: &[u64]) -> f64;
+        fn GroupClosenessGroupMaxCloseness(
+            algo: Pin<&mut GroupCloseness>,
+        ) -> UniquePtr<CxxVector<u64>>;
+        fn GroupClosenessComputeFarness(algo: &GroupCloseness, group: &[u64], h: u64) -> f64;
+
+        type GroupClosenessGrowShrink;
+        fn NewGroupClosenessGrowShrink(
+            g: &Graph,
+            group: &[u64],
+            extended: bool,
+            insertions: u64,
+            max_iterations: u64,
+        ) -> UniquePtr<GroupClosenessGrowShrink>;
+        fn run(self: Pin<&mut GroupClosenessGrowShrink>) -> Result<()>;
+        fn hasFinished(self: &GroupClosenessGrowShrink) -> bool;
+        fn GroupClosenessGrowShrinkGroupMaxCloseness(
+            algo: &GroupClosenessGrowShrink,
+        ) -> UniquePtr<CxxVector<u64>>;
+        fn numberOfIterations(self: &GroupClosenessGrowShrink) -> u64;
+
+        type GroupClosenessLocalSearch;
+        fn NewGroupClosenessLocalSearch(
+            g: &Graph,
+            group: &[u64],
+            run_grow_shrink: bool,
+            max_iterations: u64,
+        ) -> UniquePtr<GroupClosenessLocalSearch>;
+        fn run(self: Pin<&mut GroupClosenessLocalSearch>) -> Result<()>;
+        fn hasFinished(self: &GroupClosenessLocalSearch) -> bool;
+        fn GroupClosenessLocalSearchGroupMaxCloseness(
+            algo: &GroupClosenessLocalSearch,
+        ) -> UniquePtr<CxxVector<u64>>;
+        fn numberOfIterations(self: &GroupClosenessLocalSearch) -> u64;
+
+        type GroupClosenessLocalSwaps;
+        fn NewGroupClosenessLocalSwaps(
+            g: &Graph,
+            group: &[u64],
+            max_swaps: u64,
+        ) -> UniquePtr<GroupClosenessLocalSwaps>;
+        fn run(self: Pin<&mut GroupClosenessLocalSwaps>) -> Result<()>;
+        fn hasFinished(self: &GroupClosenessLocalSwaps) -> bool;
+        fn GroupClosenessLocalSwapsGroupMaxCloseness(
+            algo: &GroupClosenessLocalSwaps,
+        ) -> UniquePtr<CxxVector<u64>>;
+        fn numberOfSwaps(self: &GroupClosenessLocalSwaps) -> u64;
+
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

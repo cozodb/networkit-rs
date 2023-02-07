@@ -1119,3 +1119,152 @@ impl Algorithm for GedWalk {
         self.inner.hasFinished()
     }
 }
+
+pub struct GroupCloseness {
+    inner: UniquePtr<bridge::GroupCloseness>,
+}
+
+impl GroupCloseness {
+    pub fn new(g: &crate::Graph, k: Option<u64>, h: Option<u64>) -> Self {
+        Self {
+            inner: NewGroupCloseness(g, k.unwrap_or(1), h.unwrap_or(0)),
+        }
+    }
+    pub fn score_of_group(&mut self, group: &[u64]) -> f64 {
+        GroupClosenessScoreOfGroup(self.inner.pin_mut(), group)
+    }
+    pub fn group_max_closeness(&mut self) -> impl Iterator<Item = u64> {
+        NodeIter {
+            at: 0,
+            nodes: GroupClosenessGroupMaxCloseness(self.inner.pin_mut()),
+        }
+    }
+    pub fn compute_farness(&self, group: &[u64], h: Option<u64>) -> f64 {
+        GroupClosenessComputeFarness(&self.inner, group, h.unwrap_or(u64::MAX))
+    }
+}
+
+impl Algorithm for GroupCloseness {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct GroupClosenessGrowShrink {
+    inner: UniquePtr<bridge::GroupClosenessGrowShrink>,
+}
+
+impl GroupClosenessGrowShrink {
+    pub fn new(
+        g: &crate::Graph,
+        group: &[u64],
+        extended: bool,
+        insertions: Option<u64>,
+        max_iterations: Option<u64>,
+    ) -> Self {
+        Self {
+            inner: NewGroupClosenessGrowShrink(
+                g,
+                group,
+                extended,
+                insertions.unwrap_or(0),
+                max_iterations.unwrap_or(100),
+            ),
+        }
+    }
+    pub fn number_of_iterations(&self) -> u64 {
+        self.inner.numberOfIterations()
+    }
+    pub fn group_max_closeness(&mut self) -> impl Iterator<Item = u64> {
+        NodeIter {
+            at: 0,
+            nodes: GroupClosenessGrowShrinkGroupMaxCloseness(&self.inner),
+        }
+    }
+}
+
+impl Algorithm for GroupClosenessGrowShrink {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct GroupClosenessLocalSearch {
+    inner: UniquePtr<bridge::GroupClosenessLocalSearch>,
+}
+
+impl GroupClosenessLocalSearch {
+    pub fn new(
+        g: &crate::Graph,
+        group: &[u64],
+        run_grow_shrink: bool,
+        max_iterations: Option<u64>,
+    ) -> Self {
+        Self {
+            inner: NewGroupClosenessLocalSearch(
+                g,
+                group,
+                run_grow_shrink,
+                max_iterations.unwrap_or(u64::MAX),
+            ),
+        }
+    }
+    pub fn number_of_iterations(&self) -> u64 {
+        self.inner.numberOfIterations()
+    }
+    pub fn group_max_closeness(&mut self) -> impl Iterator<Item = u64> {
+        NodeIter {
+            at: 0,
+            nodes: GroupClosenessLocalSearchGroupMaxCloseness(&self.inner),
+        }
+    }
+}
+
+impl Algorithm for GroupClosenessLocalSearch {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct GroupClosenessLocalSwaps {
+    inner: UniquePtr<bridge::GroupClosenessLocalSwaps>,
+}
+
+impl GroupClosenessLocalSwaps {
+    pub fn new(g: &crate::Graph, group: &[u64], max_swaps: Option<u64>) -> Self {
+        Self {
+            inner: NewGroupClosenessLocalSwaps(g, group, max_swaps.unwrap_or(100)),
+        }
+    }
+    pub fn number_of_swaps(&self) -> u64 {
+        self.inner.numberOfSwaps()
+    }
+    pub fn group_max_closeness(&mut self) -> impl Iterator<Item = u64> {
+        NodeIter {
+            at: 0,
+            nodes: GroupClosenessLocalSwapsGroupMaxCloseness(&self.inner),
+        }
+    }
+}
+
+impl Algorithm for GroupClosenessLocalSwaps {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
