@@ -25,6 +25,17 @@
 #include <networkit/centrality/GroupClosenessGrowShrink.hpp>
 #include <networkit/centrality/GroupClosenessLocalSearch.hpp>
 #include <networkit/centrality/GroupClosenessLocalSwaps.hpp>
+#include <networkit/centrality/GroupDegree.hpp>
+#include <networkit/centrality/GroupHarmonicCloseness.hpp>
+#include <networkit/centrality/HarmonicCloseness.hpp>
+#include <networkit/centrality/KPathCentrality.hpp>
+#include <networkit/centrality/KadabraBetweenness.hpp>
+#include <networkit/centrality/KatzCentrality.hpp>
+#include <networkit/centrality/LaplacianCentrality.hpp>
+#include <networkit/centrality/LocalClusteringCoefficient.hpp>
+#include <networkit/centrality/LocalPartitionCoverage.hpp>
+#include <networkit/centrality/LocalSquareClusteringCoefficient.hpp>
+#include <networkit/centrality/PageRank.hpp>
 #include "graph_event.h"
 
 namespace NetworKit
@@ -583,6 +594,254 @@ namespace NetworKit
     inline unique_ptr<vector<node>> GroupClosenessLocalSwapsGroupMaxCloseness(const GroupClosenessLocalSwaps &algo)
     {
         return make_unique<vector<node>>(algo.groupMaxCloseness());
+    }
+
+    inline unique_ptr<GroupDegree> NewGroupDegree(
+        const Graph &graph, count k = 1, bool countGroupNodes = true)
+    {
+        return make_unique<GroupDegree>(graph, k, countGroupNodes);
+    }
+
+    inline unique_ptr<vector<node>> GroupDegreeGroupMaxDegree(GroupDegree &algo)
+    {
+        return make_unique<vector<node>>(algo.groupMaxDegree());
+    }
+
+    inline double GroupDegreeScoreOfGroup(const GroupDegree &algo, rust::Slice<const node> group)
+    {
+        vector<node> gp{group.begin(), group.end()};
+        return algo.scoreOfGroup(gp);
+    }
+
+    inline unique_ptr<GroupHarmonicCloseness> NewGroupHarmonicCloseness(
+        const Graph &G, count k)
+    {
+        return make_unique<GroupHarmonicCloseness>(G, k);
+    }
+
+    inline double GroupHarmonicClosenessScoreOfGroup(const Graph &graph, rust::Slice<const node> group)
+    {
+        return GroupHarmonicCloseness::scoreOfGroup(graph, group.begin(), group.end());
+    }
+
+    inline unique_ptr<vector<node>> GroupHarmonicClosenessGroupMaxHarmonicCloseness(GroupHarmonicCloseness &algo)
+    {
+        return make_unique<vector<node>>(algo.groupMaxHarmonicCloseness());
+    }
+
+    inline unique_ptr<HarmonicCloseness> NewHarmonicCloseness(
+        const Graph &G, bool normalized)
+    {
+        return make_unique<HarmonicCloseness>(G, normalized);
+    }
+    inline void HarmonicClosenessRanking(HarmonicCloseness &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> HarmonicClosenessScores(HarmonicCloseness &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<KPathCentrality> NewKPathCentrality(
+        const Graph &G, double alpha = 0.2, count k = 0)
+    {
+        return make_unique<KPathCentrality>(G, alpha, k);
+    }
+    inline void KPathCentralityRanking(KPathCentrality &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> KPathCentralityScores(KPathCentrality &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<KadabraBetweenness> NewKadabraBetweenness(
+        const Graph &G, double err = 0.01, double delta = 0.1,
+        bool deterministic = false, count k = 0, count unionSample = 0,
+        count startFactor = 100)
+    {
+        return make_unique<KadabraBetweenness>(G, err, delta, deterministic, k, unionSample, startFactor);
+    }
+    inline void KadabraBetweennessRanking(KadabraBetweenness &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> KadabraBetweennessScores(KadabraBetweenness &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<vector<node>> KadabraBetweennessTopkNodesList(KadabraBetweenness &algo)
+    {
+        return make_unique<vector<node>>(algo.topkNodesList());
+    }
+
+    inline unique_ptr<vector<edgeweight>> KadabraBetweennessTopkScoresList(KadabraBetweenness &algo)
+    {
+        return make_unique<vector<edgeweight>>(algo.topkScoresList());
+    }
+
+    inline unique_ptr<KatzCentrality> NewKatzCentrality(
+        const Graph &G, double alpha = 0, double beta = 0.1, double tol = 1e-8)
+    {
+        return make_unique<KatzCentrality>(G, alpha, beta, tol);
+    }
+    inline void KatzCentralityRanking(KatzCentrality &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> KatzCentralityScores(KatzCentrality &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline void KatzCentralitySetEdgeDirection(KatzCentrality &algo, bool isOut)
+    {
+        if (isOut)
+        {
+            algo.edgeDirection = EdgeDirection::OUT_EDGES;
+        }
+        else
+        {
+            algo.edgeDirection = EdgeDirection::IN_EDGES;
+        }
+    }
+
+    inline unique_ptr<LaplacianCentrality> NewLaplacianCentrality(
+        const Graph &G, bool normalized)
+    {
+        return make_unique<LaplacianCentrality>(G, normalized);
+    }
+    inline void LaplacianCentralityRanking(LaplacianCentrality &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> LaplacianCentralityScores(LaplacianCentrality &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<LocalClusteringCoefficient> NewLocalClusteringCoefficient(
+        const Graph &G, bool turbo)
+    {
+        return make_unique<LocalClusteringCoefficient>(G, turbo);
+    }
+    inline void LocalClusteringCoefficientRanking(LocalClusteringCoefficient &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> LocalClusteringCoefficientScores(LocalClusteringCoefficient &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<LocalPartitionCoverage> NewLocalPartitionCoverage(
+        const Graph &G, const Partition &p)
+    {
+        return make_unique<LocalPartitionCoverage>(G, p);
+    }
+    inline void LocalPartitionCoverageRanking(LocalPartitionCoverage &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> LocalPartitionCoverageScores(LocalPartitionCoverage &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<LocalSquareClusteringCoefficient> NewLocalSquareClusteringCoefficient(
+        const Graph &G)
+    {
+        return make_unique<LocalSquareClusteringCoefficient>(G);
+    }
+    inline void LocalSquareClusteringCoefficientRanking(LocalSquareClusteringCoefficient &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> LocalSquareClusteringCoefficientScores(LocalSquareClusteringCoefficient &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<PageRank> NewPageRank(
+        const Graph &G, double damp = 0.85, double tol = 1e-8, bool normalized = false, bool distribute_sinks = false)
+    {
+        PageRank::SinkHandling sh;
+        if (distribute_sinks)
+        {
+            sh = PageRank::SinkHandling::NO_SINK_HANDLING;
+        }
+        else
+        {
+            sh = PageRank::SinkHandling::DISTRIBUTE_SINKS;
+        }
+        return make_unique<PageRank>(G, damp, tol, normalized, sh);
+    }
+    inline void PageRankRanking(PageRank &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> PageRankScores(PageRank &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline void PageRankSetMaxIterations(PageRank &algo, count limit)
+    {
+        algo.maxIterations = limit;
+    }
+
+    inline void PageRankSetNorm(PageRank &algo, uint8_t n)
+    {
+        PageRank::Norm norm;
+        switch (n)
+        {
+        case 0:
+            norm = PageRank::Norm::L1_NORM;
+            break;
+        case 1:
+            norm = PageRank::Norm::L2_NORM;
+            break;
+        }
+        algo.norm = norm;
     }
 }
 

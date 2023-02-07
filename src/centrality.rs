@@ -2,7 +2,7 @@ use cxx::UniquePtr;
 use miette::IntoDiagnostic;
 
 use crate::{
-    base::{Algorithm, DynAlgorithm},
+    base::{Algorithm, DynAlgorithm, EdgeDirection},
     bridge::{self, *},
     community::ValueIter,
     tools::NodeIter,
@@ -1260,6 +1260,581 @@ impl GroupClosenessLocalSwaps {
 }
 
 impl Algorithm for GroupClosenessLocalSwaps {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct GroupDegree {
+    inner: UniquePtr<bridge::GroupDegree>,
+}
+
+impl GroupDegree {
+    pub fn new(g: &crate::Graph, k: Option<u64>, count_group_nodes: bool) -> Self {
+        Self {
+            inner: NewGroupDegree(g, k.unwrap_or(1), count_group_nodes),
+        }
+    }
+    pub fn get_score(&mut self) -> u64 {
+        self.inner.pin_mut().getScore()
+    }
+    pub fn score_of_group(&self, group: &[u64]) -> f64 {
+        GroupDegreeScoreOfGroup(&self.inner, group)
+    }
+    pub fn group_max_degree(&mut self) -> impl Iterator<Item = u64> {
+        NodeIter {
+            at: 0,
+            nodes: GroupDegreeGroupMaxDegree(self.inner.pin_mut()),
+        }
+    }
+}
+
+impl Algorithm for GroupDegree {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct GroupHarmonicCloseness {
+    inner: UniquePtr<bridge::GroupHarmonicCloseness>,
+}
+
+impl GroupHarmonicCloseness {
+    pub fn new(g: &crate::Graph, k: Option<u64>) -> Self {
+        Self {
+            inner: NewGroupHarmonicCloseness(g, k.unwrap_or(1)),
+        }
+    }
+    pub fn score_of_group(g: &crate::Graph, group: &[u64]) -> f64 {
+        GroupHarmonicClosenessScoreOfGroup(g, group)
+    }
+    pub fn group_max_harmonic_degree(&mut self) -> impl Iterator<Item = u64> {
+        NodeIter {
+            at: 0,
+            nodes: GroupHarmonicClosenessGroupMaxHarmonicCloseness(self.inner.pin_mut()),
+        }
+    }
+}
+
+impl Algorithm for GroupHarmonicCloseness {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct HarmonicCloseness {
+    inner: UniquePtr<bridge::HarmonicCloseness>,
+}
+
+impl HarmonicCloseness {
+    pub fn new(g: &crate::Graph, normalized: bool) -> Self {
+        Self {
+            inner: NewHarmonicCloseness(g, normalized),
+        }
+    }
+}
+
+impl Centrality for HarmonicCloseness {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        HarmonicClosenessRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: HarmonicClosenessScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for HarmonicCloseness {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct KPathCentrality {
+    inner: UniquePtr<bridge::KPathCentrality>,
+}
+
+impl KPathCentrality {
+    pub fn new(g: &crate::Graph, alpha: Option<f64>, k: Option<u64>) -> Self {
+        Self {
+            inner: NewKPathCentrality(g, alpha.unwrap_or(0.2), k.unwrap_or(0)),
+        }
+    }
+}
+
+impl Centrality for KPathCentrality {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        KPathCentralityRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: KPathCentralityScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for KPathCentrality {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct KadabraBetweenness {
+    inner: UniquePtr<bridge::KadabraBetweenness>,
+}
+
+impl KadabraBetweenness {
+    pub fn new(
+        g: &crate::Graph,
+        err: Option<f64>,
+        delta: Option<f64>,
+        deterministic: bool,
+        k: Option<u64>,
+        union_sample: Option<u64>,
+        start_factor: Option<u64>,
+    ) -> Self {
+        Self {
+            inner: NewKadabraBetweenness(
+                g,
+                err.unwrap_or(0.01),
+                delta.unwrap_or(0.1),
+                deterministic,
+                k.unwrap_or(0),
+                union_sample.unwrap_or(0),
+                start_factor.unwrap_or(100),
+            ),
+        }
+    }
+
+    pub fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        KadabraBetweennessRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    pub fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: KadabraBetweennessScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+
+    pub fn get_number_of_iterations(&self) -> u64 {
+        self.inner.getNumberOfIterations()
+    }
+
+    pub fn get_omega(&self) -> f64 {
+        self.inner.getOmega()
+    }
+
+    pub fn top_k_nodes_list(&mut self) -> impl Iterator<Item = u64> {
+        NodeIter {
+            at: 0,
+            nodes: KadabraBetweennessTopkNodesList(self.inner.pin_mut()),
+        }
+    }
+    pub fn top_k_scores_list(&mut self) -> impl Iterator<Item = f64> {
+        ValueIter {
+            at: 0,
+            inner: KadabraBetweennessTopkScoresList(self.inner.pin_mut()),
+        }
+    }
+}
+
+impl Algorithm for KadabraBetweenness {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct KatzCentrality {
+    inner: UniquePtr<bridge::KatzCentrality>,
+}
+
+impl KatzCentrality {
+    pub fn new(g: &crate::Graph, alpha: Option<f64>, beta: Option<f64>, tol: Option<f64>) -> Self {
+        Self {
+            inner: NewKatzCentrality(
+                g,
+                alpha.unwrap_or(0.),
+                beta.unwrap_or(0.2),
+                tol.unwrap_or(1e-8),
+            ),
+        }
+    }
+    pub fn set_edge_direction(&mut self, dir: EdgeDirection) {
+        KatzCentralitySetEdgeDirection(self.inner.pin_mut(), dir == EdgeDirection::OutEdges)
+    }
+}
+
+impl Centrality for KatzCentrality {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        KatzCentralityRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: KatzCentralityScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for KatzCentrality {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct LaplacianCentrality {
+    inner: UniquePtr<bridge::LaplacianCentrality>,
+}
+
+impl LaplacianCentrality {
+    pub fn new(g: &crate::Graph, normalized: bool) -> Self {
+        Self {
+            inner: NewLaplacianCentrality(g, normalized),
+        }
+    }
+}
+
+impl Centrality for LaplacianCentrality {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        LaplacianCentralityRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: LaplacianCentralityScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for LaplacianCentrality {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct LocalClusteringCoefficient {
+    inner: UniquePtr<bridge::LocalClusteringCoefficient>,
+}
+
+impl LocalClusteringCoefficient {
+    pub fn new(g: &crate::Graph, turbo: bool) -> Self {
+        Self {
+            inner: NewLocalClusteringCoefficient(g, turbo),
+        }
+    }
+}
+
+impl Centrality for LocalClusteringCoefficient {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        LocalClusteringCoefficientRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: LocalClusteringCoefficientScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for LocalClusteringCoefficient {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct LocalPartitionCoverage {
+    inner: UniquePtr<bridge::LocalPartitionCoverage>,
+}
+
+impl LocalPartitionCoverage {
+    pub fn new(g: &crate::Graph, partition: &crate::Partition) -> Self {
+        Self {
+            inner: NewLocalPartitionCoverage(g, partition),
+        }
+    }
+}
+
+impl Centrality for LocalPartitionCoverage {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        LocalPartitionCoverageRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: LocalPartitionCoverageScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for LocalPartitionCoverage {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct LocalSquareClusteringCoefficient {
+    inner: UniquePtr<bridge::LocalSquareClusteringCoefficient>,
+}
+
+impl LocalSquareClusteringCoefficient {
+    pub fn new(g: &crate::Graph) -> Self {
+        Self {
+            inner: NewLocalSquareClusteringCoefficient(g),
+        }
+    }
+}
+
+impl Centrality for LocalSquareClusteringCoefficient {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        LocalSquareClusteringCoefficientRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: LocalSquareClusteringCoefficientScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for LocalSquareClusteringCoefficient {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct PageRank {
+    inner: UniquePtr<bridge::PageRank>,
+}
+
+#[derive(Default)]
+#[repr(u8)]
+pub enum PageRankNorm {
+    L1 = 0,
+    #[default]
+    L2 = 1,
+}
+
+impl PageRank {
+    pub fn new(
+        g: &crate::Graph,
+        damp: Option<f64>,
+        tol: Option<f64>,
+        normalized: bool,
+        distribute_sinks: bool,
+    ) -> Self {
+        Self {
+            inner: NewPageRank(
+                g,
+                damp.unwrap_or(0.85),
+                tol.unwrap_or(1e-9),
+                normalized,
+                distribute_sinks,
+            ),
+        }
+    }
+    pub fn set_max_iterations(&mut self, max_iter: u64) {
+        PageRankSetMaxIterations(self.inner.pin_mut(), max_iter)
+    }
+    pub fn set_norm(&mut self, norm: PageRankNorm) {
+        PageRankSetNorm(self.inner.pin_mut(), norm as u8)
+    }
+    pub fn number_of_iterations(&self) -> u64 {
+        self.inner.numberOfIterations()
+    }
+}
+
+impl Centrality for PageRank {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        PageRankRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: PageRankScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for PageRank {
     fn run(&mut self) -> miette::Result<()> {
         self.inner.pin_mut().run().into_diagnostic()
     }

@@ -41,3 +41,10 @@ pub trait DynAlgorithm {
     fn update(&mut self, e: GraphEvent);
     fn update_batch(&mut self, es: &[GraphEvent]);
 }
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[repr(u8)]
+pub enum EdgeDirection {
+    InEdges = 0,
+    OutEdges = 1,
+}

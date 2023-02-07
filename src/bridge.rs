@@ -1173,6 +1173,192 @@ mod ffi {
         ) -> UniquePtr<CxxVector<u64>>;
         fn numberOfSwaps(self: &GroupClosenessLocalSwaps) -> u64;
 
+        type GroupDegree;
+        fn NewGroupDegree(g: &Graph, k: u64, count_group_nodes: bool) -> UniquePtr<GroupDegree>;
+        fn run(self: Pin<&mut GroupDegree>) -> Result<()>;
+        fn hasFinished(self: &GroupDegree) -> bool;
+        fn GroupDegreeGroupMaxDegree(algo: Pin<&mut GroupDegree>) -> UniquePtr<CxxVector<u64>>;
+        fn GroupDegreeScoreOfGroup(algo: &GroupDegree, group: &[u64]) -> f64;
+        fn getScore(self: Pin<&mut GroupDegree>) -> u64;
+
+        type GroupHarmonicCloseness;
+        fn NewGroupHarmonicCloseness(g: &Graph, k: u64) -> UniquePtr<GroupHarmonicCloseness>;
+        fn run(self: Pin<&mut GroupHarmonicCloseness>) -> Result<()>;
+        fn hasFinished(self: &GroupHarmonicCloseness) -> bool;
+        fn GroupHarmonicClosenessGroupMaxHarmonicCloseness(
+            algo: Pin<&mut GroupHarmonicCloseness>,
+        ) -> UniquePtr<CxxVector<u64>>;
+        fn GroupHarmonicClosenessScoreOfGroup(g: &Graph, group: &[u64]) -> f64;
+
+        type HarmonicCloseness;
+        fn NewHarmonicCloseness(g: &Graph, normalized: bool) -> UniquePtr<HarmonicCloseness>;
+        fn run(self: Pin<&mut HarmonicCloseness>) -> Result<()>;
+        fn hasFinished(self: &HarmonicCloseness) -> bool;
+        fn centralization(self: Pin<&mut HarmonicCloseness>) -> f64;
+        fn maximum(self: Pin<&mut HarmonicCloseness>) -> f64;
+        fn score(self: Pin<&mut HarmonicCloseness>, node: u64) -> f64;
+        fn HarmonicClosenessRanking(
+            algo: Pin<&mut HarmonicCloseness>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn HarmonicClosenessScores(algo: Pin<&mut HarmonicCloseness>) -> UniquePtr<CxxVector<f64>>;
+
+        type KPathCentrality;
+        fn NewKPathCentrality(g: &Graph, alpha: f64, k: u64) -> UniquePtr<KPathCentrality>;
+        fn run(self: Pin<&mut KPathCentrality>) -> Result<()>;
+        fn hasFinished(self: &KPathCentrality) -> bool;
+        fn centralization(self: Pin<&mut KPathCentrality>) -> f64;
+        fn maximum(self: Pin<&mut KPathCentrality>) -> f64;
+        fn score(self: Pin<&mut KPathCentrality>, node: u64) -> f64;
+        fn KPathCentralityRanking(
+            algo: Pin<&mut KPathCentrality>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn KPathCentralityScores(algo: Pin<&mut KPathCentrality>) -> UniquePtr<CxxVector<f64>>;
+
+        type KadabraBetweenness;
+        fn NewKadabraBetweenness(
+            g: &Graph,
+            err: f64,
+            delta: f64,
+            deterministic: bool,
+            k: u64,
+            union_sample: u64,
+            start_factor: u64,
+        ) -> UniquePtr<KadabraBetweenness>;
+        fn run(self: Pin<&mut KadabraBetweenness>) -> Result<()>;
+        fn hasFinished(self: &KadabraBetweenness) -> bool;
+        fn KadabraBetweennessRanking(
+            algo: Pin<&mut KadabraBetweenness>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn KadabraBetweennessScores(
+            algo: Pin<&mut KadabraBetweenness>,
+        ) -> UniquePtr<CxxVector<f64>>;
+        fn getNumberOfIterations(self: &KadabraBetweenness) -> u64;
+        fn getOmega(self: &KadabraBetweenness) -> f64;
+
+        fn KadabraBetweennessTopkNodesList(
+            algo: Pin<&mut KadabraBetweenness>,
+        ) -> UniquePtr<CxxVector<u64>>;
+        fn KadabraBetweennessTopkScoresList(
+            algo: Pin<&mut KadabraBetweenness>,
+        ) -> UniquePtr<CxxVector<f64>>;
+
+        type KatzCentrality;
+        fn NewKatzCentrality(
+            g: &Graph,
+            alpha: f64,
+            beta: f64,
+            tol: f64,
+        ) -> UniquePtr<KatzCentrality>;
+        fn run(self: Pin<&mut KatzCentrality>) -> Result<()>;
+        fn hasFinished(self: &KatzCentrality) -> bool;
+        fn centralization(self: Pin<&mut KatzCentrality>) -> f64;
+        fn maximum(self: Pin<&mut KatzCentrality>) -> f64;
+        fn score(self: Pin<&mut KatzCentrality>, node: u64) -> f64;
+        fn KatzCentralityRanking(
+            algo: Pin<&mut KatzCentrality>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn KatzCentralityScores(algo: Pin<&mut KatzCentrality>) -> UniquePtr<CxxVector<f64>>;
+        fn KatzCentralitySetEdgeDirection(algo: Pin<&mut KatzCentrality>, is_out: bool);
+
+        type LaplacianCentrality;
+        fn NewLaplacianCentrality(g: &Graph, normalized: bool) -> UniquePtr<LaplacianCentrality>;
+        fn run(self: Pin<&mut LaplacianCentrality>) -> Result<()>;
+        fn hasFinished(self: &LaplacianCentrality) -> bool;
+        fn centralization(self: Pin<&mut LaplacianCentrality>) -> f64;
+        fn maximum(self: Pin<&mut LaplacianCentrality>) -> f64;
+        fn score(self: Pin<&mut LaplacianCentrality>, node: u64) -> f64;
+        fn LaplacianCentralityRanking(
+            algo: Pin<&mut LaplacianCentrality>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn LaplacianCentralityScores(
+            algo: Pin<&mut LaplacianCentrality>,
+        ) -> UniquePtr<CxxVector<f64>>;
+
+        type LocalClusteringCoefficient;
+        fn NewLocalClusteringCoefficient(
+            g: &Graph,
+            turbo: bool,
+        ) -> UniquePtr<LocalClusteringCoefficient>;
+        fn run(self: Pin<&mut LocalClusteringCoefficient>) -> Result<()>;
+        fn hasFinished(self: &LocalClusteringCoefficient) -> bool;
+        fn centralization(self: Pin<&mut LocalClusteringCoefficient>) -> f64;
+        fn maximum(self: Pin<&mut LocalClusteringCoefficient>) -> f64;
+        fn score(self: Pin<&mut LocalClusteringCoefficient>, node: u64) -> f64;
+        fn LocalClusteringCoefficientRanking(
+            algo: Pin<&mut LocalClusteringCoefficient>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn LocalClusteringCoefficientScores(
+            algo: Pin<&mut LocalClusteringCoefficient>,
+        ) -> UniquePtr<CxxVector<f64>>;
+
+        type LocalPartitionCoverage;
+        fn NewLocalPartitionCoverage(
+            g: &Graph,
+            partition: &Partition,
+        ) -> UniquePtr<LocalPartitionCoverage>;
+        fn run(self: Pin<&mut LocalPartitionCoverage>) -> Result<()>;
+        fn hasFinished(self: &LocalPartitionCoverage) -> bool;
+        fn centralization(self: Pin<&mut LocalPartitionCoverage>) -> f64;
+        fn maximum(self: Pin<&mut LocalPartitionCoverage>) -> f64;
+        fn score(self: Pin<&mut LocalPartitionCoverage>, node: u64) -> f64;
+        fn LocalPartitionCoverageRanking(
+            algo: Pin<&mut LocalPartitionCoverage>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn LocalPartitionCoverageScores(
+            algo: Pin<&mut LocalPartitionCoverage>,
+        ) -> UniquePtr<CxxVector<f64>>;
+
+        type LocalSquareClusteringCoefficient;
+        fn NewLocalSquareClusteringCoefficient(
+            g: &Graph,
+        ) -> UniquePtr<LocalSquareClusteringCoefficient>;
+        fn run(self: Pin<&mut LocalSquareClusteringCoefficient>) -> Result<()>;
+        fn hasFinished(self: &LocalSquareClusteringCoefficient) -> bool;
+        fn centralization(self: Pin<&mut LocalSquareClusteringCoefficient>) -> f64;
+        fn maximum(self: Pin<&mut LocalSquareClusteringCoefficient>) -> f64;
+        fn score(self: Pin<&mut LocalSquareClusteringCoefficient>, node: u64) -> f64;
+        fn LocalSquareClusteringCoefficientRanking(
+            algo: Pin<&mut LocalSquareClusteringCoefficient>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn LocalSquareClusteringCoefficientScores(
+            algo: Pin<&mut LocalSquareClusteringCoefficient>,
+        ) -> UniquePtr<CxxVector<f64>>;
+
+        type PageRank;
+        fn NewPageRank(
+            g: &Graph,
+            damp: f64,
+            tol: f64,
+            normalized: bool,
+            distribute_sinks: bool,
+        ) -> UniquePtr<PageRank>;
+        fn run(self: Pin<&mut PageRank>) -> Result<()>;
+        fn hasFinished(self: &PageRank) -> bool;
+        fn centralization(self: Pin<&mut PageRank>) -> f64;
+        fn maximum(self: Pin<&mut PageRank>) -> f64;
+        fn score(self: Pin<&mut PageRank>, node: u64) -> f64;
+        fn PageRankRanking(algo: Pin<&mut PageRank>, ks: &mut Vec<u64>, vs: &mut Vec<f64>);
+        fn PageRankScores(algo: Pin<&mut PageRank>) -> UniquePtr<CxxVector<f64>>;
+        fn numberOfIterations(self: &PageRank) -> u64;
+        fn PageRankSetMaxIterations(algo: Pin<&mut PageRank>, max_iter: u64);
+        fn PageRankSetNorm(algo: Pin<&mut PageRank>, norm: u8);
+
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

@@ -11,6 +11,7 @@ fn main() {
     };
 
     builder.flag_if_supported("-fopenmp");
+    builder.flag_if_supported("-Wno-deprecated-declarations"); // dependent library decided to use sprintf
 
     builder
         .files(["bridge/bridge.cpp"])
