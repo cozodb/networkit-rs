@@ -1843,3 +1843,213 @@ impl Algorithm for PageRank {
         self.inner.hasFinished()
     }
 }
+
+pub struct PermanenceCentrality {
+    inner: UniquePtr<bridge::PermanenceCentrality>,
+}
+
+impl PermanenceCentrality {
+    pub fn new(g: &crate::Graph, p: &crate::Partition) -> Self {
+        Self {
+            inner: NewPermanenceCentrality(g, p),
+        }
+    }
+    pub fn get_permanence(&mut self, u: u64) -> f64 {
+        self.inner.pin_mut().getPermanence(u)
+    }
+    pub fn get_intra_clustering(&mut self, u: u64) -> f64 {
+        self.inner.pin_mut().getIntraClustering(u)
+    }
+}
+
+impl Algorithm for PermanenceCentrality {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct Sfigality {
+    inner: UniquePtr<bridge::Sfigality>,
+}
+
+impl Sfigality {
+    pub fn new(g: &crate::Graph) -> Self {
+        Self {
+            inner: NewSfigality(g),
+        }
+    }
+}
+
+impl Centrality for Sfigality {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        SfigalityRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: SfigalityScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for Sfigality {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct SpanningEdgeCentrality {
+    inner: UniquePtr<bridge::SpanningEdgeCentrality>,
+}
+
+impl SpanningEdgeCentrality {
+    pub fn new(g: &crate::Graph, tol: Option<f64>) -> Self {
+        Self {
+            inner: NewSpanningEdgeCentrality(g, tol.unwrap_or(0.1)),
+        }
+    }
+    pub fn run_approximation(&mut self) {
+        self.inner.pin_mut().runApproximation()
+    }
+    pub fn run_parallel_approximation(&mut self) {
+        self.inner.pin_mut().runParallelApproximation()
+    }
+}
+
+impl Centrality for SpanningEdgeCentrality {
+    fn centralization(&mut self) -> f64 {
+        self.inner.pin_mut().centralization()
+    }
+
+    fn maximum(&mut self) -> f64 {
+        self.inner.pin_mut().maximum()
+    }
+
+    fn ranking(&mut self) -> RankIter {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        SpanningEdgeCentralityRanking(self.inner.pin_mut(), &mut ks, &mut vs);
+        RankIter { ks, vs, at: 0 }
+    }
+
+    fn score(&mut self, node: u64) -> f64 {
+        self.inner.pin_mut().score(node)
+    }
+
+    fn scores(&mut self) -> ValueIter {
+        ValueIter {
+            inner: SpanningEdgeCentralityScores(self.inner.pin_mut()),
+            at: 0,
+        }
+    }
+}
+
+impl Algorithm for SpanningEdgeCentrality {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct TopCloseness {
+    inner: UniquePtr<bridge::TopCloseness>,
+}
+
+impl TopCloseness {
+    pub fn new(g: &crate::Graph, k: u64, first_heu: bool, sec_heu: bool) -> Self {
+        Self {
+            inner: NewTopCloseness(g, k, first_heu, sec_heu),
+        }
+    }
+
+    pub fn top_k_nodes_list(&mut self, include_trail: bool) -> impl Iterator<Item = u64> {
+        NodeIter {
+            at: 0,
+            nodes: TopClosenessTopkNodesList(self.inner.pin_mut(), include_trail),
+        }
+    }
+    pub fn top_k_scores_list(&mut self, include_trail: bool) -> impl Iterator<Item = f64> {
+        ValueIter {
+            at: 0,
+            inner: TopClosenessTopkScoresList(self.inner.pin_mut(), include_trail),
+        }
+    }
+    pub fn restrict_top_k_computation_to_nodes(&mut self, nodes: &[u64]) {
+        TopClosenessRestrictTopKComputationToNodes(self.inner.pin_mut(), nodes)
+    }
+}
+
+impl Algorithm for TopCloseness {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+pub struct TopHarmonicCloseness {
+    inner: UniquePtr<bridge::TopHarmonicCloseness>,
+}
+
+impl TopHarmonicCloseness {
+    pub fn new(g: &crate::Graph, k: u64, use_nb_bound: bool) -> Self {
+        Self {
+            inner: NewTopHarmonicCloseness(g, k, use_nb_bound),
+        }
+    }
+
+    pub fn top_k_nodes_list(&mut self, include_trail: bool) -> impl Iterator<Item = u64> {
+        NodeIter {
+            at: 0,
+            nodes: TopHarmonicClosenessTopkNodesList(self.inner.pin_mut(), include_trail),
+        }
+    }
+    pub fn top_k_scores_list(&mut self, include_trail: bool) -> impl Iterator<Item = f64> {
+        ValueIter {
+            at: 0,
+            inner: TopHarmonicClosenessTopkScoresList(self.inner.pin_mut(), include_trail),
+        }
+    }
+    pub fn restrict_top_k_computation_to_nodes(&mut self, nodes: &[u64]) {
+        TopHarmonicClosenessRestrictTopKComputationToNodes(self.inner.pin_mut(), nodes)
+    }
+}
+
+impl Algorithm for TopHarmonicCloseness {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}

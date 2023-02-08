@@ -36,6 +36,11 @@
 #include <networkit/centrality/LocalPartitionCoverage.hpp>
 #include <networkit/centrality/LocalSquareClusteringCoefficient.hpp>
 #include <networkit/centrality/PageRank.hpp>
+#include <networkit/centrality/PermanenceCentrality.hpp>
+#include <networkit/centrality/Sfigality.hpp>
+#include <networkit/centrality/SpanningEdgeCentrality.hpp>
+#include <networkit/centrality/TopCloseness.hpp>
+#include <networkit/centrality/TopHarmonicCloseness.hpp>
 #include "graph_event.h"
 
 namespace NetworKit
@@ -842,6 +847,91 @@ namespace NetworKit
             break;
         }
         algo.norm = norm;
+    }
+
+    inline unique_ptr<PermanenceCentrality> NewPermanenceCentrality(const Graph &G, const Partition &P)
+    {
+        return make_unique<PermanenceCentrality>(G, P);
+    }
+
+    inline unique_ptr<Sfigality> NewSfigality(
+        const Graph &G)
+    {
+        return make_unique<Sfigality>(G);
+    }
+    inline void SfigalityRanking(Sfigality &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> SfigalityScores(Sfigality &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<SpanningEdgeCentrality> NewSpanningEdgeCentrality(
+        const Graph &G, double tol)
+    {
+        return make_unique<SpanningEdgeCentrality>(G, tol);
+    }
+    inline void SpanningEdgeCentralityRanking(SpanningEdgeCentrality &algo, rust::Vec<node> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.ranking())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+    inline unique_ptr<vector<double>> SpanningEdgeCentralityScores(SpanningEdgeCentrality &algo)
+    {
+        return make_unique<vector<double>>(algo.scores());
+    }
+
+    inline unique_ptr<TopCloseness> NewTopCloseness(
+        const Graph &G, count k = 1, bool first_heu = true, bool sec_heu = true)
+    {
+        return make_unique<TopCloseness>(G, k, first_heu, sec_heu);
+    }
+
+    inline unique_ptr<vector<node>> TopClosenessTopkNodesList(TopCloseness &algo, bool includeTrail)
+    {
+        return make_unique<vector<node>>(algo.topkNodesList(includeTrail));
+    }
+
+    inline unique_ptr<vector<edgeweight>> TopClosenessTopkScoresList(TopCloseness &algo, bool includeTrail)
+    {
+        return make_unique<vector<edgeweight>>(algo.topkScoresList(includeTrail));
+    }
+
+    inline void TopClosenessRestrictTopKComputationToNodes(TopCloseness &algo, rust::Slice<const node> nodes)
+    {
+        vector<node> ns{nodes.begin(), nodes.end()};
+        algo.restrictTopKComputationToNodes(ns);
+    }
+
+    inline unique_ptr<TopHarmonicCloseness> NewTopHarmonicCloseness(
+        const Graph &G, count k = 1, bool useNBbound = false)
+    {
+        return make_unique<TopHarmonicCloseness>(G, k, useNBbound);
+    }
+
+    inline unique_ptr<vector<node>> TopHarmonicClosenessTopkNodesList(TopHarmonicCloseness &algo, bool includeTrail)
+    {
+        return make_unique<vector<node>>(algo.topkNodesList(includeTrail));
+    }
+
+    inline unique_ptr<vector<edgeweight>> TopHarmonicClosenessTopkScoresList(TopHarmonicCloseness &algo, bool includeTrail)
+    {
+        return make_unique<vector<edgeweight>>(algo.topkScoresList(includeTrail));
+    }
+
+    inline void TopHarmonicClosenessRestrictTopKComputationToNodes(TopHarmonicCloseness &algo, rust::Slice<const node> nodes)
+    {
+        vector<node> ns{nodes.begin(), nodes.end()};
+        algo.restrictTopKComputationToNodes(ns);
     }
 }
 

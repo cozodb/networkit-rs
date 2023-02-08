@@ -1359,6 +1359,81 @@ mod ffi {
         fn PageRankSetMaxIterations(algo: Pin<&mut PageRank>, max_iter: u64);
         fn PageRankSetNorm(algo: Pin<&mut PageRank>, norm: u8);
 
+        type PermanenceCentrality;
+        fn NewPermanenceCentrality(g: &Graph, p: &Partition) -> UniquePtr<PermanenceCentrality>;
+        fn run(self: Pin<&mut PermanenceCentrality>) -> Result<()>;
+        fn hasFinished(self: &PermanenceCentrality) -> bool;
+        fn getPermanence(self: Pin<&mut PermanenceCentrality>, u: u64) -> f64;
+        fn getIntraClustering(self: Pin<&mut PermanenceCentrality>, u: u64) -> f64;
+
+        type Sfigality;
+        fn NewSfigality(g: &Graph) -> UniquePtr<Sfigality>;
+        fn run(self: Pin<&mut Sfigality>) -> Result<()>;
+        fn hasFinished(self: &Sfigality) -> bool;
+        fn centralization(self: Pin<&mut Sfigality>) -> f64;
+        fn maximum(self: Pin<&mut Sfigality>) -> f64;
+        fn score(self: Pin<&mut Sfigality>, node: u64) -> f64;
+        fn SfigalityRanking(algo: Pin<&mut Sfigality>, ks: &mut Vec<u64>, vs: &mut Vec<f64>);
+        fn SfigalityScores(algo: Pin<&mut Sfigality>) -> UniquePtr<CxxVector<f64>>;
+
+        type SpanningEdgeCentrality;
+        fn NewSpanningEdgeCentrality(g: &Graph, tol: f64) -> UniquePtr<SpanningEdgeCentrality>;
+        fn run(self: Pin<&mut SpanningEdgeCentrality>) -> Result<()>;
+        fn hasFinished(self: &SpanningEdgeCentrality) -> bool;
+        fn centralization(self: Pin<&mut SpanningEdgeCentrality>) -> f64;
+        fn maximum(self: Pin<&mut SpanningEdgeCentrality>) -> f64;
+        fn score(self: Pin<&mut SpanningEdgeCentrality>, node: u64) -> f64;
+        fn SpanningEdgeCentralityRanking(
+            algo: Pin<&mut SpanningEdgeCentrality>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
+        fn SpanningEdgeCentralityScores(
+            algo: Pin<&mut SpanningEdgeCentrality>,
+        ) -> UniquePtr<CxxVector<f64>>;
+        fn runApproximation(self: Pin<&mut SpanningEdgeCentrality>);
+        fn runParallelApproximation(self: Pin<&mut SpanningEdgeCentrality>);
+
+        type TopCloseness;
+        fn NewTopCloseness(
+            g: &Graph,
+            k: u64,
+            first_heu: bool,
+            sec_heu: bool,
+        ) -> UniquePtr<TopCloseness>;
+        fn run(self: Pin<&mut TopCloseness>) -> Result<()>;
+        fn hasFinished(self: &TopCloseness) -> bool;
+        fn TopClosenessTopkNodesList(
+            algo: Pin<&mut TopCloseness>,
+            include_trail: bool,
+        ) -> UniquePtr<CxxVector<u64>>;
+        fn TopClosenessTopkScoresList(
+            algo: Pin<&mut TopCloseness>,
+            include_trail: bool,
+        ) -> UniquePtr<CxxVector<f64>>;
+        fn TopClosenessRestrictTopKComputationToNodes(algo: Pin<&mut TopCloseness>, nodes: &[u64]);
+
+        type TopHarmonicCloseness;
+        fn NewTopHarmonicCloseness(
+            g: &Graph,
+            k: u64,
+            use_nb_bound: bool,
+        ) -> UniquePtr<TopHarmonicCloseness>;
+        fn run(self: Pin<&mut TopHarmonicCloseness>) -> Result<()>;
+        fn hasFinished(self: &TopHarmonicCloseness) -> bool;
+        fn TopHarmonicClosenessTopkNodesList(
+            algo: Pin<&mut TopHarmonicCloseness>,
+            include_trail: bool,
+        ) -> UniquePtr<CxxVector<u64>>;
+        fn TopHarmonicClosenessTopkScoresList(
+            algo: Pin<&mut TopHarmonicCloseness>,
+            include_trail: bool,
+        ) -> UniquePtr<CxxVector<f64>>;
+        fn TopHarmonicClosenessRestrictTopKComputationToNodes(
+            algo: Pin<&mut TopHarmonicCloseness>,
+            nodes: &[u64],
+        );
+
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

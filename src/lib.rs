@@ -5,6 +5,7 @@ pub mod centrality;
 pub mod clique;
 pub mod coarsening;
 pub mod community;
+pub mod component;
 pub mod cover;
 pub mod graph;
 pub mod partition;
