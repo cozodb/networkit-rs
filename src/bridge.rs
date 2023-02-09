@@ -1434,6 +1434,109 @@ mod ffi {
             nodes: &[u64],
         );
 
+        // ---- COMPONENTS ----
+
+        type BiconnectedComponents;
+        fn NewBiconnectedComponents(g: &Graph,) -> UniquePtr<BiconnectedComponents>;
+        fn run(self: Pin<&mut BiconnectedComponents>) -> Result<()>;
+        fn hasFinished(self: &BiconnectedComponents) -> bool;
+        fn numberOfComponents(self: &BiconnectedComponents) -> u64;
+        fn BiconnectedComponentsGetComponentSizes(algo: &BiconnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn BiconnectedComponentsGetComponents(algo: &BiconnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn BiconnectedComponentsGetComponentOfNode(algo: &BiconnectedComponents, u: u64, vs: &mut Vec<u64>);
+
+        type ConnectedComponents;
+        fn NewConnectedComponents(g: &Graph,) -> UniquePtr<ConnectedComponents>;
+        fn run(self: Pin<&mut ConnectedComponents>) -> Result<()>;
+        fn hasFinished(self: &ConnectedComponents) -> bool;
+        fn numberOfComponents(self: &ConnectedComponents) -> u64;
+        fn ConnectedComponentsGetComponentSizes(algo: &ConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn ConnectedComponentsGetComponents(algo: &ConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn ConnectedComponentsExtractLargestConnectedComponent(g: &Graph, compact_graph: bool) -> UniquePtr<Graph>;
+        fn componentOfNode(self: &ConnectedComponents, u: u64) -> u64;
+        fn ConnectedComponentsGetPartition(algo: &ConnectedComponents) -> UniquePtr<Partition>;
+
+        type DynConnectedComponents;
+        fn NewDynConnectedComponents(g: &Graph,) -> UniquePtr<DynConnectedComponents>;
+        fn run(self: Pin<&mut DynConnectedComponents>) -> Result<()>;
+        fn hasFinished(self: &DynConnectedComponents) -> bool;
+        fn numberOfComponents(self: &DynConnectedComponents) -> u64;
+        fn DynConnectedComponentsGetComponentSizes(algo: &DynConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn DynConnectedComponentsGetComponents(algo: &DynConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn componentOfNode(self: &DynConnectedComponents, u: u64) -> u64;
+        fn DynConnectedComponentsGetPartition(algo: &DynConnectedComponents) -> UniquePtr<Partition>;
+        fn DynConnectedComponentsUpdate(
+            algo: Pin<&mut DynConnectedComponents>,
+            kind: u8,
+            u: u64,
+            v: u64,
+            ew: f64,
+        );
+        fn DynConnectedComponentsUpdateBatch(
+            algo: Pin<&mut DynConnectedComponents>,
+            kinds: &[u8],
+            us: &[u64],
+            vs: &[u64],
+            ew: &[f64],
+        );
+
+
+        type DynWeaklyConnectedComponents;
+        fn NewDynWeaklyConnectedComponents(g: &Graph,) -> UniquePtr<DynWeaklyConnectedComponents>;
+        fn run(self: Pin<&mut DynWeaklyConnectedComponents>) -> Result<()>;
+        fn hasFinished(self: &DynWeaklyConnectedComponents) -> bool;
+        fn numberOfComponents(self: &DynWeaklyConnectedComponents) -> u64;
+        fn DynWeaklyConnectedComponentsGetComponentSizes(algo: &DynWeaklyConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn DynWeaklyConnectedComponentsGetComponents(algo: &DynWeaklyConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn componentOfNode(self: &DynWeaklyConnectedComponents, u: u64) -> u64;
+        fn DynWeaklyConnectedComponentsGetPartition(algo: &DynWeaklyConnectedComponents) -> UniquePtr<Partition>;
+        fn DynWeaklyConnectedComponentsUpdate(
+            algo: Pin<&mut DynWeaklyConnectedComponents>,
+            kind: u8,
+            u: u64,
+            v: u64,
+            ew: f64,
+        );
+        fn DynWeaklyConnectedComponentsUpdateBatch(
+            algo: Pin<&mut DynWeaklyConnectedComponents>,
+            kinds: &[u8],
+            us: &[u64],
+            vs: &[u64],
+            ew: &[f64],
+        );
+
+
+
+        type ParallelConnectedComponents;
+        fn NewParallelConnectedComponents(g: &Graph, coarsening: bool) -> UniquePtr<ParallelConnectedComponents>;
+        fn run(self: Pin<&mut ParallelConnectedComponents>) -> Result<()>;
+        fn hasFinished(self: &ParallelConnectedComponents) -> bool;
+        fn numberOfComponents(self: &ParallelConnectedComponents) -> u64;
+        fn ParallelConnectedComponentsGetComponentSizes(algo: &ParallelConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn ParallelConnectedComponentsGetComponents(algo: &ParallelConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn componentOfNode(self: &ParallelConnectedComponents, u: u64) -> u64;
+        fn ParallelConnectedComponentsGetPartition(algo: &ParallelConnectedComponents) -> UniquePtr<Partition>;
+
+
+        type StronglyConnectedComponents;
+        fn NewStronglyConnectedComponents(g: &Graph) -> UniquePtr<StronglyConnectedComponents>;
+        fn run(self: Pin<&mut StronglyConnectedComponents>) -> Result<()>;
+        fn hasFinished(self: &StronglyConnectedComponents) -> bool;
+        fn numberOfComponents(self: &StronglyConnectedComponents) -> u64;
+        fn StronglyConnectedComponentsGetComponentSizes(algo: &StronglyConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn StronglyConnectedComponentsGetComponents(algo: &StronglyConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn componentOfNode(self: &StronglyConnectedComponents, u: u64) -> u64;
+        fn StronglyConnectedComponentsGetPartition(algo: &StronglyConnectedComponents) -> UniquePtr<Partition>;
+
+        type WeaklyConnectedComponents;
+        fn NewWeaklyConnectedComponents(g: &Graph) -> UniquePtr<WeaklyConnectedComponents>;
+        fn run(self: Pin<&mut WeaklyConnectedComponents>) -> Result<()>;
+        fn hasFinished(self: &WeaklyConnectedComponents) -> bool;
+        fn numberOfComponents(self: &WeaklyConnectedComponents) -> u64;
+        fn WeaklyConnectedComponentsGetComponentSizes(algo: &WeaklyConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn WeaklyConnectedComponentsGetComponents(algo: &WeaklyConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn componentOfNode(self: &WeaklyConnectedComponents, u: u64) -> u64;
+        fn WeaklyConnectedComponentsGetPartition(algo: &WeaklyConnectedComponents) -> UniquePtr<Partition>;
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {
