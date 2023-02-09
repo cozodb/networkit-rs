@@ -1537,6 +1537,17 @@ mod ffi {
         fn WeaklyConnectedComponentsGetComponents(algo: &WeaklyConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
         fn componentOfNode(self: &WeaklyConnectedComponents, u: u64) -> u64;
         fn WeaklyConnectedComponentsGetPartition(algo: &WeaklyConnectedComponents) -> UniquePtr<Partition>;
+
+        // ---- CORRELATION ----
+
+        type Assortativity;
+        fn NewAssortativity(g: &Graph, attributes: &[f64]) -> UniquePtr<Assortativity>;
+        fn run(self: Pin<&mut Assortativity>) -> Result<()>;
+        fn hasFinished(self: &Assortativity) -> bool;
+        fn getCoefficient(self: &Assortativity) -> f64;
+
+        // ---- DISTANCE ----
+        
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

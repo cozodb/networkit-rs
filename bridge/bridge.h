@@ -12,5 +12,7 @@
 #include <clique.h>
 #include <centrality.h>
 #include <component.h>
+#include <correlation.h>
+#include <distance.h>
 
 #endif // NK_BRIDGE_H
