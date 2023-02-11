@@ -9,6 +9,8 @@ mod ffi {
     unsafe extern "C++" {
         include!("bridge.h");
 
+        fn MakeWeightVector(wt: &[f64]) -> UniquePtr<CxxVector<f64>>;
+
         // ---- GRAPH ----
 
         pub type Graph;
@@ -1548,6 +1550,183 @@ mod ffi {
 
         // ---- DISTANCE ----
         
+        type APSP;
+        fn NewAPSP(g: &Graph) -> UniquePtr<APSP>;
+        fn run(self: Pin<&mut APSP>) -> Result<()>;
+        fn hasFinished(self: &APSP) -> bool;
+        fn getDistance(self: &APSP, u: u64, v: u64) -> f64;
+        fn APSPGetDistances(algo: &APSP, wt: &mut Vec<f64>) -> u64;
+
+        type AStar;
+        fn NewAStar(g: &Graph, heu: &CxxVector<f64>, src: u64, dst: u64, store_pred: bool) -> UniquePtr<AStar>;
+        fn run(self: Pin<&mut AStar>) -> Result<()>;
+        fn hasFinished(self: &AStar) -> bool;
+        fn AStarGetPath(algo: &AStar) -> UniquePtr<CxxVector<u64>>;
+        fn AStarGetPredecessors(algo: &AStar) -> UniquePtr<CxxVector<u64>>;
+        fn getDistance(self: &AStar) -> f64;
+        fn AStarGetDistances(algo: &AStar) -> UniquePtr<CxxVector<f64>>;
+        fn setSource(self: Pin<&mut AStar>, src: u64);
+        fn setTarget(self: Pin<&mut AStar>, dst: u64);
+        fn AStarSetTargets(algo: Pin<&mut AStar>, dst: &[u64]);
+        fn AStarGetTargetIndexMap(algo: &AStar, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        
+        type AdamicAdarDistance;
+        fn NewAdamicAdarDistance(g: &Graph) -> UniquePtr<AdamicAdarDistance>;
+        fn preprocess(self: Pin<&mut AdamicAdarDistance>);
+        fn distance(self: Pin<&mut AdamicAdarDistance>, u: u64, v: u64) -> f64;
+        fn AdamicAdarDistanceGetEdgeScores(algo: &AdamicAdarDistance) -> UniquePtr<CxxVector<f64>>;
+
+
+        type AlgebraicDistance;
+        fn NewAlgebraicDistance(g: &Graph, n_systems: u64, n_iterations: u64, omega: f64, norm: u64, with_edge_scores: bool) -> UniquePtr<AlgebraicDistance>;
+        fn preprocess(self: Pin<&mut AlgebraicDistance>);
+        fn distance(self: Pin<&mut AlgebraicDistance>, u: u64, v: u64) -> f64;
+        fn AlgebraicDistanceGetEdgeScores(algo: &AlgebraicDistance) -> UniquePtr<CxxVector<f64>>;
+
+        type AllSimplePaths;
+        fn NewAllSimplePaths(g: &Graph, src: u64, dst: u64, cut_off: u64) -> UniquePtr<AllSimplePaths>;
+        fn run(self: Pin<&mut AllSimplePaths>) -> Result<()>;
+        fn hasFinished(self: &AllSimplePaths) -> bool;
+        fn numberOfSimplePaths(self: Pin<&mut AllSimplePaths>) -> u64;
+        fn AllSimplePathsGetAllSimplePaths(algo: Pin<&mut AllSimplePaths>, vs: &mut Vec<u64>);
+
+
+        type BFS;
+        fn NewBFS(g: &Graph, src: u64, store_paths: bool, store_nodes_sorted_by_distance: bool, dst: u64) -> UniquePtr<BFS>;
+        fn run(self: Pin<&mut BFS>) -> Result<()>;
+        fn hasFinished(self: &BFS) -> bool;
+        fn distance(self: &BFS, t: u64) -> f64;
+        fn BFSGetDistances(algo: Pin<&mut BFS>) -> UniquePtr<CxxVector<f64>>;
+        fn _numberOfPaths(self: &BFS, t: u64) -> f64;
+        fn BFSGetPredecessors(algo: &BFS, t: u64) -> UniquePtr<CxxVector<u64>>;
+        fn BFSGetPath(algo: &BFS, t: u64, forward: bool) -> UniquePtr<CxxVector<u64>>;
+        fn BFSGetPaths(algo: &BFS, t: u64, forward: bool, vs: &mut Vec<u64>);
+        fn BFSGetNodeSortedByDistance(algo: &BFS) -> UniquePtr<CxxVector<u64>>;
+        fn getReachableNodes(self: &BFS) -> u64;
+        fn setSource(self: Pin<&mut BFS>, src: u64);
+        fn setTarget(self: Pin<&mut BFS>, dst: u64);
+        fn getSumOfDistances(self: &BFS) -> f64;
+
+
+        type BidirectionalBFS;
+        fn NewBidirectionalBFS(g: &Graph, src: u64, dst: u64, store_pred: bool) -> UniquePtr<BidirectionalBFS>;
+        fn run(self: Pin<&mut BidirectionalBFS>) -> Result<()>;
+        fn hasFinished(self: &BidirectionalBFS) -> bool;
+        fn BidirectionalBFSGetPath(algo: &BidirectionalBFS) -> UniquePtr<CxxVector<u64>>;
+        fn BidirectionalBFSGetPredecessors(algo: &BidirectionalBFS) -> UniquePtr<CxxVector<u64>>;
+        fn getDistance(self: &BidirectionalBFS) -> f64;
+        fn BidirectionalBFSGetDistances(algo: &BidirectionalBFS) -> UniquePtr<CxxVector<f64>>;
+        fn setSource(self: Pin<&mut BidirectionalBFS>, src: u64);
+        fn setTarget(self: Pin<&mut BidirectionalBFS>, dst: u64);
+        fn BidirectionalBFSSetTargets(algo: Pin<&mut BidirectionalBFS>, dst: &[u64]);
+        fn BidirectionalBFSGetTargetIndexMap(algo: &BidirectionalBFS, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        
+
+        type BidirectionalDijkstra;
+        fn NewBidirectionalDijkstra(g: &Graph, src: u64, dst: u64, store_pred: bool) -> UniquePtr<BidirectionalDijkstra>;
+        fn run(self: Pin<&mut BidirectionalDijkstra>) -> Result<()>;
+        fn hasFinished(self: &BidirectionalDijkstra) -> bool;
+        fn BidirectionalDijkstraGetPath(algo: &BidirectionalDijkstra) -> UniquePtr<CxxVector<u64>>;
+        fn BidirectionalDijkstraGetPredecessors(algo: &BidirectionalDijkstra) -> UniquePtr<CxxVector<u64>>;
+        fn getDistance(self: &BidirectionalDijkstra) -> f64;
+        fn BidirectionalDijkstraGetDistances(algo: &BidirectionalDijkstra) -> UniquePtr<CxxVector<f64>>;
+        fn setSource(self: Pin<&mut BidirectionalDijkstra>, src: u64);
+        fn setTarget(self: Pin<&mut BidirectionalDijkstra>, dst: u64);
+        fn BidirectionalDijkstraSetTargets(algo: Pin<&mut BidirectionalDijkstra>, dst: &[u64]);
+        fn BidirectionalDijkstraGetTargetIndexMap(algo: &BidirectionalDijkstra, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        
+        type CommuteTimeDistance;
+        fn NewCommuteTimeDistance(g: &Graph, tol: f64) -> UniquePtr<CommuteTimeDistance>;
+        fn run(self: Pin<&mut CommuteTimeDistance>) -> Result<()>;
+        fn hasFinished(self: &CommuteTimeDistance) -> bool;
+        fn runApproximation(self: Pin<&mut CommuteTimeDistance>);
+        fn runParallelApproximation(self: Pin<&mut CommuteTimeDistance>);
+        fn getSetupTime(self: &CommuteTimeDistance) -> u64;
+        fn runSinglePair(self: Pin<&mut CommuteTimeDistance>, u: u64, v: u64) -> f64;
+        fn distance(self: Pin<&mut CommuteTimeDistance>, u: u64, v: u64) -> f64;
+        fn runSingleSource(self: Pin<&mut CommuteTimeDistance>, u: u64) -> f64;
+
+        type Diameter;
+        fn NewDiameter(g: &Graph, algo_t: u8, error: f64, n_samples: u64) -> UniquePtr<Diameter>;
+        fn run(self: Pin<&mut Diameter>) -> Result<()>;
+        fn hasFinished(self: &Diameter) -> bool;
+        fn DiameterGetDiameter(algo: &Diameter, lower: &mut u64, upper: &mut u64);
+
+
+
+        type Dijkstra;
+        fn NewDijkstra(g: &Graph, src: u64, store_paths: bool, store_nodes_sorted_by_distance: bool, dst: u64) -> UniquePtr<Dijkstra>;
+        fn run(self: Pin<&mut Dijkstra>) -> Result<()>;
+        fn hasFinished(self: &Dijkstra) -> bool;
+        fn distance(self: &Dijkstra, t: u64) -> f64;
+        fn DijkstraGetDistances(algo: Pin<&mut Dijkstra>) -> UniquePtr<CxxVector<f64>>;
+        fn _numberOfPaths(self: &Dijkstra, t: u64) -> f64;
+        fn DijkstraGetPredecessors(algo: &Dijkstra, t: u64) -> UniquePtr<CxxVector<u64>>;
+        fn DijkstraGetPath(algo: &Dijkstra, t: u64, forward: bool) -> UniquePtr<CxxVector<u64>>;
+        fn DijkstraGetPaths(algo: &Dijkstra, t: u64, forward: bool, vs: &mut Vec<u64>);
+        fn DijkstraGetNodeSortedByDistance(algo: &Dijkstra) -> UniquePtr<CxxVector<u64>>;
+        fn getReachableNodes(self: &Dijkstra) -> u64;
+        fn setSource(self: Pin<&mut Dijkstra>, src: u64);
+        fn setTarget(self: Pin<&mut Dijkstra>, dst: u64);
+        fn getSumOfDistances(self: &Dijkstra) -> f64;
+
+
+        type DynAPSP;
+        fn NewDynAPSP(g: Pin<&mut Graph>) -> UniquePtr<DynAPSP>;
+        fn run(self: Pin<&mut DynAPSP>) -> Result<()>;
+        fn hasFinished(self: &DynAPSP) -> bool;
+        fn getDistance(self: &DynAPSP, u: u64, v: u64) -> f64;
+        fn DynAPSPGetDistances(algo: &DynAPSP, wt: &mut Vec<f64>) -> u64;
+        fn DynAPSPUpdate(
+            algo: Pin<&mut DynAPSP>,
+            kind: u8,
+            u: u64,
+            v: u64,
+            ew: f64,
+        );
+        fn DynAPSPUpdateBatch(
+            algo: Pin<&mut DynAPSP>,
+            kinds: &[u8],
+            us: &[u64],
+            vs: &[u64],
+            ew: &[f64],
+        );
+
+
+
+        type DynBFS;
+        fn NewDynBFS(g: &Graph, src: u64, store_predecessors: bool) -> UniquePtr<DynBFS>;
+        fn run(self: Pin<&mut DynBFS>) -> Result<()>;
+        fn hasFinished(self: &DynBFS) -> bool;
+        fn distance(self: &DynBFS, t: u64) -> f64;
+        fn DynBFSGetDistances(algo: Pin<&mut DynBFS>) -> UniquePtr<CxxVector<f64>>;
+        fn _numberOfPaths(self: &DynBFS, t: u64) -> f64;
+        fn DynBFSGetPredecessors(algo: &DynBFS, t: u64) -> UniquePtr<CxxVector<u64>>;
+        fn DynBFSGetPath(algo: &DynBFS, t: u64, forward: bool) -> UniquePtr<CxxVector<u64>>;
+        fn DynBFSGetPaths(algo: &DynBFS, t: u64, forward: bool, vs: &mut Vec<u64>);
+        fn DynBFSGetNodeSortedByDistance(algo: &DynBFS) -> UniquePtr<CxxVector<u64>>;
+        fn getReachableNodes(self: &DynBFS) -> u64;
+        fn setSource(self: Pin<&mut DynBFS>, src: u64);
+        fn setTarget(self: Pin<&mut DynBFS>, dst: u64);
+        fn getSumOfDistances(self: &DynBFS) -> f64;
+        fn DynBFSUpdate(
+            algo: Pin<&mut DynBFS>,
+            kind: u8,
+            u: u64,
+            v: u64,
+            ew: f64,
+        );
+        fn DynBFSUpdateBatch(
+            algo: Pin<&mut DynBFS>,
+            kinds: &[u8],
+            us: &[u64],
+            vs: &[u64],
+            ew: &[f64],
+        );
+        fn modified(self: Pin<&mut DynBFS>) -> bool;
+        fn setTargetNode(self: Pin<&mut DynBFS>, t: u64);
+
+        fn EccentricityGetValue(g: &Graph, u: u64, fartherest: &mut u64, dist: &mut u64);
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

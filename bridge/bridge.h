@@ -15,4 +15,9 @@
 #include <correlation.h>
 #include <distance.h>
 
+namespace NetworKit
+{
+    unique_ptr<vector<edgeweight>> MakeWeightVector(rust::Slice<const edgeweight> wt);
+}
+
 #endif // NK_BRIDGE_H

@@ -4,5 +4,11 @@
 
 #include "bridge.h"
 
-// we need something here otherwise some compilers will complain
-void nk_null() {}
+namespace NetworKit
+{
+    unique_ptr<vector<edgeweight>> MakeWeightVector(rust::Slice<const edgeweight> wt)
+    {
+        vector<edgeweight> v{wt.begin(), wt.end()};
+        return make_unique<vector<edgeweight>>(v);
+    }
+}
