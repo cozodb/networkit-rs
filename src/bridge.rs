@@ -1982,6 +1982,20 @@ mod ffi {
         fn run(self: Pin<&mut Node2Vec>) -> Result<()>;
         fn hasFinished(self: &Node2Vec) -> bool;
         fn Node2VecGetFeatures(algo: &Node2Vec, ret: &mut Vec<f64>);
+
+        // ---- FLOW ----
+
+        type EdmondsKarp;
+        fn NewEdmondsKarp(g: &Graph, source: u64, sink: u64) -> UniquePtr<EdmondsKarp>;
+        fn run(self: Pin<&mut EdmondsKarp>) -> Result<()>;
+        fn hasFinished(self: &EdmondsKarp) -> bool;
+        fn getMaxFlow(self: &EdmondsKarp) -> f64;
+        fn EdmondsKarpGetSourceSet(algo: &EdmondsKarp) -> UniquePtr<CxxVector<u64>>;
+        fn getFlow(self: &EdmondsKarp, u: u64, v: u64) -> f64;
+        #[rust_name = "getEdgeFlow"]
+        fn getFlow(self: &EdmondsKarp, e: u64) -> f64;
+        fn EdmondsKarpGetFlowVector(algo: &EdmondsKarp) -> UniquePtr<CxxVector<f64>>;
+
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

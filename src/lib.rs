@@ -10,6 +10,7 @@ pub mod correlation;
 pub mod cover;
 pub mod distance;
 pub mod embedding;
+pub mod flow;
 pub mod graph;
 pub mod partition;
 pub mod scd;
