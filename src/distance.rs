@@ -822,3 +822,472 @@ impl Eccentricity {
         (fartherest, dist)
     }
 }
+
+
+
+pub struct EffectiveDiameter {
+    inner: UniquePtr<bridge::EffectiveDiameter>,
+}
+
+impl EffectiveDiameter {
+    pub fn new(g: &crate::Graph, ratio: Option<f64>) -> Self {
+        let inner = NewEffectiveDiameter(g, ratio.unwrap_or(0.9));
+        Self {
+            inner
+        }
+    }
+    pub fn get_effective_diameter(&self) -> f64 {
+        self.inner.getEffectiveDiameter()
+    }
+}
+
+impl Algorithm for EffectiveDiameter {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+
+
+pub struct EffectiveDiameterApproximation {
+    inner: UniquePtr<bridge::EffectiveDiameterApproximation>,
+}
+
+impl EffectiveDiameterApproximation {
+    pub fn new(g: &crate::Graph, ratio: Option<f64>, k: Option<u64>, r: Option<u64>) -> Self {
+        let inner = NewEffectiveDiameterApproximation(g, ratio.unwrap_or(0.9), k.unwrap_or(64), r.unwrap_or(7));
+        Self {
+            inner
+        }
+    }
+    pub fn get_effective_diameter(&self) -> f64 {
+        self.inner.getEffectiveDiameter()
+    }
+}
+
+impl Algorithm for EffectiveDiameterApproximation {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+
+
+pub struct HopPlotApproximation {
+    inner: UniquePtr<bridge::HopPlotApproximation>,
+}
+
+impl HopPlotApproximation {
+    pub fn new(g: &crate::Graph, max_distance: Option<u64>, k: Option<u64>, r: Option<u64>) -> Self {
+        let inner = NewHopPlotApproximation(g, max_distance.unwrap_or(0), k.unwrap_or(64), r.unwrap_or(7));
+        Self {
+            inner
+        }
+    }
+    pub fn get_hop_plot(&self) -> BTreeMap<u64, f64> {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        HopPlotApproximationGetHopPlot(&self.inner, &mut ks, &mut vs);
+        ks.into_iter().zip(vs).collect()
+    }
+}
+
+impl Algorithm for HopPlotApproximation {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+
+
+pub struct JaccardDistance {
+    inner: UniquePtr<bridge::JaccardDistance>,
+    _triangles: UniquePtr<CxxVector<u64>>,
+}
+
+impl JaccardDistance {
+    pub fn new(g: &crate::Graph, triangles: &[u64]) -> Self {
+        let t = MakeCountVector(triangles);
+        let inner = NewJaccardDistance(g, &t);
+        Self {
+            inner, _triangles: t
+        }
+    }
+}
+
+impl NodeDistance for JaccardDistance {
+    fn preprocess(&mut self) {
+        self.inner.pin_mut().preprocess()
+    }
+
+    fn distance(&mut self, u: u64, v: u64) -> f64 {
+        self.inner.pin_mut().distance(u, v)
+    }
+
+    fn get_edge_scores(&self) -> ValueIter {
+        ValueIter {
+            at: 0, inner: JaccardDistanceGetEdgeScores(&self.inner)
+        }
+    }
+}
+
+
+
+
+pub struct MultiTargetBFS {
+    inner: UniquePtr<bridge::MultiTargetBFS>,
+}
+
+impl MultiTargetBFS {
+    pub fn new(g: &crate::Graph, src: u64, targets: &[u64]) -> Self {
+        let inner = NewMultiTargetBFS(g, src, targets);
+        Self {
+            inner
+        }
+    }
+}
+
+impl Algorithm for MultiTargetBFS {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+impl STSP for MultiTargetBFS {
+    fn get_path(&self) -> NodeIter {
+        NodeIter {at: 0, nodes: MultiTargetBFSGetPath(&self.inner)}
+    }
+
+    fn get_predecessors(&self) -> NodeIter {
+        NodeIter {at: 0, nodes: MultiTargetBFSGetPredecessors(&self.inner)}
+    }
+
+    fn set_source(&mut self, u: u64) {
+        self.inner.pin_mut().setSource(u)
+    }
+
+    fn set_target(&mut self, v: u64) {
+        self.inner.pin_mut().setTarget(v)
+    }
+
+    fn set_targets(&mut self, vs: &[u64]) {
+        MultiTargetBFSSetTargets(self.inner.pin_mut(), vs);
+    }
+
+    fn get_target_index_map(&self) -> BTreeMap<u64, u64> {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        MultiTargetBFSGetTargetIndexMap(&self.inner, &mut ks, &mut vs);
+        ks.into_iter().zip(vs).collect()
+    }
+
+    fn get_distance(&self) -> f64 {
+        self.inner.getDistance()
+    }
+
+    fn get_distances(&self) -> ValueIter {
+        ValueIter { inner: MultiTargetBFSGetDistances(&self.inner), at: 0 }
+    }
+}
+
+
+
+
+
+pub struct MultiTargetDijkstra {
+    inner: UniquePtr<bridge::MultiTargetDijkstra>,
+}
+
+impl MultiTargetDijkstra {
+    pub fn new(g: &crate::Graph, src: u64, targets: &[u64]) -> Self {
+        let inner = NewMultiTargetDijkstra(g, src, targets);
+        Self {
+            inner
+        }
+    }
+}
+
+impl Algorithm for MultiTargetDijkstra {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+impl STSP for MultiTargetDijkstra {
+    fn get_path(&self) -> NodeIter {
+        NodeIter {at: 0, nodes: MultiTargetDijkstraGetPath(&self.inner)}
+    }
+
+    fn get_predecessors(&self) -> NodeIter {
+        NodeIter {at: 0, nodes: MultiTargetDijkstraGetPredecessors(&self.inner)}
+    }
+
+    fn set_source(&mut self, u: u64) {
+        self.inner.pin_mut().setSource(u)
+    }
+
+    fn set_target(&mut self, v: u64) {
+        self.inner.pin_mut().setTarget(v)
+    }
+
+    fn set_targets(&mut self, vs: &[u64]) {
+        MultiTargetDijkstraSetTargets(self.inner.pin_mut(), vs);
+    }
+
+    fn get_target_index_map(&self) -> BTreeMap<u64, u64> {
+        let mut ks = vec![];
+        let mut vs = vec![];
+        MultiTargetDijkstraGetTargetIndexMap(&self.inner, &mut ks, &mut vs);
+        ks.into_iter().zip(vs).collect()
+    }
+
+    fn get_distance(&self) -> f64 {
+        self.inner.getDistance()
+    }
+
+    fn get_distances(&self) -> ValueIter {
+        ValueIter { inner: MultiTargetDijkstraGetDistances(&self.inner), at: 0 }
+    }
+}
+
+
+
+
+pub struct NeighborhoodFunction {
+    inner: UniquePtr<bridge::NeighborhoodFunction>,
+}
+
+impl NeighborhoodFunction {
+    pub fn new(g: &crate::Graph) -> Self {
+        let inner = NewNeighborhoodFunction(g);
+        Self {
+            inner
+        }
+    }
+    pub fn get_neighbourhood_function(&self) -> NodeIter {
+        NodeIter {at: 0, nodes: NeighborhoodFunctionGetNeighborhoodFunction(&self.inner)}
+    }
+}
+
+impl Algorithm for NeighborhoodFunction {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+
+
+
+
+pub struct NeighborhoodFunctionApproximation {
+    inner: UniquePtr<bridge::NeighborhoodFunctionApproximation>,
+}
+
+impl NeighborhoodFunctionApproximation {
+    pub fn new(g: &crate::Graph, k: Option<u64>, r: Option<u64>) -> Self {
+        let inner = NewNeighborhoodFunctionApproximation(g, k.unwrap_or(64), r.unwrap_or(7));
+        Self {
+            inner
+        }
+    }
+    pub fn get_neighbourhood_function(&self) -> NodeIter {
+        NodeIter {at: 0, nodes: NeighborhoodFunctionApproximationGetNeighborhoodFunction(&self.inner)}
+    }
+}
+
+impl Algorithm for NeighborhoodFunctionApproximation {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+
+
+
+pub struct NeighborhoodFunctionHeuristic {
+    inner: UniquePtr<bridge::NeighborhoodFunctionHeuristic>,
+}
+
+#[derive(Default, Copy, Clone, Eq, PartialEq)]
+#[repr(u8)]
+
+pub enum NeighborhoodFunctionHeuristicStrategy {
+    Random = 0,
+    #[default]
+    Split = 1
+}
+
+impl NeighborhoodFunctionHeuristic {
+    pub fn new(g: &crate::Graph, n_samples: Option<u64>, strategy: NeighborhoodFunctionHeuristicStrategy) -> Self {
+        let inner = NewNeighborhoodFunctionHeuristic(g, n_samples.unwrap_or(0), strategy as u8);
+        Self {
+            inner
+        }
+    }
+    pub fn get_neighbourhood_function(&self) -> NodeIter {
+        NodeIter {at: 0, nodes: NeighborhoodFunctionHeuristicGetNeighborhoodFunction(&self.inner)}
+    }
+}
+
+impl Algorithm for NeighborhoodFunctionHeuristic {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+
+
+
+pub struct PrunedLandmarkLabeling {
+    inner: UniquePtr<bridge::PrunedLandmarkLabeling>,
+}
+
+impl PrunedLandmarkLabeling {
+    pub fn new(g: &crate::Graph) -> Self {
+        let inner = NewPrunedLandmarkLabeling(g);
+        Self {
+            inner
+        }
+    }
+    pub fn query(&self, u: u64, v: u64) -> u64 {
+        self.inner.query(u, v)
+    }
+}
+
+impl Algorithm for PrunedLandmarkLabeling {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+
+
+
+
+pub struct ReverseBFS {
+    inner: UniquePtr<bridge::ReverseBFS>,
+}
+
+impl ReverseBFS {
+    pub fn new(g: &crate::Graph, src: u64,store_paths: bool, store_nodes_sorted_by_distance: bool, dst: Option<u64>) -> Self {
+        Self {
+            inner: NewReverseBFS(g, src, store_paths, store_nodes_sorted_by_distance, dst.unwrap_or(u64::MAX)),
+        }
+    }
+}
+
+impl Algorithm for ReverseBFS {
+    fn run(&mut self) -> miette::Result<()> {
+        self.inner.pin_mut().run().into_diagnostic()
+    }
+
+    fn has_finished(&self) -> bool {
+        self.inner.hasFinished()
+    }
+}
+
+impl SSSP for ReverseBFS {
+    fn distance(&self, t: u64) -> f64 {
+        self.inner.distance(t)
+    }
+
+    fn get_distances(&mut self) -> ValueIter {
+        ValueIter {at: 0, inner: ReverseBFSGetDistances(self.inner.pin_mut())}
+    }
+
+    fn number_of_paths(&self, t: u64) -> f64 {
+        self.inner._numberOfPaths(t)
+    }
+
+    fn get_predecessors(&self, t: u64) -> NodeIter {
+            NodeIter {at: 0, nodes: ReverseBFSGetPredecessors(&self.inner, t)}
+        }
+
+    fn get_path(&self, t: u64, forward: bool) -> NodeIter {
+        NodeIter {at: 0, nodes: ReverseBFSGetPath(&self.inner, t, forward)}
+    }
+
+    fn get_paths(&self, t: u64, forward: bool) -> Vec<Vec<u64>> {
+        let mut temp = vec![];
+        ReverseBFSGetPaths(&self.inner, t, forward, &mut temp);
+        let mut ret = vec![];
+        let mut cur = vec![];
+        for n in temp {
+            if n == u64::MAX {
+                ret.push(cur);
+                cur = vec![];
+            } else {
+                cur.push(n);
+            }
+        }
+        ret
+    }
+
+    fn get_node_sorted_by_distances(&self) -> NodeIter {
+        NodeIter {at: 0, nodes: ReverseBFSGetNodeSortedByDistance(&self.inner)}
+    }
+
+    fn get_num_reachable_nodes(&self) -> u64 {
+        self.inner.getReachableNodes()
+    }
+
+    fn set_source(&mut self, u: u64) {
+        self.inner.pin_mut().setSource(u)
+    }
+
+    fn set_target(&mut self, v: u64) {
+        self.inner.pin_mut().setTarget(v)
+    }
+
+    fn get_sum_of_distances(&self) -> f64 {
+        self.inner.getSumOfDistances()
+    }
+}
+
+
+pub struct Volume;
+
+impl Volume {
+    pub fn volume(g: &crate::Graph, radius: f64, n_samples: u64) -> f64 {
+        VolumeVolume(g, radius, n_samples)
+    }
+    pub fn volumes(g: &crate::Graph, radii: &[f64], n_samples: u64) -> ValueIter {
+        ValueIter {at: 0, inner: VolumeVolumes(g, radii, n_samples)}
+    }
+}

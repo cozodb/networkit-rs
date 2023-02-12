@@ -18,6 +18,18 @@
 #include <networkit/distance/DynAPSP.hpp>
 #include <networkit/distance/DynBFS.hpp>
 #include <networkit/distance/Eccentricity.hpp>
+#include <networkit/distance/EffectiveDiameter.hpp>
+#include <networkit/distance/EffectiveDiameterApproximation.hpp>
+#include <networkit/distance/HopPlotApproximation.hpp>
+#include <networkit/distance/JaccardDistance.hpp>
+#include <networkit/distance/MultiTargetBFS.hpp>
+#include <networkit/distance/MultiTargetDijkstra.hpp>
+#include <networkit/distance/NeighborhoodFunction.hpp>
+#include <networkit/distance/NeighborhoodFunctionApproximation.hpp>
+#include <networkit/distance/NeighborhoodFunctionHeuristic.hpp>
+#include <networkit/distance/PrunedLandmarkLabeling.hpp>
+#include <networkit/distance/ReverseBFS.hpp>
+#include <networkit/distance/Volume.hpp>
 
 namespace NetworKit
 {
@@ -379,6 +391,198 @@ namespace NetworKit
         auto res = Eccentricity::getValue(G, u);
         fartherest = res.first;
         dist = res.second;
+    }
+
+    inline unique_ptr<EffectiveDiameter> NewEffectiveDiameter(const Graph &G, double ratio)
+    {
+        return make_unique<EffectiveDiameter>(G, ratio);
+    }
+
+    inline unique_ptr<EffectiveDiameterApproximation> NewEffectiveDiameterApproximation(const Graph &G, double ratio, count k, count r)
+    {
+        return make_unique<EffectiveDiameterApproximation>(G, ratio, k, r);
+    }
+
+    inline unique_ptr<HopPlotApproximation> NewHopPlotApproximation(const Graph &G, count maxDistance, count k, count r)
+    {
+        return make_unique<HopPlotApproximation>(G, maxDistance, k, r);
+    }
+
+    inline void HopPlotApproximationGetHopPlot(const HopPlotApproximation &algo, rust::Vec<count> &ks, rust::Vec<double> &vs)
+    {
+        for (auto &&pair : algo.getHopPlot())
+        {
+            ks.push_back(pair.first);
+            vs.push_back(pair.second);
+        }
+    }
+
+    inline unique_ptr<JaccardDistance> NewJaccardDistance(const Graph &G, const std::vector<count> &triangles)
+    {
+        return make_unique<JaccardDistance>(G, triangles);
+    }
+
+    inline unique_ptr<vector<double>> JaccardDistanceGetEdgeScores(const JaccardDistance &algo)
+    {
+        return make_unique<vector<double>>(algo.getEdgeScores());
+    }
+
+    inline unique_ptr<MultiTargetBFS> NewMultiTargetBFS(const Graph &G, node source, rust::Slice<const node> targets)
+    {
+        return make_unique<MultiTargetBFS>(G, source, targets.begin(), targets.end());
+    }
+
+    inline unique_ptr<vector<node>> MultiTargetBFSGetPath(const MultiTargetBFS &algo)
+    {
+        return make_unique<vector<node>>(algo.getPath());
+    }
+
+    inline unique_ptr<vector<node>> MultiTargetBFSGetPredecessors(const MultiTargetBFS &algo)
+    {
+        return make_unique<vector<node>>(algo.getPredecessors());
+    }
+
+    inline unique_ptr<vector<edgeweight>> MultiTargetBFSGetDistances(const MultiTargetBFS &algo)
+    {
+        return make_unique<vector<edgeweight>>(algo.getDistances());
+    }
+    inline void MultiTargetBFSGetTargetIndexMap(const MultiTargetBFS &algo, rust::Vec<node> &src, rust::Vec<node> &dst)
+    {
+        for (auto &&pair : algo.getTargetIndexMap())
+        {
+            src.push_back(pair.first);
+            dst.push_back(pair.second);
+        }
+    }
+    inline void MultiTargetBFSSetTargets(MultiTargetBFS &algo, rust::Slice<const node> targets)
+    {
+        algo.setTargets(targets.begin(), targets.end());
+    }
+
+    inline unique_ptr<MultiTargetDijkstra> NewMultiTargetDijkstra(const Graph &G, node source, rust::Slice<const node> targets)
+    {
+        return make_unique<MultiTargetDijkstra>(G, source, targets.begin(), targets.end());
+    }
+
+    inline unique_ptr<vector<node>> MultiTargetDijkstraGetPath(const MultiTargetDijkstra &algo)
+    {
+        return make_unique<vector<node>>(algo.getPath());
+    }
+
+    inline unique_ptr<vector<node>> MultiTargetDijkstraGetPredecessors(const MultiTargetDijkstra &algo)
+    {
+        return make_unique<vector<node>>(algo.getPredecessors());
+    }
+
+    inline unique_ptr<vector<edgeweight>> MultiTargetDijkstraGetDistances(const MultiTargetDijkstra &algo)
+    {
+        return make_unique<vector<edgeweight>>(algo.getDistances());
+    }
+    inline void MultiTargetDijkstraGetTargetIndexMap(const MultiTargetDijkstra &algo, rust::Vec<node> &src, rust::Vec<node> &dst)
+    {
+        for (auto &&pair : algo.getTargetIndexMap())
+        {
+            src.push_back(pair.first);
+            dst.push_back(pair.second);
+        }
+    }
+    inline void MultiTargetDijkstraSetTargets(MultiTargetDijkstra &algo, rust::Slice<const node> targets)
+    {
+        algo.setTargets(targets.begin(), targets.end());
+    }
+
+    inline unique_ptr<NeighborhoodFunction> NewNeighborhoodFunction(const Graph &G)
+    {
+        return make_unique<NeighborhoodFunction>(G);
+    }
+
+    inline unique_ptr<vector<count>> NeighborhoodFunctionGetNeighborhoodFunction(const NeighborhoodFunction &algo)
+    {
+        return make_unique<vector<count>>(algo.getNeighborhoodFunction());
+    }
+
+    inline unique_ptr<NeighborhoodFunctionApproximation> NewNeighborhoodFunctionApproximation(const Graph &G, count k = 64, count r = 7)
+    {
+        return make_unique<NeighborhoodFunctionApproximation>(G, k, r);
+    }
+
+    inline unique_ptr<vector<count>> NeighborhoodFunctionApproximationGetNeighborhoodFunction(const NeighborhoodFunctionApproximation &algo)
+    {
+        return make_unique<vector<count>>(algo.getNeighborhoodFunction());
+    }
+
+    inline unique_ptr<NeighborhoodFunctionHeuristic> NewNeighborhoodFunctionHeuristic(const Graph &G, count n_samples, uint8_t strategy)
+    {
+        NeighborhoodFunctionHeuristic::SelectionStrategy s;
+        switch (strategy)
+        {
+        case 0:
+            s = NeighborhoodFunctionHeuristic::SelectionStrategy::RANDOM;
+            break;
+        case 1:
+            s = NeighborhoodFunctionHeuristic::SelectionStrategy::SPLIT;
+            break;
+        }
+        return make_unique<NeighborhoodFunctionHeuristic>(G, n_samples, s);
+    }
+
+    inline unique_ptr<vector<count>> NeighborhoodFunctionHeuristicGetNeighborhoodFunction(const NeighborhoodFunctionHeuristic &algo)
+    {
+        return make_unique<vector<count>>(algo.getNeighborhoodFunction());
+    }
+
+    inline unique_ptr<PrunedLandmarkLabeling> NewPrunedLandmarkLabeling(const Graph &G)
+    {
+        return make_unique<PrunedLandmarkLabeling>(G);
+    }
+
+    inline unique_ptr<ReverseBFS> NewReverseBFS(const Graph &G, node source, bool storePaths = true, bool storeNodesSortedByDistance = false, node target = none)
+    {
+        return make_unique<ReverseBFS>(G, source, storePaths, storeNodesSortedByDistance, target);
+    }
+
+    inline unique_ptr<vector<edgeweight>> ReverseBFSGetDistances(ReverseBFS &algo)
+    {
+        return make_unique<vector<edgeweight>>(algo.getDistances());
+    }
+
+    inline unique_ptr<vector<node>> ReverseBFSGetPredecessors(const ReverseBFS &algo, node t)
+    {
+        return make_unique<vector<node>>(algo.getPredecessors(t));
+    }
+
+    inline unique_ptr<vector<node>> ReverseBFSGetPath(const ReverseBFS &algo, node t, bool forward)
+    {
+        return make_unique<vector<node>>(algo.getPath(t, forward));
+    }
+
+    inline void ReverseBFSGetPaths(const ReverseBFS &algo, node t, bool forward, rust::Vec<node> &vs)
+    {
+        for (auto &&p : algo.getPaths(t, forward))
+        {
+            vs.push_back(none);
+            for (auto &&n : p)
+            {
+                vs.push_back(n);
+            }
+        }
+    }
+
+    inline unique_ptr<vector<node>> ReverseBFSGetNodeSortedByDistance(const ReverseBFS &algo)
+    {
+        return make_unique<vector<node>>(algo.getNodesSortedByDistance());
+    }
+
+    inline unique_ptr<vector<double>> VolumeVolumes(const Graph &G, rust::Slice<const double> rs, count samples)
+    {
+        vector<double> radii{rs.begin(), rs.end()};
+        return make_unique<vector<double>>(Volume::volume(G, radii, samples));
+    }
+
+    inline double VolumeVolume(const Graph &G, double r, count samples)
+    {
+
+        return Volume::volume(G, r, samples);
     }
 }
 

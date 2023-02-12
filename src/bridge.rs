@@ -10,6 +10,7 @@ mod ffi {
         include!("bridge.h");
 
         fn MakeWeightVector(wt: &[f64]) -> UniquePtr<CxxVector<f64>>;
+        fn MakeCountVector(ct: &[u64]) -> UniquePtr<CxxVector<u64>>;
 
         // ---- GRAPH ----
 
@@ -1727,6 +1728,103 @@ mod ffi {
         fn setTargetNode(self: Pin<&mut DynBFS>, t: u64);
 
         fn EccentricityGetValue(g: &Graph, u: u64, fartherest: &mut u64, dist: &mut u64);
+
+        type EffectiveDiameter;
+        fn NewEffectiveDiameter(g: &Graph, ratio: f64) -> UniquePtr<EffectiveDiameter>;
+        fn run(self: Pin<&mut EffectiveDiameter>) -> Result<()>;
+        fn hasFinished(self: &EffectiveDiameter) -> bool;
+        fn getEffectiveDiameter(self: &EffectiveDiameter) -> f64;
+     
+        type EffectiveDiameterApproximation;
+        fn NewEffectiveDiameterApproximation(g: &Graph, ratio: f64, k: u64, r: u64) -> UniquePtr<EffectiveDiameterApproximation>;
+        fn run(self: Pin<&mut EffectiveDiameterApproximation>) -> Result<()>;
+        fn hasFinished(self: &EffectiveDiameterApproximation) -> bool;
+        fn getEffectiveDiameter(self: &EffectiveDiameterApproximation) -> f64;
+     
+        type HopPlotApproximation;
+        fn NewHopPlotApproximation(g: &Graph, max_distance: u64, k: u64, r: u64) -> UniquePtr<HopPlotApproximation>;
+        fn run(self: Pin<&mut HopPlotApproximation>) -> Result<()>;
+        fn hasFinished(self: &HopPlotApproximation) -> bool;
+        fn HopPlotApproximationGetHopPlot(algo: &HopPlotApproximation, ks: &mut Vec<u64>, vs: &mut Vec<f64>);
+
+        type JaccardDistance;
+        fn NewJaccardDistance(g: &Graph, triangles: &CxxVector<u64>) -> UniquePtr<JaccardDistance>;
+        fn preprocess(self: Pin<&mut JaccardDistance>);
+        fn distance(self: Pin<&mut JaccardDistance>, u: u64, v: u64) -> f64;
+        fn JaccardDistanceGetEdgeScores(algo: &JaccardDistance) -> UniquePtr<CxxVector<f64>>;
+
+
+        type MultiTargetBFS;
+        fn NewMultiTargetBFS(g: &Graph, src: u64, targets: &[u64]) -> UniquePtr<MultiTargetBFS>;
+        fn run(self: Pin<&mut MultiTargetBFS>) -> Result<()>;
+        fn hasFinished(self: &MultiTargetBFS) -> bool;
+        fn MultiTargetBFSGetPath(algo: &MultiTargetBFS) -> UniquePtr<CxxVector<u64>>;
+        fn MultiTargetBFSGetPredecessors(algo: &MultiTargetBFS) -> UniquePtr<CxxVector<u64>>;
+        fn getDistance(self: &MultiTargetBFS) -> f64;
+        fn MultiTargetBFSGetDistances(algo: &MultiTargetBFS) -> UniquePtr<CxxVector<f64>>;
+        fn setSource(self: Pin<&mut MultiTargetBFS>, src: u64);
+        fn setTarget(self: Pin<&mut MultiTargetBFS>, dst: u64);
+        fn MultiTargetBFSSetTargets(algo: Pin<&mut MultiTargetBFS>, dst: &[u64]);
+        fn MultiTargetBFSGetTargetIndexMap(algo: &MultiTargetBFS, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        
+
+        type MultiTargetDijkstra;
+        fn NewMultiTargetDijkstra(g: &Graph, src: u64, targets: &[u64]) -> UniquePtr<MultiTargetDijkstra>;
+        fn run(self: Pin<&mut MultiTargetDijkstra>) -> Result<()>;
+        fn hasFinished(self: &MultiTargetDijkstra) -> bool;
+        fn MultiTargetDijkstraGetPath(algo: &MultiTargetDijkstra) -> UniquePtr<CxxVector<u64>>;
+        fn MultiTargetDijkstraGetPredecessors(algo: &MultiTargetDijkstra) -> UniquePtr<CxxVector<u64>>;
+        fn getDistance(self: &MultiTargetDijkstra) -> f64;
+        fn MultiTargetDijkstraGetDistances(algo: &MultiTargetDijkstra) -> UniquePtr<CxxVector<f64>>;
+        fn setSource(self: Pin<&mut MultiTargetDijkstra>, src: u64);
+        fn setTarget(self: Pin<&mut MultiTargetDijkstra>, dst: u64);
+        fn MultiTargetDijkstraSetTargets(algo: Pin<&mut MultiTargetDijkstra>, dst: &[u64]);
+        fn MultiTargetDijkstraGetTargetIndexMap(algo: &MultiTargetDijkstra, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        
+        type NeighborhoodFunction;
+        fn NewNeighborhoodFunction(g: &Graph) -> UniquePtr<NeighborhoodFunction>;
+        fn run(self: Pin<&mut NeighborhoodFunction>) -> Result<()>;
+        fn hasFinished(self: &NeighborhoodFunction) -> bool;
+        fn NeighborhoodFunctionGetNeighborhoodFunction(algo: &NeighborhoodFunction) ->  UniquePtr<CxxVector<u64>>;
+        
+        type NeighborhoodFunctionApproximation;
+        fn NewNeighborhoodFunctionApproximation(g: &Graph, k: u64, r: u64) -> UniquePtr<NeighborhoodFunctionApproximation>;
+        fn run(self: Pin<&mut NeighborhoodFunctionApproximation>) -> Result<()>;
+        fn hasFinished(self: &NeighborhoodFunctionApproximation) -> bool;
+        fn NeighborhoodFunctionApproximationGetNeighborhoodFunction(algo: &NeighborhoodFunctionApproximation) ->  UniquePtr<CxxVector<u64>>;
+
+        type NeighborhoodFunctionHeuristic;
+        fn NewNeighborhoodFunctionHeuristic(g: &Graph, n_samples: u64, strategy: u8) -> UniquePtr<NeighborhoodFunctionHeuristic>;
+        fn run(self: Pin<&mut NeighborhoodFunctionHeuristic>) -> Result<()>;
+        fn hasFinished(self: &NeighborhoodFunctionHeuristic) -> bool;
+        fn NeighborhoodFunctionHeuristicGetNeighborhoodFunction(algo: &NeighborhoodFunctionHeuristic) ->  UniquePtr<CxxVector<u64>>;
+
+        type PrunedLandmarkLabeling;
+        fn NewPrunedLandmarkLabeling(g: &Graph) -> UniquePtr<PrunedLandmarkLabeling>;
+        fn run(self: Pin<&mut PrunedLandmarkLabeling>) -> Result<()>;
+        fn hasFinished(self: &PrunedLandmarkLabeling) -> bool;
+        fn query(self:  &PrunedLandmarkLabeling, u: u64, v: u64) -> u64;
+
+
+
+        type ReverseBFS;
+        fn NewReverseBFS(g: &Graph, src: u64, store_paths: bool, store_nodes_sorted_by_distance: bool, dst: u64) -> UniquePtr<ReverseBFS>;
+        fn run(self: Pin<&mut ReverseBFS>) -> Result<()>;
+        fn hasFinished(self: &ReverseBFS) -> bool;
+        fn distance(self: &ReverseBFS, t: u64) -> f64;
+        fn ReverseBFSGetDistances(algo: Pin<&mut ReverseBFS>) -> UniquePtr<CxxVector<f64>>;
+        fn _numberOfPaths(self: &ReverseBFS, t: u64) -> f64;
+        fn ReverseBFSGetPredecessors(algo: &ReverseBFS, t: u64) -> UniquePtr<CxxVector<u64>>;
+        fn ReverseBFSGetPath(algo: &ReverseBFS, t: u64, forward: bool) -> UniquePtr<CxxVector<u64>>;
+        fn ReverseBFSGetPaths(algo: &ReverseBFS, t: u64, forward: bool, vs: &mut Vec<u64>);
+        fn ReverseBFSGetNodeSortedByDistance(algo: &ReverseBFS) -> UniquePtr<CxxVector<u64>>;
+        fn getReachableNodes(self: &ReverseBFS) -> u64;
+        fn setSource(self: Pin<&mut ReverseBFS>, src: u64);
+        fn setTarget(self: Pin<&mut ReverseBFS>, dst: u64);
+        fn getSumOfDistances(self: &ReverseBFS) -> f64;
+
+        fn VolumeVolume(g: &Graph, r: f64, n_samples: u64) -> f64;
+        fn VolumeVolumes(g: &Graph, rs: &[f64], n_samples: u64) -> UniquePtr<CxxVector<f64>>;
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

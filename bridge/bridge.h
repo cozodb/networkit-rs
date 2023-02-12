@@ -18,6 +18,7 @@
 namespace NetworKit
 {
     unique_ptr<vector<edgeweight>> MakeWeightVector(rust::Slice<const edgeweight> wt);
+    unique_ptr<vector<count>> MakeCountVector(rust::Slice<const count> ct);
 }
 
 #endif // NK_BRIDGE_H

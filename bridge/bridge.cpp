@@ -11,4 +11,10 @@ namespace NetworKit
         vector<edgeweight> v{wt.begin(), wt.end()};
         return make_unique<vector<edgeweight>>(v);
     }
+
+    unique_ptr<vector<count>> MakeCountVector(rust::Slice<const count> wt)
+    {
+        vector<count> v{wt.begin(), wt.end()};
+        return make_unique<vector<count>>(v);
+    }
 }
