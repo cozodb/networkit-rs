@@ -16,8 +16,6 @@ pub trait ComponentDecomposition {
     fn get_components(&self) -> Vec<Vec<u64>>;
 }
 
-
-
 pub struct BiconnectedComponents {
     inner: UniquePtr<bridge::BiconnectedComponents>,
 }
@@ -54,7 +52,7 @@ impl BiconnectedComponents {
     }
     pub fn get_component_of_node(&self, u: u64) -> Vec<u64> {
         let mut vs = vec![];
-        BiconnectedComponentsGetComponentOfNode(&self.inner,u, &mut vs);
+        BiconnectedComponentsGetComponentOfNode(&self.inner, u, &mut vs);
         vs
     }
 }
@@ -69,9 +67,6 @@ impl Algorithm for BiconnectedComponents {
     }
 }
 
-
-
-
 pub struct ConnectedComponents {
     inner: UniquePtr<bridge::ConnectedComponents>,
 }
@@ -83,7 +78,10 @@ impl ConnectedComponents {
         }
     }
 
-    pub fn extract_largest_connected_component(g: &crate::Graph, compact_graph: bool) -> crate::Graph {
+    pub fn extract_largest_connected_component(
+        g: &crate::Graph,
+        compact_graph: bool,
+    ) -> crate::Graph {
         ConnectedComponentsExtractLargestConnectedComponent(g, compact_graph).into()
     }
 }
@@ -98,19 +96,17 @@ impl Algorithm for ConnectedComponents {
     }
 }
 
-
-impl ComponentDecomposition  for ConnectedComponents{
-    
-     fn number_of_components(&self) -> u64 {
+impl ComponentDecomposition for ConnectedComponents {
+    fn number_of_components(&self) -> u64 {
         self.inner.numberOfComponents()
     }
-     fn get_component_sizes(&self) -> BTreeMap<u64, u64> {
+    fn get_component_sizes(&self) -> BTreeMap<u64, u64> {
         let mut ks = vec![];
         let mut vs = vec![];
         ConnectedComponentsGetComponentSizes(&self.inner, &mut ks, &mut vs);
         ks.into_iter().zip(vs).collect()
     }
-     fn get_components(&self) -> Vec<Vec<u64>> {
+    fn get_components(&self) -> Vec<Vec<u64>> {
         let mut ks = vec![];
         let mut vs = vec![];
         ConnectedComponentsGetComponents(&self.inner, &mut ks, &mut vs);
@@ -125,7 +121,7 @@ impl ComponentDecomposition  for ConnectedComponents{
             ret
         }
     }
-     fn component_of_node(&self, u: u64) -> u64 {
+    fn component_of_node(&self, u: u64) -> u64 {
         self.inner.componentOfNode(u)
     }
 
@@ -133,9 +129,6 @@ impl ComponentDecomposition  for ConnectedComponents{
         ConnectedComponentsGetPartition(&self.inner).into()
     }
 }
-
-
-
 
 pub struct DynConnectedComponents {
     inner: UniquePtr<bridge::DynConnectedComponents>,
@@ -159,19 +152,17 @@ impl Algorithm for DynConnectedComponents {
     }
 }
 
-
-impl ComponentDecomposition  for DynConnectedComponents{
-    
-     fn number_of_components(&self) -> u64 {
+impl ComponentDecomposition for DynConnectedComponents {
+    fn number_of_components(&self) -> u64 {
         self.inner.numberOfComponents()
     }
-     fn get_component_sizes(&self) -> BTreeMap<u64, u64> {
+    fn get_component_sizes(&self) -> BTreeMap<u64, u64> {
         let mut ks = vec![];
         let mut vs = vec![];
         DynConnectedComponentsGetComponentSizes(&self.inner, &mut ks, &mut vs);
         ks.into_iter().zip(vs).collect()
     }
-     fn get_components(&self) -> Vec<Vec<u64>> {
+    fn get_components(&self) -> Vec<Vec<u64>> {
         let mut ks = vec![];
         let mut vs = vec![];
         DynConnectedComponentsGetComponents(&self.inner, &mut ks, &mut vs);
@@ -186,7 +177,7 @@ impl ComponentDecomposition  for DynConnectedComponents{
             ret
         }
     }
-     fn component_of_node(&self, u: u64) -> u64 {
+    fn component_of_node(&self, u: u64) -> u64 {
         self.inner.componentOfNode(u)
     }
 
@@ -194,8 +185,6 @@ impl ComponentDecomposition  for DynConnectedComponents{
         DynConnectedComponentsGetPartition(&self.inner).into()
     }
 }
-
-
 
 impl DynAlgorithm for DynConnectedComponents {
     fn update(&mut self, e: crate::base::GraphEvent) {
@@ -216,9 +205,6 @@ impl DynAlgorithm for DynConnectedComponents {
         DynConnectedComponentsUpdateBatch(self.inner.pin_mut(), &kinds, &us, &vs, &ews);
     }
 }
-
-
-
 
 pub struct DynWeaklyConnectedComponents {
     inner: UniquePtr<bridge::DynWeaklyConnectedComponents>,
@@ -242,19 +228,17 @@ impl Algorithm for DynWeaklyConnectedComponents {
     }
 }
 
-
-impl ComponentDecomposition  for DynWeaklyConnectedComponents{
-    
-     fn number_of_components(&self) -> u64 {
+impl ComponentDecomposition for DynWeaklyConnectedComponents {
+    fn number_of_components(&self) -> u64 {
         self.inner.numberOfComponents()
     }
-     fn get_component_sizes(&self) -> BTreeMap<u64, u64> {
+    fn get_component_sizes(&self) -> BTreeMap<u64, u64> {
         let mut ks = vec![];
         let mut vs = vec![];
         DynWeaklyConnectedComponentsGetComponentSizes(&self.inner, &mut ks, &mut vs);
         ks.into_iter().zip(vs).collect()
     }
-     fn get_components(&self) -> Vec<Vec<u64>> {
+    fn get_components(&self) -> Vec<Vec<u64>> {
         let mut ks = vec![];
         let mut vs = vec![];
         DynWeaklyConnectedComponentsGetComponents(&self.inner, &mut ks, &mut vs);
@@ -269,7 +253,7 @@ impl ComponentDecomposition  for DynWeaklyConnectedComponents{
             ret
         }
     }
-     fn component_of_node(&self, u: u64) -> u64 {
+    fn component_of_node(&self, u: u64) -> u64 {
         self.inner.componentOfNode(u)
     }
 
@@ -277,8 +261,6 @@ impl ComponentDecomposition  for DynWeaklyConnectedComponents{
         DynWeaklyConnectedComponentsGetPartition(&self.inner).into()
     }
 }
-
-
 
 impl DynAlgorithm for DynWeaklyConnectedComponents {
     fn update(&mut self, e: crate::base::GraphEvent) {
@@ -299,8 +281,6 @@ impl DynAlgorithm for DynWeaklyConnectedComponents {
         DynWeaklyConnectedComponentsUpdateBatch(self.inner.pin_mut(), &kinds, &us, &vs, &ews);
     }
 }
-
-
 
 pub struct ParallelConnectedComponents {
     inner: UniquePtr<bridge::ParallelConnectedComponents>,
@@ -324,19 +304,17 @@ impl Algorithm for ParallelConnectedComponents {
     }
 }
 
-
-impl ComponentDecomposition  for ParallelConnectedComponents{
-    
-     fn number_of_components(&self) -> u64 {
+impl ComponentDecomposition for ParallelConnectedComponents {
+    fn number_of_components(&self) -> u64 {
         self.inner.numberOfComponents()
     }
-     fn get_component_sizes(&self) -> BTreeMap<u64, u64> {
+    fn get_component_sizes(&self) -> BTreeMap<u64, u64> {
         let mut ks = vec![];
         let mut vs = vec![];
         ParallelConnectedComponentsGetComponentSizes(&self.inner, &mut ks, &mut vs);
         ks.into_iter().zip(vs).collect()
     }
-     fn get_components(&self) -> Vec<Vec<u64>> {
+    fn get_components(&self) -> Vec<Vec<u64>> {
         let mut ks = vec![];
         let mut vs = vec![];
         ParallelConnectedComponentsGetComponents(&self.inner, &mut ks, &mut vs);
@@ -351,7 +329,7 @@ impl ComponentDecomposition  for ParallelConnectedComponents{
             ret
         }
     }
-     fn component_of_node(&self, u: u64) -> u64 {
+    fn component_of_node(&self, u: u64) -> u64 {
         self.inner.componentOfNode(u)
     }
 
@@ -359,9 +337,6 @@ impl ComponentDecomposition  for ParallelConnectedComponents{
         ParallelConnectedComponentsGetPartition(&self.inner).into()
     }
 }
-
-
-
 
 pub struct StronglyConnectedComponents {
     inner: UniquePtr<bridge::StronglyConnectedComponents>,
@@ -385,19 +360,17 @@ impl Algorithm for StronglyConnectedComponents {
     }
 }
 
-
-impl ComponentDecomposition  for StronglyConnectedComponents{
-    
-     fn number_of_components(&self) -> u64 {
+impl ComponentDecomposition for StronglyConnectedComponents {
+    fn number_of_components(&self) -> u64 {
         self.inner.numberOfComponents()
     }
-     fn get_component_sizes(&self) -> BTreeMap<u64, u64> {
+    fn get_component_sizes(&self) -> BTreeMap<u64, u64> {
         let mut ks = vec![];
         let mut vs = vec![];
         StronglyConnectedComponentsGetComponentSizes(&self.inner, &mut ks, &mut vs);
         ks.into_iter().zip(vs).collect()
     }
-     fn get_components(&self) -> Vec<Vec<u64>> {
+    fn get_components(&self) -> Vec<Vec<u64>> {
         let mut ks = vec![];
         let mut vs = vec![];
         StronglyConnectedComponentsGetComponents(&self.inner, &mut ks, &mut vs);
@@ -412,7 +385,7 @@ impl ComponentDecomposition  for StronglyConnectedComponents{
             ret
         }
     }
-     fn component_of_node(&self, u: u64) -> u64 {
+    fn component_of_node(&self, u: u64) -> u64 {
         self.inner.componentOfNode(u)
     }
 
@@ -420,9 +393,6 @@ impl ComponentDecomposition  for StronglyConnectedComponents{
         StronglyConnectedComponentsGetPartition(&self.inner).into()
     }
 }
-
-
-
 
 pub struct WeaklyConnectedComponents {
     inner: UniquePtr<bridge::WeaklyConnectedComponents>,
@@ -446,19 +416,17 @@ impl Algorithm for WeaklyConnectedComponents {
     }
 }
 
-
-impl ComponentDecomposition  for WeaklyConnectedComponents{
-    
-     fn number_of_components(&self) -> u64 {
+impl ComponentDecomposition for WeaklyConnectedComponents {
+    fn number_of_components(&self) -> u64 {
         self.inner.numberOfComponents()
     }
-     fn get_component_sizes(&self) -> BTreeMap<u64, u64> {
+    fn get_component_sizes(&self) -> BTreeMap<u64, u64> {
         let mut ks = vec![];
         let mut vs = vec![];
         WeaklyConnectedComponentsGetComponentSizes(&self.inner, &mut ks, &mut vs);
         ks.into_iter().zip(vs).collect()
     }
-     fn get_components(&self) -> Vec<Vec<u64>> {
+    fn get_components(&self) -> Vec<Vec<u64>> {
         let mut ks = vec![];
         let mut vs = vec![];
         WeaklyConnectedComponentsGetComponents(&self.inner, &mut ks, &mut vs);
@@ -473,7 +441,7 @@ impl ComponentDecomposition  for WeaklyConnectedComponents{
             ret
         }
     }
-     fn component_of_node(&self, u: u64) -> u64 {
+    fn component_of_node(&self, u: u64) -> u64 {
         self.inner.componentOfNode(u)
     }
 

@@ -6,13 +6,14 @@ pub mod clique;
 pub mod coarsening;
 pub mod community;
 pub mod component;
+pub mod correlation;
 pub mod cover;
+pub mod distance;
+pub mod embedding;
 pub mod graph;
 pub mod partition;
 pub mod scd;
 pub mod tools;
-pub mod correlation;
-pub mod distance;
 
 pub use cover::Cover;
 pub use graph::Graph;

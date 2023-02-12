@@ -1440,34 +1440,67 @@ mod ffi {
         // ---- COMPONENTS ----
 
         type BiconnectedComponents;
-        fn NewBiconnectedComponents(g: &Graph,) -> UniquePtr<BiconnectedComponents>;
+        fn NewBiconnectedComponents(g: &Graph) -> UniquePtr<BiconnectedComponents>;
         fn run(self: Pin<&mut BiconnectedComponents>) -> Result<()>;
         fn hasFinished(self: &BiconnectedComponents) -> bool;
         fn numberOfComponents(self: &BiconnectedComponents) -> u64;
-        fn BiconnectedComponentsGetComponentSizes(algo: &BiconnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
-        fn BiconnectedComponentsGetComponents(algo: &BiconnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
-        fn BiconnectedComponentsGetComponentOfNode(algo: &BiconnectedComponents, u: u64, vs: &mut Vec<u64>);
+        fn BiconnectedComponentsGetComponentSizes(
+            algo: &BiconnectedComponents,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn BiconnectedComponentsGetComponents(
+            algo: &BiconnectedComponents,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn BiconnectedComponentsGetComponentOfNode(
+            algo: &BiconnectedComponents,
+            u: u64,
+            vs: &mut Vec<u64>,
+        );
 
         type ConnectedComponents;
-        fn NewConnectedComponents(g: &Graph,) -> UniquePtr<ConnectedComponents>;
+        fn NewConnectedComponents(g: &Graph) -> UniquePtr<ConnectedComponents>;
         fn run(self: Pin<&mut ConnectedComponents>) -> Result<()>;
         fn hasFinished(self: &ConnectedComponents) -> bool;
         fn numberOfComponents(self: &ConnectedComponents) -> u64;
-        fn ConnectedComponentsGetComponentSizes(algo: &ConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
-        fn ConnectedComponentsGetComponents(algo: &ConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
-        fn ConnectedComponentsExtractLargestConnectedComponent(g: &Graph, compact_graph: bool) -> UniquePtr<Graph>;
+        fn ConnectedComponentsGetComponentSizes(
+            algo: &ConnectedComponents,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn ConnectedComponentsGetComponents(
+            algo: &ConnectedComponents,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn ConnectedComponentsExtractLargestConnectedComponent(
+            g: &Graph,
+            compact_graph: bool,
+        ) -> UniquePtr<Graph>;
         fn componentOfNode(self: &ConnectedComponents, u: u64) -> u64;
         fn ConnectedComponentsGetPartition(algo: &ConnectedComponents) -> UniquePtr<Partition>;
 
         type DynConnectedComponents;
-        fn NewDynConnectedComponents(g: &Graph,) -> UniquePtr<DynConnectedComponents>;
+        fn NewDynConnectedComponents(g: &Graph) -> UniquePtr<DynConnectedComponents>;
         fn run(self: Pin<&mut DynConnectedComponents>) -> Result<()>;
         fn hasFinished(self: &DynConnectedComponents) -> bool;
         fn numberOfComponents(self: &DynConnectedComponents) -> u64;
-        fn DynConnectedComponentsGetComponentSizes(algo: &DynConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
-        fn DynConnectedComponentsGetComponents(algo: &DynConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn DynConnectedComponentsGetComponentSizes(
+            algo: &DynConnectedComponents,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn DynConnectedComponentsGetComponents(
+            algo: &DynConnectedComponents,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
         fn componentOfNode(self: &DynConnectedComponents, u: u64) -> u64;
-        fn DynConnectedComponentsGetPartition(algo: &DynConnectedComponents) -> UniquePtr<Partition>;
+        fn DynConnectedComponentsGetPartition(
+            algo: &DynConnectedComponents,
+        ) -> UniquePtr<Partition>;
         fn DynConnectedComponentsUpdate(
             algo: Pin<&mut DynConnectedComponents>,
             kind: u8,
@@ -1483,16 +1516,25 @@ mod ffi {
             ew: &[f64],
         );
 
-
         type DynWeaklyConnectedComponents;
-        fn NewDynWeaklyConnectedComponents(g: &Graph,) -> UniquePtr<DynWeaklyConnectedComponents>;
+        fn NewDynWeaklyConnectedComponents(g: &Graph) -> UniquePtr<DynWeaklyConnectedComponents>;
         fn run(self: Pin<&mut DynWeaklyConnectedComponents>) -> Result<()>;
         fn hasFinished(self: &DynWeaklyConnectedComponents) -> bool;
         fn numberOfComponents(self: &DynWeaklyConnectedComponents) -> u64;
-        fn DynWeaklyConnectedComponentsGetComponentSizes(algo: &DynWeaklyConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
-        fn DynWeaklyConnectedComponentsGetComponents(algo: &DynWeaklyConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn DynWeaklyConnectedComponentsGetComponentSizes(
+            algo: &DynWeaklyConnectedComponents,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn DynWeaklyConnectedComponentsGetComponents(
+            algo: &DynWeaklyConnectedComponents,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
         fn componentOfNode(self: &DynWeaklyConnectedComponents, u: u64) -> u64;
-        fn DynWeaklyConnectedComponentsGetPartition(algo: &DynWeaklyConnectedComponents) -> UniquePtr<Partition>;
+        fn DynWeaklyConnectedComponentsGetPartition(
+            algo: &DynWeaklyConnectedComponents,
+        ) -> UniquePtr<Partition>;
         fn DynWeaklyConnectedComponentsUpdate(
             algo: Pin<&mut DynWeaklyConnectedComponents>,
             kind: u8,
@@ -1508,38 +1550,68 @@ mod ffi {
             ew: &[f64],
         );
 
-
-
         type ParallelConnectedComponents;
-        fn NewParallelConnectedComponents(g: &Graph, coarsening: bool) -> UniquePtr<ParallelConnectedComponents>;
+        fn NewParallelConnectedComponents(
+            g: &Graph,
+            coarsening: bool,
+        ) -> UniquePtr<ParallelConnectedComponents>;
         fn run(self: Pin<&mut ParallelConnectedComponents>) -> Result<()>;
         fn hasFinished(self: &ParallelConnectedComponents) -> bool;
         fn numberOfComponents(self: &ParallelConnectedComponents) -> u64;
-        fn ParallelConnectedComponentsGetComponentSizes(algo: &ParallelConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
-        fn ParallelConnectedComponentsGetComponents(algo: &ParallelConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn ParallelConnectedComponentsGetComponentSizes(
+            algo: &ParallelConnectedComponents,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn ParallelConnectedComponentsGetComponents(
+            algo: &ParallelConnectedComponents,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
         fn componentOfNode(self: &ParallelConnectedComponents, u: u64) -> u64;
-        fn ParallelConnectedComponentsGetPartition(algo: &ParallelConnectedComponents) -> UniquePtr<Partition>;
-
+        fn ParallelConnectedComponentsGetPartition(
+            algo: &ParallelConnectedComponents,
+        ) -> UniquePtr<Partition>;
 
         type StronglyConnectedComponents;
         fn NewStronglyConnectedComponents(g: &Graph) -> UniquePtr<StronglyConnectedComponents>;
         fn run(self: Pin<&mut StronglyConnectedComponents>) -> Result<()>;
         fn hasFinished(self: &StronglyConnectedComponents) -> bool;
         fn numberOfComponents(self: &StronglyConnectedComponents) -> u64;
-        fn StronglyConnectedComponentsGetComponentSizes(algo: &StronglyConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
-        fn StronglyConnectedComponentsGetComponents(algo: &StronglyConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn StronglyConnectedComponentsGetComponentSizes(
+            algo: &StronglyConnectedComponents,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn StronglyConnectedComponentsGetComponents(
+            algo: &StronglyConnectedComponents,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
         fn componentOfNode(self: &StronglyConnectedComponents, u: u64) -> u64;
-        fn StronglyConnectedComponentsGetPartition(algo: &StronglyConnectedComponents) -> UniquePtr<Partition>;
+        fn StronglyConnectedComponentsGetPartition(
+            algo: &StronglyConnectedComponents,
+        ) -> UniquePtr<Partition>;
 
         type WeaklyConnectedComponents;
         fn NewWeaklyConnectedComponents(g: &Graph) -> UniquePtr<WeaklyConnectedComponents>;
         fn run(self: Pin<&mut WeaklyConnectedComponents>) -> Result<()>;
         fn hasFinished(self: &WeaklyConnectedComponents) -> bool;
         fn numberOfComponents(self: &WeaklyConnectedComponents) -> u64;
-        fn WeaklyConnectedComponentsGetComponentSizes(algo: &WeaklyConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
-        fn WeaklyConnectedComponentsGetComponents(algo: &WeaklyConnectedComponents, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
+        fn WeaklyConnectedComponentsGetComponentSizes(
+            algo: &WeaklyConnectedComponents,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+        fn WeaklyConnectedComponentsGetComponents(
+            algo: &WeaklyConnectedComponents,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
         fn componentOfNode(self: &WeaklyConnectedComponents, u: u64) -> u64;
-        fn WeaklyConnectedComponentsGetPartition(algo: &WeaklyConnectedComponents) -> UniquePtr<Partition>;
+        fn WeaklyConnectedComponentsGetPartition(
+            algo: &WeaklyConnectedComponents,
+        ) -> UniquePtr<Partition>;
 
         // ---- CORRELATION ----
 
@@ -1550,7 +1622,7 @@ mod ffi {
         fn getCoefficient(self: &Assortativity) -> f64;
 
         // ---- DISTANCE ----
-        
+
         type APSP;
         fn NewAPSP(g: &Graph) -> UniquePtr<APSP>;
         fn run(self: Pin<&mut APSP>) -> Result<()>;
@@ -1559,7 +1631,13 @@ mod ffi {
         fn APSPGetDistances(algo: &APSP, wt: &mut Vec<f64>) -> u64;
 
         type AStar;
-        fn NewAStar(g: &Graph, heu: &CxxVector<f64>, src: u64, dst: u64, store_pred: bool) -> UniquePtr<AStar>;
+        fn NewAStar(
+            g: &Graph,
+            heu: &CxxVector<f64>,
+            src: u64,
+            dst: u64,
+            store_pred: bool,
+        ) -> UniquePtr<AStar>;
         fn run(self: Pin<&mut AStar>) -> Result<()>;
         fn hasFinished(self: &AStar) -> bool;
         fn AStarGetPath(algo: &AStar) -> UniquePtr<CxxVector<u64>>;
@@ -1570,30 +1648,46 @@ mod ffi {
         fn setTarget(self: Pin<&mut AStar>, dst: u64);
         fn AStarSetTargets(algo: Pin<&mut AStar>, dst: &[u64]);
         fn AStarGetTargetIndexMap(algo: &AStar, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
-        
+
         type AdamicAdarDistance;
         fn NewAdamicAdarDistance(g: &Graph) -> UniquePtr<AdamicAdarDistance>;
         fn preprocess(self: Pin<&mut AdamicAdarDistance>);
         fn distance(self: Pin<&mut AdamicAdarDistance>, u: u64, v: u64) -> f64;
         fn AdamicAdarDistanceGetEdgeScores(algo: &AdamicAdarDistance) -> UniquePtr<CxxVector<f64>>;
 
-
         type AlgebraicDistance;
-        fn NewAlgebraicDistance(g: &Graph, n_systems: u64, n_iterations: u64, omega: f64, norm: u64, with_edge_scores: bool) -> UniquePtr<AlgebraicDistance>;
+        fn NewAlgebraicDistance(
+            g: &Graph,
+            n_systems: u64,
+            n_iterations: u64,
+            omega: f64,
+            norm: u64,
+            with_edge_scores: bool,
+        ) -> UniquePtr<AlgebraicDistance>;
         fn preprocess(self: Pin<&mut AlgebraicDistance>);
         fn distance(self: Pin<&mut AlgebraicDistance>, u: u64, v: u64) -> f64;
         fn AlgebraicDistanceGetEdgeScores(algo: &AlgebraicDistance) -> UniquePtr<CxxVector<f64>>;
 
         type AllSimplePaths;
-        fn NewAllSimplePaths(g: &Graph, src: u64, dst: u64, cut_off: u64) -> UniquePtr<AllSimplePaths>;
+        fn NewAllSimplePaths(
+            g: &Graph,
+            src: u64,
+            dst: u64,
+            cut_off: u64,
+        ) -> UniquePtr<AllSimplePaths>;
         fn run(self: Pin<&mut AllSimplePaths>) -> Result<()>;
         fn hasFinished(self: &AllSimplePaths) -> bool;
         fn numberOfSimplePaths(self: Pin<&mut AllSimplePaths>) -> u64;
         fn AllSimplePathsGetAllSimplePaths(algo: Pin<&mut AllSimplePaths>, vs: &mut Vec<u64>);
 
-
         type BFS;
-        fn NewBFS(g: &Graph, src: u64, store_paths: bool, store_nodes_sorted_by_distance: bool, dst: u64) -> UniquePtr<BFS>;
+        fn NewBFS(
+            g: &Graph,
+            src: u64,
+            store_paths: bool,
+            store_nodes_sorted_by_distance: bool,
+            dst: u64,
+        ) -> UniquePtr<BFS>;
         fn run(self: Pin<&mut BFS>) -> Result<()>;
         fn hasFinished(self: &BFS) -> bool;
         fn distance(self: &BFS, t: u64) -> f64;
@@ -1608,9 +1702,13 @@ mod ffi {
         fn setTarget(self: Pin<&mut BFS>, dst: u64);
         fn getSumOfDistances(self: &BFS) -> f64;
 
-
         type BidirectionalBFS;
-        fn NewBidirectionalBFS(g: &Graph, src: u64, dst: u64, store_pred: bool) -> UniquePtr<BidirectionalBFS>;
+        fn NewBidirectionalBFS(
+            g: &Graph,
+            src: u64,
+            dst: u64,
+            store_pred: bool,
+        ) -> UniquePtr<BidirectionalBFS>;
         fn run(self: Pin<&mut BidirectionalBFS>) -> Result<()>;
         fn hasFinished(self: &BidirectionalBFS) -> bool;
         fn BidirectionalBFSGetPath(algo: &BidirectionalBFS) -> UniquePtr<CxxVector<u64>>;
@@ -1620,22 +1718,38 @@ mod ffi {
         fn setSource(self: Pin<&mut BidirectionalBFS>, src: u64);
         fn setTarget(self: Pin<&mut BidirectionalBFS>, dst: u64);
         fn BidirectionalBFSSetTargets(algo: Pin<&mut BidirectionalBFS>, dst: &[u64]);
-        fn BidirectionalBFSGetTargetIndexMap(algo: &BidirectionalBFS, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
-        
+        fn BidirectionalBFSGetTargetIndexMap(
+            algo: &BidirectionalBFS,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
 
         type BidirectionalDijkstra;
-        fn NewBidirectionalDijkstra(g: &Graph, src: u64, dst: u64, store_pred: bool) -> UniquePtr<BidirectionalDijkstra>;
+        fn NewBidirectionalDijkstra(
+            g: &Graph,
+            src: u64,
+            dst: u64,
+            store_pred: bool,
+        ) -> UniquePtr<BidirectionalDijkstra>;
         fn run(self: Pin<&mut BidirectionalDijkstra>) -> Result<()>;
         fn hasFinished(self: &BidirectionalDijkstra) -> bool;
         fn BidirectionalDijkstraGetPath(algo: &BidirectionalDijkstra) -> UniquePtr<CxxVector<u64>>;
-        fn BidirectionalDijkstraGetPredecessors(algo: &BidirectionalDijkstra) -> UniquePtr<CxxVector<u64>>;
+        fn BidirectionalDijkstraGetPredecessors(
+            algo: &BidirectionalDijkstra,
+        ) -> UniquePtr<CxxVector<u64>>;
         fn getDistance(self: &BidirectionalDijkstra) -> f64;
-        fn BidirectionalDijkstraGetDistances(algo: &BidirectionalDijkstra) -> UniquePtr<CxxVector<f64>>;
+        fn BidirectionalDijkstraGetDistances(
+            algo: &BidirectionalDijkstra,
+        ) -> UniquePtr<CxxVector<f64>>;
         fn setSource(self: Pin<&mut BidirectionalDijkstra>, src: u64);
         fn setTarget(self: Pin<&mut BidirectionalDijkstra>, dst: u64);
         fn BidirectionalDijkstraSetTargets(algo: Pin<&mut BidirectionalDijkstra>, dst: &[u64]);
-        fn BidirectionalDijkstraGetTargetIndexMap(algo: &BidirectionalDijkstra, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
-        
+        fn BidirectionalDijkstraGetTargetIndexMap(
+            algo: &BidirectionalDijkstra,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+
         type CommuteTimeDistance;
         fn NewCommuteTimeDistance(g: &Graph, tol: f64) -> UniquePtr<CommuteTimeDistance>;
         fn run(self: Pin<&mut CommuteTimeDistance>) -> Result<()>;
@@ -1653,10 +1767,14 @@ mod ffi {
         fn hasFinished(self: &Diameter) -> bool;
         fn DiameterGetDiameter(algo: &Diameter, lower: &mut u64, upper: &mut u64);
 
-
-
         type Dijkstra;
-        fn NewDijkstra(g: &Graph, src: u64, store_paths: bool, store_nodes_sorted_by_distance: bool, dst: u64) -> UniquePtr<Dijkstra>;
+        fn NewDijkstra(
+            g: &Graph,
+            src: u64,
+            store_paths: bool,
+            store_nodes_sorted_by_distance: bool,
+            dst: u64,
+        ) -> UniquePtr<Dijkstra>;
         fn run(self: Pin<&mut Dijkstra>) -> Result<()>;
         fn hasFinished(self: &Dijkstra) -> bool;
         fn distance(self: &Dijkstra, t: u64) -> f64;
@@ -1671,20 +1789,13 @@ mod ffi {
         fn setTarget(self: Pin<&mut Dijkstra>, dst: u64);
         fn getSumOfDistances(self: &Dijkstra) -> f64;
 
-
         type DynAPSP;
         fn NewDynAPSP(g: Pin<&mut Graph>) -> UniquePtr<DynAPSP>;
         fn run(self: Pin<&mut DynAPSP>) -> Result<()>;
         fn hasFinished(self: &DynAPSP) -> bool;
         fn getDistance(self: &DynAPSP, u: u64, v: u64) -> f64;
         fn DynAPSPGetDistances(algo: &DynAPSP, wt: &mut Vec<f64>) -> u64;
-        fn DynAPSPUpdate(
-            algo: Pin<&mut DynAPSP>,
-            kind: u8,
-            u: u64,
-            v: u64,
-            ew: f64,
-        );
+        fn DynAPSPUpdate(algo: Pin<&mut DynAPSP>, kind: u8, u: u64, v: u64, ew: f64);
         fn DynAPSPUpdateBatch(
             algo: Pin<&mut DynAPSP>,
             kinds: &[u8],
@@ -1692,8 +1803,6 @@ mod ffi {
             vs: &[u64],
             ew: &[f64],
         );
-
-
 
         type DynBFS;
         fn NewDynBFS(g: &Graph, src: u64, store_predecessors: bool) -> UniquePtr<DynBFS>;
@@ -1710,13 +1819,7 @@ mod ffi {
         fn setSource(self: Pin<&mut DynBFS>, src: u64);
         fn setTarget(self: Pin<&mut DynBFS>, dst: u64);
         fn getSumOfDistances(self: &DynBFS) -> f64;
-        fn DynBFSUpdate(
-            algo: Pin<&mut DynBFS>,
-            kind: u8,
-            u: u64,
-            v: u64,
-            ew: f64,
-        );
+        fn DynBFSUpdate(algo: Pin<&mut DynBFS>, kind: u8, u: u64, v: u64, ew: f64);
         fn DynBFSUpdateBatch(
             algo: Pin<&mut DynBFS>,
             kinds: &[u8],
@@ -1734,25 +1837,38 @@ mod ffi {
         fn run(self: Pin<&mut EffectiveDiameter>) -> Result<()>;
         fn hasFinished(self: &EffectiveDiameter) -> bool;
         fn getEffectiveDiameter(self: &EffectiveDiameter) -> f64;
-     
+
         type EffectiveDiameterApproximation;
-        fn NewEffectiveDiameterApproximation(g: &Graph, ratio: f64, k: u64, r: u64) -> UniquePtr<EffectiveDiameterApproximation>;
+        fn NewEffectiveDiameterApproximation(
+            g: &Graph,
+            ratio: f64,
+            k: u64,
+            r: u64,
+        ) -> UniquePtr<EffectiveDiameterApproximation>;
         fn run(self: Pin<&mut EffectiveDiameterApproximation>) -> Result<()>;
         fn hasFinished(self: &EffectiveDiameterApproximation) -> bool;
         fn getEffectiveDiameter(self: &EffectiveDiameterApproximation) -> f64;
-     
+
         type HopPlotApproximation;
-        fn NewHopPlotApproximation(g: &Graph, max_distance: u64, k: u64, r: u64) -> UniquePtr<HopPlotApproximation>;
+        fn NewHopPlotApproximation(
+            g: &Graph,
+            max_distance: u64,
+            k: u64,
+            r: u64,
+        ) -> UniquePtr<HopPlotApproximation>;
         fn run(self: Pin<&mut HopPlotApproximation>) -> Result<()>;
         fn hasFinished(self: &HopPlotApproximation) -> bool;
-        fn HopPlotApproximationGetHopPlot(algo: &HopPlotApproximation, ks: &mut Vec<u64>, vs: &mut Vec<f64>);
+        fn HopPlotApproximationGetHopPlot(
+            algo: &HopPlotApproximation,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<f64>,
+        );
 
         type JaccardDistance;
         fn NewJaccardDistance(g: &Graph, triangles: &CxxVector<u64>) -> UniquePtr<JaccardDistance>;
         fn preprocess(self: Pin<&mut JaccardDistance>);
         fn distance(self: Pin<&mut JaccardDistance>, u: u64, v: u64) -> f64;
         fn JaccardDistanceGetEdgeScores(algo: &JaccardDistance) -> UniquePtr<CxxVector<f64>>;
-
 
         type MultiTargetBFS;
         fn NewMultiTargetBFS(g: &Graph, src: u64, targets: &[u64]) -> UniquePtr<MultiTargetBFS>;
@@ -1765,57 +1881,90 @@ mod ffi {
         fn setSource(self: Pin<&mut MultiTargetBFS>, src: u64);
         fn setTarget(self: Pin<&mut MultiTargetBFS>, dst: u64);
         fn MultiTargetBFSSetTargets(algo: Pin<&mut MultiTargetBFS>, dst: &[u64]);
-        fn MultiTargetBFSGetTargetIndexMap(algo: &MultiTargetBFS, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
-        
+        fn MultiTargetBFSGetTargetIndexMap(
+            algo: &MultiTargetBFS,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
 
         type MultiTargetDijkstra;
-        fn NewMultiTargetDijkstra(g: &Graph, src: u64, targets: &[u64]) -> UniquePtr<MultiTargetDijkstra>;
+        fn NewMultiTargetDijkstra(
+            g: &Graph,
+            src: u64,
+            targets: &[u64],
+        ) -> UniquePtr<MultiTargetDijkstra>;
         fn run(self: Pin<&mut MultiTargetDijkstra>) -> Result<()>;
         fn hasFinished(self: &MultiTargetDijkstra) -> bool;
         fn MultiTargetDijkstraGetPath(algo: &MultiTargetDijkstra) -> UniquePtr<CxxVector<u64>>;
-        fn MultiTargetDijkstraGetPredecessors(algo: &MultiTargetDijkstra) -> UniquePtr<CxxVector<u64>>;
+        fn MultiTargetDijkstraGetPredecessors(
+            algo: &MultiTargetDijkstra,
+        ) -> UniquePtr<CxxVector<u64>>;
         fn getDistance(self: &MultiTargetDijkstra) -> f64;
-        fn MultiTargetDijkstraGetDistances(algo: &MultiTargetDijkstra) -> UniquePtr<CxxVector<f64>>;
+        fn MultiTargetDijkstraGetDistances(algo: &MultiTargetDijkstra)
+            -> UniquePtr<CxxVector<f64>>;
         fn setSource(self: Pin<&mut MultiTargetDijkstra>, src: u64);
         fn setTarget(self: Pin<&mut MultiTargetDijkstra>, dst: u64);
         fn MultiTargetDijkstraSetTargets(algo: Pin<&mut MultiTargetDijkstra>, dst: &[u64]);
-        fn MultiTargetDijkstraGetTargetIndexMap(algo: &MultiTargetDijkstra, ks: &mut Vec<u64>, vs: &mut Vec<u64>);
-        
+        fn MultiTargetDijkstraGetTargetIndexMap(
+            algo: &MultiTargetDijkstra,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+        );
+
         type NeighborhoodFunction;
         fn NewNeighborhoodFunction(g: &Graph) -> UniquePtr<NeighborhoodFunction>;
         fn run(self: Pin<&mut NeighborhoodFunction>) -> Result<()>;
         fn hasFinished(self: &NeighborhoodFunction) -> bool;
-        fn NeighborhoodFunctionGetNeighborhoodFunction(algo: &NeighborhoodFunction) ->  UniquePtr<CxxVector<u64>>;
-        
+        fn NeighborhoodFunctionGetNeighborhoodFunction(
+            algo: &NeighborhoodFunction,
+        ) -> UniquePtr<CxxVector<u64>>;
+
         type NeighborhoodFunctionApproximation;
-        fn NewNeighborhoodFunctionApproximation(g: &Graph, k: u64, r: u64) -> UniquePtr<NeighborhoodFunctionApproximation>;
+        fn NewNeighborhoodFunctionApproximation(
+            g: &Graph,
+            k: u64,
+            r: u64,
+        ) -> UniquePtr<NeighborhoodFunctionApproximation>;
         fn run(self: Pin<&mut NeighborhoodFunctionApproximation>) -> Result<()>;
         fn hasFinished(self: &NeighborhoodFunctionApproximation) -> bool;
-        fn NeighborhoodFunctionApproximationGetNeighborhoodFunction(algo: &NeighborhoodFunctionApproximation) ->  UniquePtr<CxxVector<u64>>;
+        fn NeighborhoodFunctionApproximationGetNeighborhoodFunction(
+            algo: &NeighborhoodFunctionApproximation,
+        ) -> UniquePtr<CxxVector<u64>>;
 
         type NeighborhoodFunctionHeuristic;
-        fn NewNeighborhoodFunctionHeuristic(g: &Graph, n_samples: u64, strategy: u8) -> UniquePtr<NeighborhoodFunctionHeuristic>;
+        fn NewNeighborhoodFunctionHeuristic(
+            g: &Graph,
+            n_samples: u64,
+            strategy: u8,
+        ) -> UniquePtr<NeighborhoodFunctionHeuristic>;
         fn run(self: Pin<&mut NeighborhoodFunctionHeuristic>) -> Result<()>;
         fn hasFinished(self: &NeighborhoodFunctionHeuristic) -> bool;
-        fn NeighborhoodFunctionHeuristicGetNeighborhoodFunction(algo: &NeighborhoodFunctionHeuristic) ->  UniquePtr<CxxVector<u64>>;
+        fn NeighborhoodFunctionHeuristicGetNeighborhoodFunction(
+            algo: &NeighborhoodFunctionHeuristic,
+        ) -> UniquePtr<CxxVector<u64>>;
 
         type PrunedLandmarkLabeling;
         fn NewPrunedLandmarkLabeling(g: &Graph) -> UniquePtr<PrunedLandmarkLabeling>;
         fn run(self: Pin<&mut PrunedLandmarkLabeling>) -> Result<()>;
         fn hasFinished(self: &PrunedLandmarkLabeling) -> bool;
-        fn query(self:  &PrunedLandmarkLabeling, u: u64, v: u64) -> u64;
-
-
+        fn query(self: &PrunedLandmarkLabeling, u: u64, v: u64) -> u64;
 
         type ReverseBFS;
-        fn NewReverseBFS(g: &Graph, src: u64, store_paths: bool, store_nodes_sorted_by_distance: bool, dst: u64) -> UniquePtr<ReverseBFS>;
+        fn NewReverseBFS(
+            g: &Graph,
+            src: u64,
+            store_paths: bool,
+            store_nodes_sorted_by_distance: bool,
+            dst: u64,
+        ) -> UniquePtr<ReverseBFS>;
         fn run(self: Pin<&mut ReverseBFS>) -> Result<()>;
         fn hasFinished(self: &ReverseBFS) -> bool;
         fn distance(self: &ReverseBFS, t: u64) -> f64;
         fn ReverseBFSGetDistances(algo: Pin<&mut ReverseBFS>) -> UniquePtr<CxxVector<f64>>;
         fn _numberOfPaths(self: &ReverseBFS, t: u64) -> f64;
         fn ReverseBFSGetPredecessors(algo: &ReverseBFS, t: u64) -> UniquePtr<CxxVector<u64>>;
-        fn ReverseBFSGetPath(algo: &ReverseBFS, t: u64, forward: bool) -> UniquePtr<CxxVector<u64>>;
+        fn ReverseBFSGetPath(algo: &ReverseBFS, t: u64, forward: bool)
+            -> UniquePtr<CxxVector<u64>>;
         fn ReverseBFSGetPaths(algo: &ReverseBFS, t: u64, forward: bool, vs: &mut Vec<u64>);
         fn ReverseBFSGetNodeSortedByDistance(algo: &ReverseBFS) -> UniquePtr<CxxVector<u64>>;
         fn getReachableNodes(self: &ReverseBFS) -> u64;
@@ -1825,6 +1974,14 @@ mod ffi {
 
         fn VolumeVolume(g: &Graph, r: f64, n_samples: u64) -> f64;
         fn VolumeVolumes(g: &Graph, rs: &[f64], n_samples: u64) -> UniquePtr<CxxVector<f64>>;
+
+        // ---- EMBEDDING ----
+
+        type Node2Vec;
+        fn NewNode2Vec(g: &Graph, p: f64, q: f64, l: u64, n: u64, d: u64) -> UniquePtr<Node2Vec>;
+        fn run(self: Pin<&mut Node2Vec>) -> Result<()>;
+        fn hasFinished(self: &Node2Vec) -> bool;
+        fn Node2VecGetFeatures(algo: &Node2Vec, ret: &mut Vec<f64>);
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

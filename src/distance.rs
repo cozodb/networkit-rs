@@ -1,11 +1,14 @@
 use std::collections::BTreeMap;
 
-use cxx::{UniquePtr, CxxVector};
+use cxx::{CxxVector, UniquePtr};
 use miette::IntoDiagnostic;
 
 use crate::{
-    base::Algorithm, base::DynAlgorithm,
-    bridge::{self, *}, tools::NodeIter, community::ValueIter,
+    base::Algorithm,
+    base::DynAlgorithm,
+    bridge::{self, *},
+    community::ValueIter,
+    tools::NodeIter,
 };
 
 pub trait STSP: Algorithm {
@@ -18,7 +21,6 @@ pub trait STSP: Algorithm {
     fn set_targets(&mut self, vs: &[u64]);
     fn get_target_index_map(&self) -> BTreeMap<u64, u64>;
 }
-
 
 pub trait SSSP: Algorithm {
     fn distance(&self, t: u64) -> f64;
@@ -51,9 +53,7 @@ pub struct APSP {
 
 impl APSP {
     pub fn new(g: &crate::Graph) -> Self {
-        Self {
-            inner: NewAPSP(g),
-        }
+        Self { inner: NewAPSP(g) }
     }
     pub fn get_distance(&self, u: u64, v: u64) -> f64 {
         self.inner.getDistance(u, v)
@@ -82,9 +82,6 @@ impl Algorithm for APSP {
     }
 }
 
-
-
-
 pub struct AStar {
     inner: UniquePtr<bridge::AStar>,
     _heu: UniquePtr<CxxVector<f64>>,
@@ -94,9 +91,7 @@ impl AStar {
     pub fn new(g: &crate::Graph, heuristic: &[f64], src: u64, dst: u64, store_pred: bool) -> Self {
         let heu = MakeWeightVector(heuristic);
         let inner = NewAStar(g, &heu, src, dst, store_pred);
-        Self {
-            inner, _heu: heu
-        }
+        Self { inner, _heu: heu }
     }
 }
 
@@ -112,11 +107,17 @@ impl Algorithm for AStar {
 
 impl STSP for AStar {
     fn get_path(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: AStarGetPath(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: AStarGetPath(&self.inner),
+        }
     }
 
     fn get_predecessors(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: AStarGetPredecessors(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: AStarGetPredecessors(&self.inner),
+        }
     }
 
     fn set_source(&mut self, u: u64) {
@@ -143,10 +144,12 @@ impl STSP for AStar {
     }
 
     fn get_distances(&self) -> ValueIter {
-        ValueIter { inner: AStarGetDistances(&self.inner), at: 0 }
+        ValueIter {
+            inner: AStarGetDistances(&self.inner),
+            at: 0,
+        }
     }
 }
-
 
 pub struct AdamicAdarDistance {
     inner: UniquePtr<bridge::AdamicAdarDistance>,
@@ -155,7 +158,7 @@ pub struct AdamicAdarDistance {
 impl AdamicAdarDistance {
     pub fn new(g: &crate::Graph) -> Self {
         Self {
-            inner: NewAdamicAdarDistance(g)
+            inner: NewAdamicAdarDistance(g),
         }
     }
 }
@@ -171,21 +174,34 @@ impl NodeDistance for AdamicAdarDistance {
 
     fn get_edge_scores(&self) -> ValueIter {
         ValueIter {
-            at: 0, inner: AdamicAdarDistanceGetEdgeScores(&self.inner)
+            at: 0,
+            inner: AdamicAdarDistanceGetEdgeScores(&self.inner),
         }
     }
 }
-
-
 
 pub struct AlgebraicDistance {
     inner: UniquePtr<bridge::AlgebraicDistance>,
 }
 
 impl AlgebraicDistance {
-    pub fn new(g: &crate::Graph, n_systems: Option<u64>, n_iterations: Option<u64>, omega: Option<f64>, norm: Option<u64>, with_edge_scores: bool) -> Self {
+    pub fn new(
+        g: &crate::Graph,
+        n_systems: Option<u64>,
+        n_iterations: Option<u64>,
+        omega: Option<f64>,
+        norm: Option<u64>,
+        with_edge_scores: bool,
+    ) -> Self {
         Self {
-            inner: NewAlgebraicDistance(g, n_systems.unwrap_or(10), n_iterations.unwrap_or(30), omega.unwrap_or(0.5), norm.unwrap_or(0), with_edge_scores)
+            inner: NewAlgebraicDistance(
+                g,
+                n_systems.unwrap_or(10),
+                n_iterations.unwrap_or(30),
+                omega.unwrap_or(0.5),
+                norm.unwrap_or(0),
+                with_edge_scores,
+            ),
         }
     }
 }
@@ -201,13 +217,11 @@ impl NodeDistance for AlgebraicDistance {
 
     fn get_edge_scores(&self) -> ValueIter {
         ValueIter {
-            at: 0, inner: AlgebraicDistanceGetEdgeScores(&self.inner)
+            at: 0,
+            inner: AlgebraicDistanceGetEdgeScores(&self.inner),
         }
     }
 }
-
-
-
 
 pub struct AllSimplePaths {
     inner: UniquePtr<bridge::AllSimplePaths>,
@@ -251,18 +265,26 @@ impl Algorithm for AllSimplePaths {
     }
 }
 
-
-
-
-
 pub struct Dijkstra {
     inner: UniquePtr<bridge::Dijkstra>,
 }
 
 impl Dijkstra {
-    pub fn new(g: &crate::Graph, src: u64,store_paths: bool, store_nodes_sorted_by_distance: bool, dst: Option<u64>) -> Self {
+    pub fn new(
+        g: &crate::Graph,
+        src: u64,
+        store_paths: bool,
+        store_nodes_sorted_by_distance: bool,
+        dst: Option<u64>,
+    ) -> Self {
         Self {
-            inner: NewDijkstra(g, src, store_paths, store_nodes_sorted_by_distance, dst.unwrap_or(u64::MAX)),
+            inner: NewDijkstra(
+                g,
+                src,
+                store_paths,
+                store_nodes_sorted_by_distance,
+                dst.unwrap_or(u64::MAX),
+            ),
         }
     }
 }
@@ -283,7 +305,10 @@ impl SSSP for Dijkstra {
     }
 
     fn get_distances(&mut self) -> ValueIter {
-        ValueIter {at: 0, inner: DijkstraGetDistances(self.inner.pin_mut())}
+        ValueIter {
+            at: 0,
+            inner: DijkstraGetDistances(self.inner.pin_mut()),
+        }
     }
 
     fn number_of_paths(&self, t: u64) -> f64 {
@@ -291,11 +316,17 @@ impl SSSP for Dijkstra {
     }
 
     fn get_predecessors(&self, t: u64) -> NodeIter {
-            NodeIter {at: 0, nodes: DijkstraGetPredecessors(&self.inner, t)}
+        NodeIter {
+            at: 0,
+            nodes: DijkstraGetPredecessors(&self.inner, t),
         }
+    }
 
     fn get_path(&self, t: u64, forward: bool) -> NodeIter {
-        NodeIter {at: 0, nodes: DijkstraGetPath(&self.inner, t, forward)}
+        NodeIter {
+            at: 0,
+            nodes: DijkstraGetPath(&self.inner, t, forward),
+        }
     }
 
     fn get_paths(&self, t: u64, forward: bool) -> Vec<Vec<u64>> {
@@ -315,7 +346,10 @@ impl SSSP for Dijkstra {
     }
 
     fn get_node_sorted_by_distances(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: DijkstraGetNodeSortedByDistance(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: DijkstraGetNodeSortedByDistance(&self.inner),
+        }
     }
 
     fn get_num_reachable_nodes(&self) -> u64 {
@@ -335,10 +369,6 @@ impl SSSP for Dijkstra {
     }
 }
 
-
-
-
-
 pub struct BidirectionalBFS {
     inner: UniquePtr<bridge::BidirectionalBFS>,
 }
@@ -346,9 +376,7 @@ pub struct BidirectionalBFS {
 impl BidirectionalBFS {
     pub fn new(g: &crate::Graph, src: u64, dst: u64, store_pred: bool) -> Self {
         let inner = NewBidirectionalBFS(g, src, dst, store_pred);
-        Self {
-            inner
-        }
+        Self { inner }
     }
 }
 
@@ -364,11 +392,17 @@ impl Algorithm for BidirectionalBFS {
 
 impl STSP for BidirectionalBFS {
     fn get_path(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: BidirectionalBFSGetPath(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: BidirectionalBFSGetPath(&self.inner),
+        }
     }
 
     fn get_predecessors(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: BidirectionalBFSGetPredecessors(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: BidirectionalBFSGetPredecessors(&self.inner),
+        }
     }
 
     fn set_source(&mut self, u: u64) {
@@ -395,13 +429,12 @@ impl STSP for BidirectionalBFS {
     }
 
     fn get_distances(&self) -> ValueIter {
-        ValueIter { inner: BidirectionalBFSGetDistances(&self.inner), at: 0 }
+        ValueIter {
+            inner: BidirectionalBFSGetDistances(&self.inner),
+            at: 0,
+        }
     }
 }
-
-
-
-
 
 pub struct BidirectionalDijkstra {
     inner: UniquePtr<bridge::BidirectionalDijkstra>,
@@ -410,9 +443,7 @@ pub struct BidirectionalDijkstra {
 impl BidirectionalDijkstra {
     pub fn new(g: &crate::Graph, src: u64, dst: u64, store_pred: bool) -> Self {
         let inner = NewBidirectionalDijkstra(g, src, dst, store_pred);
-        Self {
-            inner
-        }
+        Self { inner }
     }
 }
 
@@ -428,11 +459,17 @@ impl Algorithm for BidirectionalDijkstra {
 
 impl STSP for BidirectionalDijkstra {
     fn get_path(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: BidirectionalDijkstraGetPath(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: BidirectionalDijkstraGetPath(&self.inner),
+        }
     }
 
     fn get_predecessors(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: BidirectionalDijkstraGetPredecessors(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: BidirectionalDijkstraGetPredecessors(&self.inner),
+        }
     }
 
     fn set_source(&mut self, u: u64) {
@@ -459,11 +496,12 @@ impl STSP for BidirectionalDijkstra {
     }
 
     fn get_distances(&self) -> ValueIter {
-        ValueIter { inner: BidirectionalDijkstraGetDistances(&self.inner), at: 0 }
+        ValueIter {
+            inner: BidirectionalDijkstraGetDistances(&self.inner),
+            at: 0,
+        }
     }
 }
-
-
 
 pub struct CommuteTimeDistance {
     inner: UniquePtr<bridge::CommuteTimeDistance>,
@@ -472,9 +510,7 @@ pub struct CommuteTimeDistance {
 impl CommuteTimeDistance {
     pub fn new(g: &crate::Graph, tol: Option<f64>) -> Self {
         let inner = NewCommuteTimeDistance(g, tol.unwrap_or(0.1));
-        Self {
-            inner
-        }
+        Self { inner }
     }
 
     pub fn run_approximation(&mut self) {
@@ -507,11 +543,6 @@ impl Algorithm for CommuteTimeDistance {
     }
 }
 
-
-
-
-
-
 pub struct Diameter {
     inner: UniquePtr<bridge::Diameter>,
 }
@@ -522,20 +553,23 @@ pub struct Diameter {
 pub enum DiameterAlgorithm {
     #[default]
     Automatic = 0,
-Exact = 1,
-EstimatedRange = 2,
-EstimatedSamples = 3,
-EstimatedPedantic = 4,
+    Exact = 1,
+    EstimatedRange = 2,
+    EstimatedSamples = 3,
+    EstimatedPedantic = 4,
 }
 
 impl Diameter {
-    pub fn new(g: &crate::Graph, algo: DiameterAlgorithm,  error: Option<f64>, n_samples: Option<u64>) -> Self {
+    pub fn new(
+        g: &crate::Graph,
+        algo: DiameterAlgorithm,
+        error: Option<f64>,
+        n_samples: Option<u64>,
+    ) -> Self {
         let inner = NewDiameter(g, algo as u8, error.unwrap_or(-1.), n_samples.unwrap_or(0));
-        Self {
-            inner
-        }
+        Self { inner }
     }
-    pub fn get_diameter(& self) -> (u64, u64) {
+    pub fn get_diameter(&self) -> (u64, u64) {
         let mut lower = 0;
         let mut upper = 0;
         DiameterGetDiameter(&self.inner, &mut lower, &mut upper);
@@ -553,18 +587,26 @@ impl Algorithm for Diameter {
     }
 }
 
-
-
-
-
 pub struct BFS {
     inner: UniquePtr<bridge::BFS>,
 }
 
 impl BFS {
-    pub fn new(g: &crate::Graph, src: u64,store_paths: bool, store_nodes_sorted_by_distance: bool, dst: Option<u64>) -> Self {
+    pub fn new(
+        g: &crate::Graph,
+        src: u64,
+        store_paths: bool,
+        store_nodes_sorted_by_distance: bool,
+        dst: Option<u64>,
+    ) -> Self {
         Self {
-            inner: NewBFS(g, src, store_paths, store_nodes_sorted_by_distance, dst.unwrap_or(u64::MAX)),
+            inner: NewBFS(
+                g,
+                src,
+                store_paths,
+                store_nodes_sorted_by_distance,
+                dst.unwrap_or(u64::MAX),
+            ),
         }
     }
 }
@@ -585,7 +627,10 @@ impl SSSP for BFS {
     }
 
     fn get_distances(&mut self) -> ValueIter {
-        ValueIter {at: 0, inner: BFSGetDistances(self.inner.pin_mut())}
+        ValueIter {
+            at: 0,
+            inner: BFSGetDistances(self.inner.pin_mut()),
+        }
     }
 
     fn number_of_paths(&self, t: u64) -> f64 {
@@ -593,11 +638,17 @@ impl SSSP for BFS {
     }
 
     fn get_predecessors(&self, t: u64) -> NodeIter {
-            NodeIter {at: 0, nodes: BFSGetPredecessors(&self.inner, t)}
+        NodeIter {
+            at: 0,
+            nodes: BFSGetPredecessors(&self.inner, t),
         }
+    }
 
     fn get_path(&self, t: u64, forward: bool) -> NodeIter {
-        NodeIter {at: 0, nodes: BFSGetPath(&self.inner, t, forward)}
+        NodeIter {
+            at: 0,
+            nodes: BFSGetPath(&self.inner, t, forward),
+        }
     }
 
     fn get_paths(&self, t: u64, forward: bool) -> Vec<Vec<u64>> {
@@ -617,7 +668,10 @@ impl SSSP for BFS {
     }
 
     fn get_node_sorted_by_distances(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: BFSGetNodeSortedByDistance(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: BFSGetNodeSortedByDistance(&self.inner),
+        }
     }
 
     fn get_num_reachable_nodes(&self) -> u64 {
@@ -636,9 +690,6 @@ impl SSSP for BFS {
         self.inner.getSumOfDistances()
     }
 }
-
-
-
 
 pub struct DynAPSP {
     inner: UniquePtr<bridge::DynAPSP>,
@@ -697,8 +748,6 @@ impl DynAlgorithm for DynAPSP {
     }
 }
 
-
-
 pub struct DynBFS {
     inner: UniquePtr<bridge::DynBFS>,
 }
@@ -706,7 +755,7 @@ pub struct DynBFS {
 impl DynBFS {
     pub fn new(g: &crate::Graph, src: u64, store_predecessors: bool) -> Self {
         Self {
-            inner: NewDynBFS(g, src,  store_predecessors),
+            inner: NewDynBFS(g, src, store_predecessors),
         }
     }
 }
@@ -727,7 +776,10 @@ impl SSSP for DynBFS {
     }
 
     fn get_distances(&mut self) -> ValueIter {
-        ValueIter {at: 0, inner: DynBFSGetDistances(self.inner.pin_mut())}
+        ValueIter {
+            at: 0,
+            inner: DynBFSGetDistances(self.inner.pin_mut()),
+        }
     }
 
     fn number_of_paths(&self, t: u64) -> f64 {
@@ -735,11 +787,17 @@ impl SSSP for DynBFS {
     }
 
     fn get_predecessors(&self, t: u64) -> NodeIter {
-            NodeIter {at: 0, nodes: DynBFSGetPredecessors(&self.inner, t)}
+        NodeIter {
+            at: 0,
+            nodes: DynBFSGetPredecessors(&self.inner, t),
         }
+    }
 
     fn get_path(&self, t: u64, forward: bool) -> NodeIter {
-        NodeIter {at: 0, nodes: DynBFSGetPath(&self.inner, t, forward)}
+        NodeIter {
+            at: 0,
+            nodes: DynBFSGetPath(&self.inner, t, forward),
+        }
     }
 
     fn get_paths(&self, t: u64, forward: bool) -> Vec<Vec<u64>> {
@@ -759,7 +817,10 @@ impl SSSP for DynBFS {
     }
 
     fn get_node_sorted_by_distances(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: DynBFSGetNodeSortedByDistance(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: DynBFSGetNodeSortedByDistance(&self.inner),
+        }
     }
 
     fn get_num_reachable_nodes(&self) -> u64 {
@@ -778,8 +839,6 @@ impl SSSP for DynBFS {
         self.inner.getSumOfDistances()
     }
 }
-
-
 
 impl DynAlgorithm for DynBFS {
     fn update(&mut self, e: crate::base::GraphEvent) {
@@ -800,7 +859,6 @@ impl DynAlgorithm for DynBFS {
         DynBFSUpdateBatch(self.inner.pin_mut(), &kinds, &us, &vs, &ews);
     }
 }
-
 
 impl DynSSSP for DynBFS {
     fn modified(&mut self) -> bool {
@@ -823,8 +881,6 @@ impl Eccentricity {
     }
 }
 
-
-
 pub struct EffectiveDiameter {
     inner: UniquePtr<bridge::EffectiveDiameter>,
 }
@@ -832,9 +888,7 @@ pub struct EffectiveDiameter {
 impl EffectiveDiameter {
     pub fn new(g: &crate::Graph, ratio: Option<f64>) -> Self {
         let inner = NewEffectiveDiameter(g, ratio.unwrap_or(0.9));
-        Self {
-            inner
-        }
+        Self { inner }
     }
     pub fn get_effective_diameter(&self) -> f64 {
         self.inner.getEffectiveDiameter()
@@ -851,18 +905,19 @@ impl Algorithm for EffectiveDiameter {
     }
 }
 
-
-
 pub struct EffectiveDiameterApproximation {
     inner: UniquePtr<bridge::EffectiveDiameterApproximation>,
 }
 
 impl EffectiveDiameterApproximation {
     pub fn new(g: &crate::Graph, ratio: Option<f64>, k: Option<u64>, r: Option<u64>) -> Self {
-        let inner = NewEffectiveDiameterApproximation(g, ratio.unwrap_or(0.9), k.unwrap_or(64), r.unwrap_or(7));
-        Self {
-            inner
-        }
+        let inner = NewEffectiveDiameterApproximation(
+            g,
+            ratio.unwrap_or(0.9),
+            k.unwrap_or(64),
+            r.unwrap_or(7),
+        );
+        Self { inner }
     }
     pub fn get_effective_diameter(&self) -> f64 {
         self.inner.getEffectiveDiameter()
@@ -879,18 +934,24 @@ impl Algorithm for EffectiveDiameterApproximation {
     }
 }
 
-
-
 pub struct HopPlotApproximation {
     inner: UniquePtr<bridge::HopPlotApproximation>,
 }
 
 impl HopPlotApproximation {
-    pub fn new(g: &crate::Graph, max_distance: Option<u64>, k: Option<u64>, r: Option<u64>) -> Self {
-        let inner = NewHopPlotApproximation(g, max_distance.unwrap_or(0), k.unwrap_or(64), r.unwrap_or(7));
-        Self {
-            inner
-        }
+    pub fn new(
+        g: &crate::Graph,
+        max_distance: Option<u64>,
+        k: Option<u64>,
+        r: Option<u64>,
+    ) -> Self {
+        let inner = NewHopPlotApproximation(
+            g,
+            max_distance.unwrap_or(0),
+            k.unwrap_or(64),
+            r.unwrap_or(7),
+        );
+        Self { inner }
     }
     pub fn get_hop_plot(&self) -> BTreeMap<u64, f64> {
         let mut ks = vec![];
@@ -910,8 +971,6 @@ impl Algorithm for HopPlotApproximation {
     }
 }
 
-
-
 pub struct JaccardDistance {
     inner: UniquePtr<bridge::JaccardDistance>,
     _triangles: UniquePtr<CxxVector<u64>>,
@@ -922,7 +981,8 @@ impl JaccardDistance {
         let t = MakeCountVector(triangles);
         let inner = NewJaccardDistance(g, &t);
         Self {
-            inner, _triangles: t
+            inner,
+            _triangles: t,
         }
     }
 }
@@ -938,13 +998,11 @@ impl NodeDistance for JaccardDistance {
 
     fn get_edge_scores(&self) -> ValueIter {
         ValueIter {
-            at: 0, inner: JaccardDistanceGetEdgeScores(&self.inner)
+            at: 0,
+            inner: JaccardDistanceGetEdgeScores(&self.inner),
         }
     }
 }
-
-
-
 
 pub struct MultiTargetBFS {
     inner: UniquePtr<bridge::MultiTargetBFS>,
@@ -953,9 +1011,7 @@ pub struct MultiTargetBFS {
 impl MultiTargetBFS {
     pub fn new(g: &crate::Graph, src: u64, targets: &[u64]) -> Self {
         let inner = NewMultiTargetBFS(g, src, targets);
-        Self {
-            inner
-        }
+        Self { inner }
     }
 }
 
@@ -971,11 +1027,17 @@ impl Algorithm for MultiTargetBFS {
 
 impl STSP for MultiTargetBFS {
     fn get_path(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: MultiTargetBFSGetPath(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: MultiTargetBFSGetPath(&self.inner),
+        }
     }
 
     fn get_predecessors(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: MultiTargetBFSGetPredecessors(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: MultiTargetBFSGetPredecessors(&self.inner),
+        }
     }
 
     fn set_source(&mut self, u: u64) {
@@ -1002,13 +1064,12 @@ impl STSP for MultiTargetBFS {
     }
 
     fn get_distances(&self) -> ValueIter {
-        ValueIter { inner: MultiTargetBFSGetDistances(&self.inner), at: 0 }
+        ValueIter {
+            inner: MultiTargetBFSGetDistances(&self.inner),
+            at: 0,
+        }
     }
 }
-
-
-
-
 
 pub struct MultiTargetDijkstra {
     inner: UniquePtr<bridge::MultiTargetDijkstra>,
@@ -1017,9 +1078,7 @@ pub struct MultiTargetDijkstra {
 impl MultiTargetDijkstra {
     pub fn new(g: &crate::Graph, src: u64, targets: &[u64]) -> Self {
         let inner = NewMultiTargetDijkstra(g, src, targets);
-        Self {
-            inner
-        }
+        Self { inner }
     }
 }
 
@@ -1035,11 +1094,17 @@ impl Algorithm for MultiTargetDijkstra {
 
 impl STSP for MultiTargetDijkstra {
     fn get_path(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: MultiTargetDijkstraGetPath(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: MultiTargetDijkstraGetPath(&self.inner),
+        }
     }
 
     fn get_predecessors(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: MultiTargetDijkstraGetPredecessors(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: MultiTargetDijkstraGetPredecessors(&self.inner),
+        }
     }
 
     fn set_source(&mut self, u: u64) {
@@ -1066,12 +1131,12 @@ impl STSP for MultiTargetDijkstra {
     }
 
     fn get_distances(&self) -> ValueIter {
-        ValueIter { inner: MultiTargetDijkstraGetDistances(&self.inner), at: 0 }
+        ValueIter {
+            inner: MultiTargetDijkstraGetDistances(&self.inner),
+            at: 0,
+        }
     }
 }
-
-
-
 
 pub struct NeighborhoodFunction {
     inner: UniquePtr<bridge::NeighborhoodFunction>,
@@ -1080,12 +1145,13 @@ pub struct NeighborhoodFunction {
 impl NeighborhoodFunction {
     pub fn new(g: &crate::Graph) -> Self {
         let inner = NewNeighborhoodFunction(g);
-        Self {
-            inner
-        }
+        Self { inner }
     }
     pub fn get_neighbourhood_function(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: NeighborhoodFunctionGetNeighborhoodFunction(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: NeighborhoodFunctionGetNeighborhoodFunction(&self.inner),
+        }
     }
 }
 
@@ -1099,10 +1165,6 @@ impl Algorithm for NeighborhoodFunction {
     }
 }
 
-
-
-
-
 pub struct NeighborhoodFunctionApproximation {
     inner: UniquePtr<bridge::NeighborhoodFunctionApproximation>,
 }
@@ -1110,12 +1172,13 @@ pub struct NeighborhoodFunctionApproximation {
 impl NeighborhoodFunctionApproximation {
     pub fn new(g: &crate::Graph, k: Option<u64>, r: Option<u64>) -> Self {
         let inner = NewNeighborhoodFunctionApproximation(g, k.unwrap_or(64), r.unwrap_or(7));
-        Self {
-            inner
-        }
+        Self { inner }
     }
     pub fn get_neighbourhood_function(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: NeighborhoodFunctionApproximationGetNeighborhoodFunction(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: NeighborhoodFunctionApproximationGetNeighborhoodFunction(&self.inner),
+        }
     }
 }
 
@@ -1129,9 +1192,6 @@ impl Algorithm for NeighborhoodFunctionApproximation {
     }
 }
 
-
-
-
 pub struct NeighborhoodFunctionHeuristic {
     inner: UniquePtr<bridge::NeighborhoodFunctionHeuristic>,
 }
@@ -1142,18 +1202,23 @@ pub struct NeighborhoodFunctionHeuristic {
 pub enum NeighborhoodFunctionHeuristicStrategy {
     Random = 0,
     #[default]
-    Split = 1
+    Split = 1,
 }
 
 impl NeighborhoodFunctionHeuristic {
-    pub fn new(g: &crate::Graph, n_samples: Option<u64>, strategy: NeighborhoodFunctionHeuristicStrategy) -> Self {
+    pub fn new(
+        g: &crate::Graph,
+        n_samples: Option<u64>,
+        strategy: NeighborhoodFunctionHeuristicStrategy,
+    ) -> Self {
         let inner = NewNeighborhoodFunctionHeuristic(g, n_samples.unwrap_or(0), strategy as u8);
-        Self {
-            inner
-        }
+        Self { inner }
     }
     pub fn get_neighbourhood_function(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: NeighborhoodFunctionHeuristicGetNeighborhoodFunction(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: NeighborhoodFunctionHeuristicGetNeighborhoodFunction(&self.inner),
+        }
     }
 }
 
@@ -1167,9 +1232,6 @@ impl Algorithm for NeighborhoodFunctionHeuristic {
     }
 }
 
-
-
-
 pub struct PrunedLandmarkLabeling {
     inner: UniquePtr<bridge::PrunedLandmarkLabeling>,
 }
@@ -1177,9 +1239,7 @@ pub struct PrunedLandmarkLabeling {
 impl PrunedLandmarkLabeling {
     pub fn new(g: &crate::Graph) -> Self {
         let inner = NewPrunedLandmarkLabeling(g);
-        Self {
-            inner
-        }
+        Self { inner }
     }
     pub fn query(&self, u: u64, v: u64) -> u64 {
         self.inner.query(u, v)
@@ -1196,18 +1256,26 @@ impl Algorithm for PrunedLandmarkLabeling {
     }
 }
 
-
-
-
-
 pub struct ReverseBFS {
     inner: UniquePtr<bridge::ReverseBFS>,
 }
 
 impl ReverseBFS {
-    pub fn new(g: &crate::Graph, src: u64,store_paths: bool, store_nodes_sorted_by_distance: bool, dst: Option<u64>) -> Self {
+    pub fn new(
+        g: &crate::Graph,
+        src: u64,
+        store_paths: bool,
+        store_nodes_sorted_by_distance: bool,
+        dst: Option<u64>,
+    ) -> Self {
         Self {
-            inner: NewReverseBFS(g, src, store_paths, store_nodes_sorted_by_distance, dst.unwrap_or(u64::MAX)),
+            inner: NewReverseBFS(
+                g,
+                src,
+                store_paths,
+                store_nodes_sorted_by_distance,
+                dst.unwrap_or(u64::MAX),
+            ),
         }
     }
 }
@@ -1228,7 +1296,10 @@ impl SSSP for ReverseBFS {
     }
 
     fn get_distances(&mut self) -> ValueIter {
-        ValueIter {at: 0, inner: ReverseBFSGetDistances(self.inner.pin_mut())}
+        ValueIter {
+            at: 0,
+            inner: ReverseBFSGetDistances(self.inner.pin_mut()),
+        }
     }
 
     fn number_of_paths(&self, t: u64) -> f64 {
@@ -1236,11 +1307,17 @@ impl SSSP for ReverseBFS {
     }
 
     fn get_predecessors(&self, t: u64) -> NodeIter {
-            NodeIter {at: 0, nodes: ReverseBFSGetPredecessors(&self.inner, t)}
+        NodeIter {
+            at: 0,
+            nodes: ReverseBFSGetPredecessors(&self.inner, t),
         }
+    }
 
     fn get_path(&self, t: u64, forward: bool) -> NodeIter {
-        NodeIter {at: 0, nodes: ReverseBFSGetPath(&self.inner, t, forward)}
+        NodeIter {
+            at: 0,
+            nodes: ReverseBFSGetPath(&self.inner, t, forward),
+        }
     }
 
     fn get_paths(&self, t: u64, forward: bool) -> Vec<Vec<u64>> {
@@ -1260,7 +1337,10 @@ impl SSSP for ReverseBFS {
     }
 
     fn get_node_sorted_by_distances(&self) -> NodeIter {
-        NodeIter {at: 0, nodes: ReverseBFSGetNodeSortedByDistance(&self.inner)}
+        NodeIter {
+            at: 0,
+            nodes: ReverseBFSGetNodeSortedByDistance(&self.inner),
+        }
     }
 
     fn get_num_reachable_nodes(&self) -> u64 {
@@ -1280,7 +1360,6 @@ impl SSSP for ReverseBFS {
     }
 }
 
-
 pub struct Volume;
 
 impl Volume {
@@ -1288,6 +1367,9 @@ impl Volume {
         VolumeVolume(g, radius, n_samples)
     }
     pub fn volumes(g: &crate::Graph, radii: &[f64], n_samples: u64) -> ValueIter {
-        ValueIter {at: 0, inner: VolumeVolumes(g, radii, n_samples)}
+        ValueIter {
+            at: 0,
+            inner: VolumeVolumes(g, radii, n_samples),
+        }
     }
 }

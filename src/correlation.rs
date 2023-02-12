@@ -6,8 +6,6 @@ use crate::{
     bridge::{self, *},
 };
 
-
-
 pub struct Assortativity {
     inner: UniquePtr<bridge::Assortativity>,
 }
@@ -32,4 +30,3 @@ impl Algorithm for Assortativity {
         self.inner.hasFinished()
     }
 }
-

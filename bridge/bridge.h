@@ -14,6 +14,7 @@
 #include <component.h>
 #include <correlation.h>
 #include <distance.h>
+#include <embedding.h>
 
 namespace NetworKit
 {
