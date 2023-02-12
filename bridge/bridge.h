@@ -15,6 +15,7 @@
 #include <correlation.h>
 #include <distance.h>
 #include <misc.h>
+#include <generators.h>
 
 namespace NetworKit
 {

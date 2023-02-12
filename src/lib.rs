@@ -15,6 +15,7 @@ pub mod graph;
 pub mod partition;
 pub mod scd;
 pub mod tools;
+pub mod generators;
 
 pub use cover::Cover;
 pub use graph::Graph;

@@ -1996,6 +1996,19 @@ mod ffi {
         fn getFlow(self: &EdmondsKarp, e: u64) -> f64;
         fn EdmondsKarpGetFlowVector(algo: &EdmondsKarp) -> UniquePtr<CxxVector<f64>>;
 
+        // ---- GENERATORS ----
+
+        type BarabasiAlbertGenerator;
+        fn NewBarabasiAlbertGenerator(
+            k: u64,
+            n_max: u64,
+            n0: u64,
+            batagelj: bool,
+        ) -> UniquePtr<BarabasiAlbertGenerator>;
+        fn BarabasiAlbertGeneratorGenerate(
+            algo: Pin<&mut BarabasiAlbertGenerator>,
+        ) -> UniquePtr<Graph>;
+
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

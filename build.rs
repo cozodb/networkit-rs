@@ -34,6 +34,7 @@ fn main() {
     println!("cargo:rerun-if-changed=bridge/correlation.h");
     println!("cargo:rerun-if-changed=bridge/distance.h");
     println!("cargo:rerun-if-changed=bridge/misc.h");
+    println!("cargo:rerun-if-changed=bridge/generators.h");
 
     println!("cargo:rustc-link-search=native=/opt/homebrew/opt/libomp/lib");
     println!("cargo:rustc-link-search=native=/usr/local/opt/libomp/lib");
