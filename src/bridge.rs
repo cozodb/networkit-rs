@@ -2009,6 +2009,40 @@ mod ffi {
             algo: Pin<&mut BarabasiAlbertGenerator>,
         ) -> UniquePtr<Graph>;
 
+        type ChungLuGenerator;
+        fn NewChungLuGenerator(degree_sequence: &CxxVector<u64>) -> UniquePtr<ChungLuGenerator>;
+        fn ChungLuGeneratorGenerate(algo: Pin<&mut ChungLuGenerator>) -> UniquePtr<Graph>;
+
+        type ClusteredRandomGraphGenerator;
+        fn NewClusteredRandomGraphGenerator(
+            n: u64,
+            k: u64,
+            p_intra: f64,
+            p_inter: f64,
+        ) -> UniquePtr<ClusteredRandomGraphGenerator>;
+        fn ClusteredRandomGraphGeneratorGenerate(
+            algo: Pin<&mut ClusteredRandomGraphGenerator>,
+        ) -> UniquePtr<Graph>;
+        fn ClusteredRandomGraphGeneratorGetCommunities(
+            algo: Pin<&mut ClusteredRandomGraphGenerator>,
+        ) -> UniquePtr<Partition>;
+
+        type DorogovtsevMendesGenerator;
+        fn NewDorogovtsevMendesGenerator(n_nodes: u64) -> UniquePtr<DorogovtsevMendesGenerator>;
+        fn DorogovtsevMendesGeneratorGenerate(
+            algo: Pin<&mut DorogovtsevMendesGenerator>,
+        ) -> UniquePtr<Graph>;
+
+        type DynamicDorogovtsevMendesGenerator;
+        fn NewDynamicDorogovtsevMendesGenerator() -> UniquePtr<DynamicDorogovtsevMendesGenerator>;
+        fn DynamicDorogovtsevMendesGeneratorGenerate(
+            algo: Pin<&mut DynamicDorogovtsevMendesGenerator>,
+            n_steps: u64,
+            tps: &mut Vec<u8>,
+            us: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

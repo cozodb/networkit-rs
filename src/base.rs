@@ -27,14 +27,30 @@ impl GraphEvent {
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[repr(u8)]
 pub enum GraphEventType {
-    NodeAddition,
-    NodeRemoval,
-    NodeRestoration,
-    EdgeAddition,
-    EdgeRemoval,
-    EdgeWeightUpdate,
-    EdgeWeightIncrement,
-    TimeStep,
+    NodeAddition = 0,
+    NodeRemoval = 1,
+    NodeRestoration = 2,
+    EdgeAddition = 3,
+    EdgeRemoval = 4,
+    EdgeWeightUpdate = 5,
+    EdgeWeightIncrement = 6,
+    TimeStep = 7,
+}
+
+impl From<u8> for GraphEventType {
+    fn from(value: u8) -> Self {
+        match value {
+            0 => Self::NodeAddition,
+            1 => Self::NodeRemoval,
+            2 => Self::NodeRestoration,
+            3 => Self::EdgeAddition,
+            4 => Self::EdgeRemoval,
+            5 => Self::EdgeWeightUpdate,
+            6 => Self::EdgeWeightIncrement,
+            7 => Self::TimeStep,
+            _ => panic!(),
+        }
+    }
 }
 
 pub trait DynAlgorithm {
