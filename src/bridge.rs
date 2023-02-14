@@ -2043,6 +2043,250 @@ mod ffi {
             vs: &mut Vec<u64>,
             ws: &mut Vec<f64>,
         );
+
+        type DynamicForestFireGenerator;
+        fn NewDynamicForestFireGenerator(
+            p: f64,
+            directed: bool,
+            r: f64,
+        ) -> UniquePtr<DynamicForestFireGenerator>;
+        fn DynamicForestFireGeneratorGenerate(
+            algo: Pin<&mut DynamicForestFireGenerator>,
+            n_steps: u64,
+            tps: &mut Vec<u8>,
+            us: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+
+        type DynamicHyperbolicGenerator;
+        fn NewDynamicHyperbolicGenerator(
+            n: u64,
+            avg_degree: f64,
+            exp: f64,
+            t: f64,
+            move_each_step: f64,
+            move_distance: f64,
+        ) -> UniquePtr<DynamicHyperbolicGenerator>;
+        fn DynamicHyperbolicGeneratorGenerate(
+            algo: Pin<&mut DynamicHyperbolicGenerator>,
+            n_steps: u64,
+            tps: &mut Vec<u8>,
+            us: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn DynamicHyperbolicGeneratorGetGraph(
+            algo: &DynamicHyperbolicGenerator,
+        ) -> UniquePtr<Graph>;
+        fn DynamicHyperbolicGeneratorGetCoordinates(
+            algo: &DynamicHyperbolicGenerator,
+            xs: &mut Vec<f64>,
+            ys: &mut Vec<f64>,
+        );
+
+        type DynamicPathGenerator;
+        fn NewDynamicPathGenerator() -> UniquePtr<DynamicPathGenerator>;
+        fn DynamicPathGeneratorGenerate(
+            algo: Pin<&mut DynamicPathGenerator>,
+            n_steps: u64,
+            tps: &mut Vec<u8>,
+            us: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+
+        type DynamicPubWebGenerator;
+        fn NewDynamicPubWebGenerator(
+            num_nodes: u64,
+            num_dense_areas: u64,
+            neighbourhood_radius: f64,
+            max_num_neighbours: u64,
+            write_initial_graph_to_stream: bool,
+        ) -> UniquePtr<DynamicPubWebGenerator>;
+        fn DynamicPubWebGeneratorGenerate(
+            algo: Pin<&mut DynamicPubWebGenerator>,
+            n_steps: u64,
+            tps: &mut Vec<u8>,
+            us: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn DynamicPubWebGeneratorGetGraph(algo: &DynamicPubWebGenerator) -> UniquePtr<Graph>;
+        fn DynamicPubWebGeneratorGetCoordinates(
+            algo: &DynamicPubWebGenerator,
+            xs: &mut Vec<f64>,
+            ys: &mut Vec<f64>,
+        );
+        fn DynamicPubWebGeneratorGetNewCoordinates(
+            algo: &DynamicPubWebGenerator,
+            ns: &mut Vec<u64>,
+            xs: &mut Vec<f64>,
+            ys: &mut Vec<f64>,
+        );
+
+        type EdgeSwitchingMarkovChainGenerator;
+        fn NewEdgeSwitchingMarkovChainGenerator(
+            sequence: &CxxVector<u64>,
+            ignore_if_not_realizable: bool,
+            num_switches_per_edge: u64,
+        ) -> UniquePtr<EdgeSwitchingMarkovChainGenerator>;
+        fn EdgeSwitchingMarkovChainGeneratorGenerate(
+            algo: Pin<&mut EdgeSwitchingMarkovChainGenerator>,
+        ) -> UniquePtr<Graph>;
+        fn isRealizable(self: Pin<&mut EdgeSwitchingMarkovChainGenerator>) -> bool;
+        fn getRealizable(self: &EdgeSwitchingMarkovChainGenerator) -> bool;
+
+        type ErdosRenyiGenerator;
+        fn NewErdosRenyiGenerator(
+            n_nodes: u64,
+            prob: f64,
+            directed: bool,
+            self_loops: bool,
+        ) -> UniquePtr<ErdosRenyiGenerator>;
+        fn ErdosRenyiGeneratorGenerate(algo: Pin<&mut ErdosRenyiGenerator>) -> UniquePtr<Graph>;
+
+        type HavelHakimiGenerator;
+        fn NewHavelHakimiGenerator(
+            sequence: &CxxVector<u64>,
+            ignore_if_not_realizable: bool,
+        ) -> UniquePtr<HavelHakimiGenerator>;
+        fn HavelHakimiGeneratorGenerate(algo: Pin<&mut HavelHakimiGenerator>) -> UniquePtr<Graph>;
+        fn isRealizable(self: Pin<&mut HavelHakimiGenerator>) -> bool;
+        fn getRealizable(self: &HavelHakimiGenerator) -> bool;
+
+        type HyperbolicGenerator;
+        fn NewHyperbolicGenerator(
+            n: u64,
+            avg_degree: f64,
+            exp: f64,
+            T: f64,
+        ) -> UniquePtr<HyperbolicGenerator>;
+        fn HyperbolicGeneratorGenerate(algo: Pin<&mut HyperbolicGenerator>) -> UniquePtr<Graph>;
+        #[rust_name = "HyperbolicGeneratorGenerateAdvanced"]
+        fn HyperbolicGeneratorGenerate(
+            algo: Pin<&mut HyperbolicGenerator>,
+            angles: &[f64],
+            radii: &[f64],
+            r: f64,
+            T: f64,
+        ) -> UniquePtr<Graph>;
+        fn setLeafCapacity(self: Pin<&mut HyperbolicGenerator>, capacity: u64);
+        fn setTheoreticalSplit(self: Pin<&mut HyperbolicGenerator>, split: bool);
+        fn setBalance(self: Pin<&mut HyperbolicGenerator>, balance: f64);
+
+        type LFRGenerator;
+        fn NewLFRGenerator(n: u64) -> UniquePtr<LFRGenerator>;
+        fn LFRGeneratorGenerate(algo: Pin<&mut LFRGenerator>) -> UniquePtr<Graph>;
+        fn run(self: Pin<&mut LFRGenerator>) -> Result<()>;
+        fn hasFinished(self: &LFRGenerator) -> bool;
+        fn LFRGeneratorSetDegreeSequence(algo: Pin<&mut LFRGenerator>, seq: &[u64]);
+        fn generatePowerlawDegreeSequence(
+            self: Pin<&mut LFRGenerator>,
+            avg_degree: u64,
+            max_degree: u64,
+            node_degree_exp: f64,
+        );
+        fn LFRGeneratorSetCommunitySizeSequence(algo: Pin<&mut LFRGenerator>, seq: &[u64]);
+        fn LFRGeneratorSetPartition(algo: Pin<&mut LFRGenerator>, p: UniquePtr<Partition>);
+        fn generatePowerlawCommunitySizeSequence(
+            self: Pin<&mut LFRGenerator>,
+            min_community_size: u64,
+            max_community_size: u64,
+            community_size_exp: f64,
+        );
+        fn setMu(self: Pin<&mut LFRGenerator>, mu: f64);
+        #[rust_name = "setMuArray"]
+        fn setMu(self: Pin<&mut LFRGenerator>, mu: &CxxVector<f64>);
+        fn setMuWithBinomialDistribution(self: Pin<&mut LFRGenerator>, mu: f64);
+        fn LFRGeneratorGetGraph(algo: &LFRGenerator) -> UniquePtr<Graph>;
+        fn LFRGeneratorGetPartition(algo: &LFRGenerator) -> UniquePtr<Partition>;
+
+        type MocnikGenerator;
+        fn NewMocnikGenerator(
+            dim: u64,
+            n: u64,
+            k: f64,
+            weighted: bool,
+        ) -> UniquePtr<MocnikGenerator>;
+        fn MocnikGeneratorGenerate(algo: Pin<&mut MocnikGenerator>) -> UniquePtr<Graph>;
+
+        type MocnikGeneratorBasic;
+        fn NewMocnikGeneratorBasic(dim: u64, n: u64, k: f64) -> UniquePtr<MocnikGeneratorBasic>;
+        fn MocnikGeneratorBasicGenerate(algo: Pin<&mut MocnikGeneratorBasic>) -> UniquePtr<Graph>;
+
+        type PowerlawDegreeSequence;
+        fn NewPowerlawDegreeSequence(
+            min_deg: u64,
+            max_deg: u64,
+            gamma: f64,
+        ) -> UniquePtr<PowerlawDegreeSequence>;
+        fn run(self: Pin<&mut PowerlawDegreeSequence>) -> Result<()>;
+        fn hasFinished(self: &PowerlawDegreeSequence) -> bool;
+        fn PowerlawDegreeSequenceGetDegreeSequence(
+            algo: &PowerlawDegreeSequence,
+            num_nodes: u64,
+        ) -> UniquePtr<CxxVector<u64>>;
+        fn setMinimumFromAverageDegree(self: Pin<&mut PowerlawDegreeSequence>, avg_deg: f64);
+        fn setGammaFromAverageDegree(
+            self: Pin<&mut PowerlawDegreeSequence>,
+            avg_deg: f64,
+            min_gamma: f64,
+            max_gamma: f64,
+        );
+        fn setMinimumDegree(self: Pin<&mut PowerlawDegreeSequence>, min_deg: u64);
+        fn getMinimumDegree(self: &PowerlawDegreeSequence) -> u64;
+        fn getMaximumDegree(self: &PowerlawDegreeSequence) -> u64;
+        fn setGamma(self: Pin<&mut PowerlawDegreeSequence>, gamma: f64);
+        fn getGamma(self: &PowerlawDegreeSequence) -> f64;
+        fn getExpectedAverageDegree(self: &PowerlawDegreeSequence) -> f64;
+        fn getDegree(self: &PowerlawDegreeSequence) -> u64;
+
+        type PubWebGenerator;
+        fn NewPubWebGenerator(
+            num_nodes: u64,
+            num_dense_areas: u64,
+            neighbourhood_radius: f64,
+            max_num_neighbours: u64,
+        ) -> UniquePtr<PubWebGenerator>;
+        fn PubWebGeneratorGenerate(algo: Pin<&mut PubWebGenerator>) -> UniquePtr<Graph>;
+        fn PubWebGeneratorGetCoordinates(
+            algo: &PubWebGenerator,
+            xs: &mut Vec<f64>,
+            ys: &mut Vec<f64>,
+        );
+
+        type RegularRingLatticeGenerator;
+        fn NewRegularRingLatticeGenerator(
+            num_nodes: u64,
+            num_neighbours: u64,
+        ) -> UniquePtr<RegularRingLatticeGenerator>;
+        fn RegularRingLatticeGeneratorGenerate(
+            algo: Pin<&mut RegularRingLatticeGenerator>,
+        ) -> UniquePtr<Graph>;
+
+        type RmatGenerator;
+        fn NewRmatGenerator(
+            scale: u64,
+            edge_factor: u64,
+            a: f64,
+            b: f64,
+            c: f64,
+            d: f64,
+            weighted: bool,
+            reduce_nodes: u64,
+        ) -> UniquePtr<RmatGenerator>;
+        fn RmatGeneratorGenerate(algo: Pin<&mut RmatGenerator>) -> UniquePtr<Graph>;
+
+        type WattsStrogatzGenerator;
+        fn NewWattsStrogatzGenerator(
+            n_nodes: u64,
+            n_neighbours: u64,
+            p: f64,
+        ) -> UniquePtr<WattsStrogatzGenerator>;
+        fn WattsStrogatzGeneratorGenerate(
+            algo: Pin<&mut WattsStrogatzGenerator>,
+        ) -> UniquePtr<Graph>;
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {
