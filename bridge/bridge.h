@@ -16,6 +16,7 @@
 #include <distance.h>
 #include <misc.h>
 #include <generators.h>
+#include <link_prediction.h>
 
 namespace NetworKit
 {
