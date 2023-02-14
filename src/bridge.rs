@@ -2287,6 +2287,13 @@ mod ffi {
         fn WattsStrogatzGeneratorGenerate(
             algo: Pin<&mut WattsStrogatzGenerator>,
         ) -> UniquePtr<Graph>;
+
+        // ---- INDEPENDENT SET ----
+        type Luby;
+        fn NewLuby() -> UniquePtr<Luby>;
+        fn LubyRun(algo: Pin<&mut Luby>, g: &Graph, ret: &mut Vec<bool>);
+        fn LubyIsIndependentSet(algo: &Luby, set: &[bool], g: &Graph) -> bool;
+
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

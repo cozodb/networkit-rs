@@ -5,6 +5,7 @@
 #include "rust/cxx.h"
 #include <networkit/embedding/Node2Vec.hpp>
 #include <networkit/flow/EdmondsKarp.hpp>
+#include <networkit/independentset/Luby.hpp>
 
 namespace NetworKit
 {
@@ -39,6 +40,24 @@ namespace NetworKit
     inline unique_ptr<vector<edgeweight>> EdmondsKarpGetFlowVector(const EdmondsKarp &algo)
     {
         return make_unique<vector<edgeweight>>(algo.getFlowVector());
+    }
+
+    inline unique_ptr<Luby> NewLuby()
+    {
+        return make_unique<Luby>();
+    }
+
+    inline void LubyRun(Luby &algo, const Graph &g, rust::Vec<bool> &ret)
+    {
+        for (auto &&v : algo.run(g))
+        {
+            ret.push_back(v);
+        }
+    }
+    inline bool LubyIsIndependentSet(const Luby &algo, rust::Slice<const bool> set, const Graph &g)
+    {
+        vector<bool> v{set.begin(), set.end()};
+        return algo.isIndependentSet(v, g);
     }
 }
 
