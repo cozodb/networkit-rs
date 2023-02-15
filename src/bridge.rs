@@ -2294,6 +2294,374 @@ mod ffi {
         fn LubyRun(algo: Pin<&mut Luby>, g: &Graph, ret: &mut Vec<bool>);
         fn LubyIsIndependentSet(algo: &Luby, set: &[bool], g: &Graph) -> bool;
 
+        // ---- LINK PREDICTION ----
+
+        type AdamicAdarIndex;
+        fn NewAdamicAdarIndex(g: &Graph) -> UniquePtr<AdamicAdarIndex>;
+        fn AdamicAdarIndexRunOn(
+            algo: Pin<&mut AdamicAdarIndex>,
+            src: &[u64],
+            dst: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn AdamicAdarIndexRunAll(
+            algo: Pin<&mut AdamicAdarIndex>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn setGraph(self: Pin<&mut AdamicAdarIndex>, g: &Graph);
+        fn run(self: Pin<&mut AdamicAdarIndex>, u: u64, v: u64) -> f64;
+
+        type AdjustedRandIndex;
+        fn NewAdjustedRandIndex(g: &Graph) -> UniquePtr<AdjustedRandIndex>;
+        fn AdjustedRandIndexRunOn(
+            algo: Pin<&mut AdjustedRandIndex>,
+            src: &[u64],
+            dst: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn AdjustedRandIndexRunAll(
+            algo: Pin<&mut AdjustedRandIndex>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn setGraph(self: Pin<&mut AdjustedRandIndex>, g: &Graph);
+        fn run(self: Pin<&mut AdjustedRandIndex>, u: u64, v: u64) -> f64;
+
+        type AlgebraicDistanceIndex;
+        fn NewAlgebraicDistanceIndex(
+            g: &Graph,
+            num_systems: u64,
+            num_iterations: u64,
+            omega: f64,
+            norm: u64,
+        ) -> UniquePtr<AlgebraicDistanceIndex>;
+        fn AlgebraicDistanceIndexRunOn(
+            algo: Pin<&mut AlgebraicDistanceIndex>,
+            src: &[u64],
+            dst: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn AlgebraicDistanceIndexRunAll(
+            algo: Pin<&mut AlgebraicDistanceIndex>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn setGraph(self: Pin<&mut AlgebraicDistanceIndex>, g: &Graph);
+        fn run(self: Pin<&mut AlgebraicDistanceIndex>, u: u64, v: u64) -> f64;
+        fn preprocess(self: Pin<&mut AlgebraicDistanceIndex>);
+
+        type CommonNeighborsIndex;
+        fn NewCommonNeighborsIndex(g: &Graph) -> UniquePtr<CommonNeighborsIndex>;
+        fn CommonNeighborsIndexRunOn(
+            algo: Pin<&mut CommonNeighborsIndex>,
+            src: &[u64],
+            dst: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn CommonNeighborsIndexRunAll(
+            algo: Pin<&mut CommonNeighborsIndex>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn setGraph(self: Pin<&mut CommonNeighborsIndex>, g: &Graph);
+        fn run(self: Pin<&mut CommonNeighborsIndex>, u: u64, v: u64) -> f64;
+
+        type ROCMetric;
+        fn NewROCMetric(g: &Graph) -> UniquePtr<ROCMetric>;
+        fn setTestGraph(self: Pin<&mut ROCMetric>, g: &Graph);
+        fn ROCMetricGetCurve(
+            algo: Pin<&mut ROCMetric>,
+            us: &[u64],
+            vs: &[u64],
+            ws: &[f64],
+            num_threshold: u64,
+            xs: &mut Vec<f64>,
+            ys: &mut Vec<f64>,
+        );
+        fn ROCMetricGetAreaUnderCurve(algo: &ROCMetric, xs: &[f64], ys: &[f64]) -> f64;
+        fn getAreaUnderCurve(self: &ROCMetric) -> f64;
+
+        type PrecisionRecallMetric;
+        fn NewPrecisionRecallMetric(g: &Graph) -> UniquePtr<PrecisionRecallMetric>;
+        fn setTestGraph(self: Pin<&mut PrecisionRecallMetric>, g: &Graph);
+        fn PrecisionRecallMetricGetCurve(
+            algo: Pin<&mut PrecisionRecallMetric>,
+            us: &[u64],
+            vs: &[u64],
+            ws: &[f64],
+            num_threshold: u64,
+            xs: &mut Vec<f64>,
+            ys: &mut Vec<f64>,
+        );
+        fn PrecisionRecallMetricGetAreaUnderCurve(
+            algo: &PrecisionRecallMetric,
+            xs: &[f64],
+            ys: &[f64],
+        ) -> f64;
+        fn getAreaUnderCurve(self: &PrecisionRecallMetric) -> f64;
+
+        type JaccardIndex;
+        fn NewJaccardIndex(g: &Graph) -> UniquePtr<JaccardIndex>;
+        fn JaccardIndexRunOn(
+            algo: Pin<&mut JaccardIndex>,
+            src: &[u64],
+            dst: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn JaccardIndexRunAll(
+            algo: Pin<&mut JaccardIndex>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn setGraph(self: Pin<&mut JaccardIndex>, g: &Graph);
+        fn run(self: Pin<&mut JaccardIndex>, u: u64, v: u64) -> f64;
+
+        type KatzIndex;
+        fn NewKatzIndex(
+            g: &Graph,
+            max_path_length: u64,
+            damping_value: f64,
+        ) -> UniquePtr<KatzIndex>;
+        fn KatzIndexRunOn(
+            algo: Pin<&mut KatzIndex>,
+            src: &[u64],
+            dst: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn KatzIndexRunAll(
+            algo: Pin<&mut KatzIndex>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn setGraph(self: Pin<&mut KatzIndex>, g: &Graph);
+        fn run(self: Pin<&mut KatzIndex>, u: u64, v: u64) -> f64;
+
+        fn LinkThresholderByCount(
+            us: &[u64],
+            vs: &[u64],
+            ws: &[f64],
+            num_links: u64,
+            src: &mut Vec<u64>,
+            dst: &mut Vec<u64>,
+        );
+        fn LinkThresholderByPercentage(
+            us: &[u64],
+            vs: &[u64],
+            ws: &[f64],
+            percentage_links: f64,
+            src: &mut Vec<u64>,
+            dst: &mut Vec<u64>,
+        );
+        fn LinkThresholderByScore(
+            us: &[u64],
+            vs: &[u64],
+            ws: &[f64],
+            min_score: f64,
+            src: &mut Vec<u64>,
+            dst: &mut Vec<u64>,
+        );
+
+        type MissingLinksFinder;
+        fn NewMissingLinksFinder(g: &Graph) -> UniquePtr<MissingLinksFinder>;
+        fn MissingLinksFinderFindAtDistance(
+            algo: Pin<&mut MissingLinksFinder>,
+            k: u64,
+            src: &mut Vec<u64>,
+            dst: &mut Vec<u64>,
+        );
+        fn MissingLinksFinderFindFromNode(
+            algo: Pin<&mut MissingLinksFinder>,
+            u: u64,
+            k: u64,
+            src: &mut Vec<u64>,
+            dst: &mut Vec<u64>,
+        );
+
+        type NeighborhoodDistanceIndex;
+        fn NewNeighborhoodDistanceIndex(g: &Graph) -> UniquePtr<NeighborhoodDistanceIndex>;
+        fn NeighborhoodDistanceIndexRunOn(
+            algo: Pin<&mut NeighborhoodDistanceIndex>,
+            src: &[u64],
+            dst: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn NeighborhoodDistanceIndexRunAll(
+            algo: Pin<&mut NeighborhoodDistanceIndex>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn setGraph(self: Pin<&mut NeighborhoodDistanceIndex>, g: &Graph);
+        fn run(self: Pin<&mut NeighborhoodDistanceIndex>, u: u64, v: u64) -> f64;
+
+        fn NeighborhoodUtilityGetNeighborsUnion(
+            g: &Graph,
+            u: u64,
+            v: u64,
+        ) -> UniquePtr<CxxVector<u64>>;
+        fn NeighborhoodUtilityGetCommonNeighbors(
+            g: &Graph,
+            u: u64,
+            v: u64,
+        ) -> UniquePtr<CxxVector<u64>>;
+
+        type NeighborsMeasureIndex;
+        fn NewNeighborsMeasureIndex(g: &Graph) -> UniquePtr<NeighborsMeasureIndex>;
+        fn NeighborsMeasureIndexRunOn(
+            algo: Pin<&mut NeighborsMeasureIndex>,
+            src: &[u64],
+            dst: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn NeighborsMeasureIndexRunAll(
+            algo: Pin<&mut NeighborsMeasureIndex>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn setGraph(self: Pin<&mut NeighborsMeasureIndex>, g: &Graph);
+        fn run(self: Pin<&mut NeighborsMeasureIndex>, u: u64, v: u64) -> f64;
+
+        type PreferentialAttachmentIndex;
+        fn NewPreferentialAttachmentIndex(g: &Graph) -> UniquePtr<PreferentialAttachmentIndex>;
+        fn PreferentialAttachmentIndexRunOn(
+            algo: Pin<&mut PreferentialAttachmentIndex>,
+            src: &[u64],
+            dst: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn PreferentialAttachmentIndexRunAll(
+            algo: Pin<&mut PreferentialAttachmentIndex>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn setGraph(self: Pin<&mut PreferentialAttachmentIndex>, g: &Graph);
+        fn run(self: Pin<&mut PreferentialAttachmentIndex>, u: u64, v: u64) -> f64;
+
+        fn RandomLinkSamplerByCount(g: &Graph, num_links: u64) -> UniquePtr<Graph>;
+        fn RandomLinkSamplerByPercentage(g: &Graph, percentage: f64) -> UniquePtr<Graph>;
+
+        type ResourceAllocationIndex;
+        fn NewResourceAllocationIndex(g: &Graph) -> UniquePtr<ResourceAllocationIndex>;
+        fn ResourceAllocationIndexRunOn(
+            algo: Pin<&mut ResourceAllocationIndex>,
+            src: &[u64],
+            dst: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn ResourceAllocationIndexRunAll(
+            algo: Pin<&mut ResourceAllocationIndex>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn setGraph(self: Pin<&mut ResourceAllocationIndex>, g: &Graph);
+        fn run(self: Pin<&mut ResourceAllocationIndex>, u: u64, v: u64) -> f64;
+
+        type SameCommunityIndex;
+        fn NewSameCommunityIndex(g: &Graph) -> UniquePtr<SameCommunityIndex>;
+        fn SameCommunityIndexRunOn(
+            algo: Pin<&mut SameCommunityIndex>,
+            src: &[u64],
+            dst: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn SameCommunityIndexRunAll(
+            algo: Pin<&mut SameCommunityIndex>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn setGraph(self: Pin<&mut SameCommunityIndex>, g: &Graph);
+        fn run(self: Pin<&mut SameCommunityIndex>, u: u64, v: u64) -> f64;
+
+        type TotalNeighborsIndex;
+        fn NewTotalNeighborsIndex(g: &Graph) -> UniquePtr<TotalNeighborsIndex>;
+        fn TotalNeighborsIndexRunOn(
+            algo: Pin<&mut TotalNeighborsIndex>,
+            src: &[u64],
+            dst: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn TotalNeighborsIndexRunAll(
+            algo: Pin<&mut TotalNeighborsIndex>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn setGraph(self: Pin<&mut TotalNeighborsIndex>, g: &Graph);
+        fn run(self: Pin<&mut TotalNeighborsIndex>, u: u64, v: u64) -> f64;
+
+        type UDegreeIndex;
+        fn NewUDegreeIndex(g: &Graph) -> UniquePtr<UDegreeIndex>;
+        fn UDegreeIndexRunOn(
+            algo: Pin<&mut UDegreeIndex>,
+            src: &[u64],
+            dst: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn UDegreeIndexRunAll(
+            algo: Pin<&mut UDegreeIndex>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn setGraph(self: Pin<&mut UDegreeIndex>, g: &Graph);
+        fn run(self: Pin<&mut UDegreeIndex>, u: u64, v: u64) -> f64;
+
+        type VDegreeIndex;
+        fn NewVDegreeIndex(g: &Graph) -> UniquePtr<VDegreeIndex>;
+        fn VDegreeIndexRunOn(
+            algo: Pin<&mut VDegreeIndex>,
+            src: &[u64],
+            dst: &[u64],
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn VDegreeIndexRunAll(
+            algo: Pin<&mut VDegreeIndex>,
+            ks: &mut Vec<u64>,
+            vs: &mut Vec<u64>,
+            ws: &mut Vec<f64>,
+        );
+        fn setGraph(self: Pin<&mut VDegreeIndex>, g: &Graph);
+        fn run(self: Pin<&mut VDegreeIndex>, u: u64, v: u64) -> f64;
+
     }
     #[namespace = "NetworKit::GraphTools"]
     unsafe extern "C++" {

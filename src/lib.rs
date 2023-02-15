@@ -14,10 +14,10 @@ pub mod flow;
 pub mod generators;
 pub mod graph;
 pub mod independent_set;
+pub mod link_prediction;
 pub mod partition;
 pub mod scd;
 pub mod tools;
-pub mod link_prediction;
 
 pub use cover::Cover;
 pub use graph::Graph;
