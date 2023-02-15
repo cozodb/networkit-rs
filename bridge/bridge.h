@@ -17,6 +17,7 @@
 #include <misc.h>
 #include <generators.h>
 #include <link_prediction.h>
+#include <viz.h>
 
 namespace NetworKit
 {
