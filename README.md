@@ -1,6 +1,7 @@
 # NetworKit-rs
 
 [![Crates.io](https://img.shields.io/crates/v/networkit-rs)](https://crates.io/crates/networkit-rs)
+[![docs.rs](https://img.shields.io/docsrs/networkit-rs)](https://docs.rs/networkit-rs)
 
 
 This is a rust wrapper for [NetworKit](https://networkit.github.io/), a toolkit for large-scale network analysis.
