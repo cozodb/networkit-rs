@@ -845,6 +845,9 @@ namespace NetworKit
         case 1:
             norm = PageRank::Norm::L2_NORM;
             break;
+        default:
+            norm = PageRank::Norm::L2_NORM;
+            break;
         }
         algo.norm = norm;
     }

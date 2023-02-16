@@ -274,6 +274,7 @@ namespace NetworKit
             n = OverlappingNMIDistance::Normalization::MIN;
             break;
         default:
+            n = OverlappingNMIDistance::Normalization::MIN;
             break;
         }
         return make_unique<OverlappingNMIDistance>(n);
