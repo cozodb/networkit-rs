@@ -56,10 +56,8 @@ fn main() {
 fn build_networkit() {
     let mut config = cmake::Config::new("networkit");
     config.define("NETWORKIT_STATIC", "ON");
-    let mut res = config.build();
+    let res = config.build();
     println!("{}", res.display());
-    println!("cargo:rustc-link-search=native={}", res.display());
-    res.push("lib");
     println!("cargo:rustc-link-search=native={}", res.display());
     println!("cargo:rustc-link-lib=static=networkit");
 }
