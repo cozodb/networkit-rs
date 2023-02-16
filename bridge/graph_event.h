@@ -31,7 +31,11 @@ namespace NetworKit
         case 6:
             t = GraphEvent::Type::TIME_STEP;
             break;
+        default:
+            t = GraphEvent::Type::TIME_STEP;
+            break;
         }
+
         return GraphEvent(t, u, v, ew);
     }
 }
