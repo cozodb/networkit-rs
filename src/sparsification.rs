@@ -8,9 +8,7 @@ use crate::{
     bridge::{self, *},
 };
 
-trait GraphLayoutAlgorithm {
+pub trait Sparsifier {
     fn run(&mut self);
-    fn get_coordinates(&self) -> Vec<(f64, f64)>;
-    fn num_edge_crossings(&self) -> u64;
-    
+    fn get_graph(&mut self) -> crate::Graph;
 }

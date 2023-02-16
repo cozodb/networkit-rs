@@ -17,7 +17,12 @@
 #include <misc.h>
 #include <generators.h>
 #include <link_prediction.h>
-#include <viz.h>
+#include <sparsification.h>
+// networkit.dynamics
+// networkit.graphio
+// networkit.matching
+// networkit.randomization
+// networkit.simulation
 
 namespace NetworKit
 {

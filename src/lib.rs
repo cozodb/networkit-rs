@@ -18,6 +18,7 @@ pub mod link_prediction;
 pub mod partition;
 pub mod scd;
 pub mod tools;
+// pub mod sparsification;
 
 pub use cover::Cover;
 pub use graph::Graph;
